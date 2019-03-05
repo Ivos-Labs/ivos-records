@@ -1,12 +1,5 @@
-/**
- * 
- */
-package com.ivoslabs.records.core;
+package com.ivoslabs.records.exceptions;
 
-/**
- * @author www.ivoslabs.com
- *
- */
 public class RecordParserException extends RuntimeException {
 
     /** */

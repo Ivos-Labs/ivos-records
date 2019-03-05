@@ -5,6 +5,7 @@ package com.ivoslabs.records.core;
 
 import java.lang.reflect.Field;
 
+import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
 
@@ -23,24 +24,29 @@ public class Extract {
     /** */
     private Pic copyField;
 
+    /** */
+    private Converter converter;
+
     /**
      * @param field
      * @param copyField
      */
-    public Extract(Field field, Pic copyField) {
+    public Extract(Field field, Pic copyField, Converter converter) {
 	super();
 	this.field = field;
 	this.copyField = copyField;
+	this.converter = converter;
     }
 
     /**
      * @param field
      * @param pipeField
      */
-    public Extract(Field field, PipedField pipeField) {
+    public Extract(Field field, PipedField pipeField, Converter converter) {
 	super();
 	this.field = field;
 	this.pipeField = pipeField;
+	this.converter = converter;
     }
 
     /**
@@ -95,6 +101,24 @@ public class Extract {
      */
     public void setCopyField(Pic copyField) {
 	this.copyField = copyField;
+    }
+
+    /**
+     * Gets the converter
+     *
+     * @return {@code Converter} The converter
+     */
+    public Converter getConverter() {
+	return this.converter;
+    }
+
+    /**
+     * Sets the converter
+     *
+     * @param converter {@code Converter} The converter to set
+     */
+    public void setConverter(Converter converter) {
+	this.converter = converter;
     }
 
 }

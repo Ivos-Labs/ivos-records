@@ -8,25 +8,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.ivoslabs.records.converters.FieldConverter;
+
 /**
- * 
  * @author www.ivoslabs.com
  *
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Pic {
+public @interface Converter {
 
     /**
      * 
      * @return
      */
-    int beginIndex();
-
-    /**
-     * 
-     * @return
-     */
-    int size();
-
+    Class<? extends FieldConverter<? extends Object>> value();
 }

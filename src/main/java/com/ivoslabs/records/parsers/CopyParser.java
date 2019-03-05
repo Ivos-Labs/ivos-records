@@ -5,7 +5,7 @@ package com.ivoslabs.records.parsers;
 
 import java.util.List;
 
-import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.core.ActionObj;
 import com.ivoslabs.records.core.Extractor;
 
@@ -13,7 +13,7 @@ import com.ivoslabs.records.core.Extractor;
  * @author www.ivoslabs.com
  *
  */
-public class PipedParser {
+public class CopyParser {
 
     /**
      * 
@@ -22,7 +22,7 @@ public class PipedParser {
      * @return
      */
     public <T> T toObject(String data, Class<T> type) {
-	return Extractor.convertStringToObject(data, type, PipedField.class);
+	return Extractor.convertStringToObject(data, type, Pic.class);
     }
 
     /**
@@ -32,7 +32,7 @@ public class PipedParser {
      * @return
      */
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
-	return Extractor.convertStringsToObjects(data, type, PipedField.class);
+	return Extractor.convertStringsToObjects(data, type, Pic.class);
     }
 
     /**
@@ -41,7 +41,7 @@ public class PipedParser {
      * @return
      */
     public String toString(Object data) {
-	return Extractor.convertObjectToString(data, PipedField.class);
+	return Extractor.convertObjectToString(data, Pic.class);
     }
 
     /**
@@ -50,7 +50,7 @@ public class PipedParser {
      * @return
      */
     public List<String> toStrings(List<?> data) {
-	return Extractor.convertObjectsToStrings(data, PipedField.class);
+	return Extractor.convertObjectsToStrings(data, Pic.class);
     }
 
     /**
@@ -60,7 +60,6 @@ public class PipedParser {
      * @param action
      */
     public <T> void fileToObjects(String file, Class<T> type, ActionObj<T> action) {
-	Extractor.convertFileToObjects(file, type, action, PipedField.class);
+	Extractor.convertFileToObjects(file, type, action, Pic.class);
     }
-
 }

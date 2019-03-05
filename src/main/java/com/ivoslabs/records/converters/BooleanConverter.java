@@ -7,7 +7,7 @@ package com.ivoslabs.records.converters;
  * @author www.ivoslabs.com
  *
  */
-public class BooleanConverter implements Converter<Boolean> {
+public class BooleanConverter implements FieldConverter<Boolean> {
 
     /** The constant true */
     public static final String TRUE = "true";
