@@ -21,6 +21,5 @@ public class CopyExtractor {
     public <T extends Object> List<T> convert(List<String> data, Class<T> type) {
 	return Extractor.convert(data, type, Pic.class);
     }
-    
-    
+
 }

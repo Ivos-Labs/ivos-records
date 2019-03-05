@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.ivoslabs.records.extractors.CopyExtractor;
 import com.ivoslabs.records.extractors.PipedExtactor;
+import com.ivoslabs.records.parsers.PipedParser;
 
 /**
  * @author www.ivoslabs.com
@@ -30,7 +31,7 @@ public class TestPipe {
 	    System.out.println(dataDTO);
 	}
 
-	PipedExtactor ex = new PipedExtactor();
+	PipedParser ex = new PipedParser();
 
 	List<String> rows = new ArrayList<String>();
 	rows.add("a|1|true|1.1");
@@ -38,10 +39,16 @@ public class TestPipe {
 	rows.add("c|3|1|3.3");
 	rows.add("d||0|4.4");
 
-	List<PipedDTO> dtos = ex.convert(rows, PipedDTO.class);
+	List<PipedDTO> dtos = ex.toObjects(rows, PipedDTO.class);
 
 	for (PipedDTO dataDTO : dtos) {
 	    System.out.println(dataDTO);
+	}
+	
+	List<String> strs = ex.toStrings(dtos);
+	
+	for (String s : strs) {
+	    System.out.println(s);
 	}
 
     }

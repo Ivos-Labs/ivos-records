@@ -97,7 +97,4 @@ public class Extract {
 	this.copyField = copyField;
     }
 
-    
-    
-    
 }

@@ -8,6 +8,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.ivoslabs.records.converters.Converter;
+import com.ivoslabs.records.converters.DefalutConverter;
+
 /**
  * Specify the index where found the field in row separated by pipe
  * 
@@ -24,5 +27,11 @@ public @interface PipedField {
      * @return
      */
     int value();
+
+    /**
+     * 
+     * @return
+     */
+    Class<? extends Converter<? extends Object>> converter() default DefalutConverter.class;
 
 }

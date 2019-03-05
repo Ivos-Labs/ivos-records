@@ -10,6 +10,8 @@ import java.util.List;
 
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.converters.Converter;
+import com.ivoslabs.records.converters.DefalutConverter;
 import com.ivoslabs.records.core.Template.Type;
 
 /**
@@ -17,14 +19,19 @@ import com.ivoslabs.records.core.Template.Type;
  *
  */
 public class Extractor {
-    
+
     /** The constant true (1) */
-    private static final String TRUE = "1";
+    private static final String TRUE_1 = "1";
+
+    /** The constant true (Y) */
+    private static final String TRUE_Y = "Y";
+
+    /** The constant true (T) */
+    private static final String TRUE_T = "T";
 
     /** The constant pipe separator */
     private static final String PIPE_SEPARATOR = "\\|";
-    
-    
+
     /**
      * 
      * @param data
@@ -113,6 +120,7 @@ public class Extractor {
      * @param rowNum
      * @return
      */
+    @SuppressWarnings("unchecked")
     private static <T extends Object> T convert(String data, Class<T> type, Template extracts, Integer rowNum) {
 
 	T object;
@@ -132,34 +140,48 @@ public class Extractor {
 	}
 
 	for (Extract ex : extracts.getExtracts()) {
-	    
+
 	    Field field = ex.getField();
 	    PipedField pf = ex.getPipeField();
 	    Pic pic = ex.getCopyField();
-	    
+
 	    if (pf != null || pic != null) {
 		String fieldName = field.getName();
 		String value = null;
-		
+		Object v = null;
+		Class<? extends Converter<Object>> clazzConv = null;
+
+		if (extracts.getType().equals(Template.Type.PIPE) && pf != null) {
+		    int indx = pf.value();
+		    value = values[indx];
+		    clazzConv = (Class<? extends Converter<Object>>) pf.converter();
+		} else if (extracts.getType().equals(Template.Type.PIC) && pic != null) {
+		    int begin = pic.beginIndex();
+		    int size = pic.size();
+		    value = data.substring(begin, begin + size);
+		    clazzConv = (Class<? extends Converter<Object>>) pic.converter();
+		}
+
 		try {
-		    
-		    if (extracts.getType().equals(Template.Type.PIPE) && pf != null) {
-			int indx = pf.value();
-			value = values[indx];
-		    } else if (extracts.getType().equals(Template.Type.PIC) && pic != null) {
-			int begin = pic.beginIndex();
-			int size = pic.size();
-			value = data.substring(begin, begin + size);
-		    }
 
 		    if (value != null) {
 			field.setAccessible(Boolean.TRUE);
-			Object v = Extractor.parse(value, field.getType());
+			// TODO save converters new instances
+
+			if (clazzConv.equals(DefalutConverter.class)) {
+			    clazzConv = null;
+			    v = Extractor.parse(value, field.getType());
+			} else {
+			    v = clazzConv.newInstance().toObject(value);
+			}
+
 			field.set(object, v);
 		    }
-		    
+
 		} catch (Exception e) {
-		    throw new RuntimeException("Error extracting " + fieldName + " " + rowNum != null ? "at row " + rowNum : "", e);
+		    String row = rowNum != null ? "at row " + rowNum : "";
+		    String conv = clazzConv != null ? " converter: " + clazzConv.getCanonicalName() + "; " : "";
+		    throw new RecordParserException("An error occurred setting value, original value: " + value + "; converted value: " + v + "; " + conv + " class: " + type.getCanonicalName() + "; " + "field: " + fieldName + "; " + row, e);
 		}
 
 	    }
@@ -184,7 +206,7 @@ public class Extractor {
 	} else if (type == float.class) {
 	    v = Float.parseFloat(value);
 	} else if (type == boolean.class) {
-	    v = value.equals(TRUE);
+	    v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
 	    if (v.equals(Boolean.FALSE)) {
 		v = Boolean.parseBoolean(value);
 	    }
@@ -202,7 +224,7 @@ public class Extractor {
 	    }
 	} else if (type.equals(Boolean.class)) {
 	    if (!value.isEmpty()) {
-		v = value.equals(TRUE);
+		v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
 		if (v.equals(Boolean.FALSE)) {
 		    v = Boolean.parseBoolean(value);
 		}
