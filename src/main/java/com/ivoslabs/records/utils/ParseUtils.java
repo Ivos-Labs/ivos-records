@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
@@ -25,6 +28,8 @@ import com.ivoslabs.records.core.Template.Type;
  */
 public class ParseUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParseUtils.class);
+    
     /** The constant true (1) */
     private static final String TRUE_1 = "1";
 
@@ -172,6 +177,11 @@ public class ParseUtils {
 	return v;
     }
 
+    /**
+     * 
+     * @param url
+     * @param action
+     */
     public static void readTextFile(String url, Action action) {
 	BufferedReader br = null;
 	try {
@@ -189,7 +199,7 @@ public class ParseUtils {
 		try {
 		    br.close();
 		} catch (Exception e2) {
-		    e2.printStackTrace();
+		    LOGGER.error(e2.getMessage(), e2);
 		}
 	    }
 	}

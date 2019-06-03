@@ -51,6 +51,12 @@ public class Extractor {
 	return obj;
     }
 
+    /**
+     * 
+     * @param data
+     * @param annon
+     * @return
+     */
     public static List<String> convertObjectsToStrings(List<?> data, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(data, "data must not be null");
 	List<String> list = new ArrayList<String>();
@@ -77,6 +83,43 @@ public class Extractor {
 	return list;
 
     }
+
+    /**
+     * 
+     * @param file
+     * @param objects
+     */
+    public static <T> void convertObjectsToFile(String file, List<T> objects, Class<? extends Annotation> annon) {
+	ParseUtils.notNull(file, "file must not be null");
+	ParseUtils.notNull(objects, "objests must not be null");
+
+	final MutableCounter rowNum = new MutableCounter();
+	final Template template = ParseUtils.getTemplate(objects.get(0).getClass(), annon, Boolean.TRUE);
+	
+	ActionString s;
+	
+	Action actionForRow;
+	
+	if (annon.equals(PipedField.class)) {
+	    actionForRow = new Action() {
+
+		public void event(String row) {
+		    String object;
+		    rowNum.increment();
+		    object = Extractor.convertPipedObjectToString(row, template);
+		   
+		}
+		
+	    };
+	}
+	
+	
+
+    }
+
+    /**********************************
+     * Start String to object parsers *
+     **********************************/
 
     /**
      * 
@@ -125,6 +168,13 @@ public class Extractor {
 
     }
 
+    /**
+     * 
+     * @param file
+     * @param type
+     * @param action
+     * @param annon
+     */
     public static <T> void convertFileToObjects(String file, final Class<T> type, final ActionObj<T> action, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(file, "file must not be null");
 	ParseUtils.notNull(type, "type must not be null");
@@ -145,6 +195,10 @@ public class Extractor {
 
 	ParseUtils.readTextFile(file, actionForRow);
     }
+
+    /*************************
+     * Start private methods *
+     *************************/
 
     /**
      * Conver a string to a dto object
@@ -240,6 +294,12 @@ public class Extractor {
 	return object;
     }
 
+    /**
+     * 
+     * @param data
+     * @param template
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private static String convertPipedObjectToString(Object data, Template template) {
 
@@ -308,6 +368,12 @@ public class Extractor {
 	return sb.toString();
     }
 
+    /**
+     * 
+     * @param data
+     * @param template
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private static String convertCopyObjectToString(Object data, Template template) {
 

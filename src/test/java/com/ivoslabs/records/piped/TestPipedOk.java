@@ -23,6 +23,13 @@ import com.ivoslabs.records.parsers.PipedParser;
  *
  */
 public class TestPipedOk {
+    
+    @Test
+    public void testObjectsToFile() {
+	PipedParser ex = new PipedParser();
+	
+    
+    }
 
     @Test
     public void testToObject() {

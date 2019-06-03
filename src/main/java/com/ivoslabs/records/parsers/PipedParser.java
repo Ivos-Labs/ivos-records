@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.core.ActionObj;
+import com.ivoslabs.records.core.ActionString;
 import com.ivoslabs.records.core.Extractor;
 
 /**
@@ -34,6 +35,18 @@ public class PipedParser {
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
 	return Extractor.convertStringsToObjects(data, type, PipedField.class);
     }
+    
+    
+    /**
+     * 
+     * @param file
+     * @param type
+     * @param action
+     */
+    public <T> void fileToObjects(String file, Class<T> type, ActionObj<T> action) {
+	Extractor.convertFileToObjects(file, type, action, PipedField.class);
+    }
+
 
     /**
      * 
@@ -53,14 +66,15 @@ public class PipedParser {
 	return Extractor.convertObjectsToStrings(data, PipedField.class);
     }
 
+    
     /**
      * 
      * @param file
      * @param type
      * @param action
      */
-    public <T> void fileToObjects(String file, Class<T> type, ActionObj<T> action) {
-	Extractor.convertFileToObjects(file, type, action, PipedField.class);
+    public <T> void objectsToFile(String file, List<T> objects) {
+	Extractor.convertObjectsToFile(file, objects, PipedField.class);
     }
-
+ 
 }

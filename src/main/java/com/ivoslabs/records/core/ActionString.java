@@ -6,7 +6,7 @@ package com.ivoslabs.records.core;
  * @author www.ivoslabs.com
  *
  */
-public interface ActionString<T extends Object> {
+public interface ActionString  {
 
-    String event(T row);
+    void event(String row);
 }

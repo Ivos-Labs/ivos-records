@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
 import com.ivoslabs.records.core.ActionObj;
-import com.ivoslabs.records.dtos.CopyOkDTO;
+import com.ivoslabs.records.dtos.copy.CopyOkDTO;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**
@@ -23,6 +23,14 @@ import com.ivoslabs.records.parsers.CopyParser;
  *
  */
 public class TestCopyOk {
+    
+    @Test
+    public void testObjectsToFile() {
+	CopyParser cex = new CopyParser();
+	
+	
+	
+    }
 
     @Test
     public void testToObject() {
@@ -60,6 +68,7 @@ public class TestCopyOk {
     public void testString() {
 	CopyParser cex = new CopyParser();
 
+	
 	CopyOkDTO dto = new CopyOkDTO();
 	dto.setField("d");
 	dto.setField2(1);
