@@ -13,7 +13,7 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.core.ObjectConsumer;
-import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.dtos.copy.CopyOkDTO;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**
@@ -26,9 +26,9 @@ public class TestCopyFile {
     public void testFileToObjects() {
 
 	CopyParser ex = new CopyParser();
-	ex.fileToObjects("data.copy", PipedOkDTO.class, new ObjectConsumer<PipedOkDTO>() {
+	ex.fileToObjects("data.copy", CopyOkDTO.class, new ObjectConsumer<CopyOkDTO>() {
 
-	    public void process(PipedOkDTO object) {
+	    public void process(CopyOkDTO object) {
 		System.out.println(object.toString());
 	    }
 
@@ -42,41 +42,36 @@ public class TestCopyFile {
     public void testObjectsToFile() {
 	CopyParser ex = new CopyParser();
 
-	PipedOkDTO dto1 = new PipedOkDTO();
-	dto1.setField1("a");
+	CopyOkDTO dto1 = new CopyOkDTO();
+	dto1.setField("a");
 	dto1.setField2(1);
 	dto1.setField3(1);
-	dto1.setField4(true);
+	dto1.setField4(false);
 	dto1.setField5(1.1);
 	dto1.setField6(new Date());
 
-	PipedOkDTO dto2 = new PipedOkDTO();
-	dto2.setField1("b");
+	CopyOkDTO dto2 = new CopyOkDTO();
+	dto2.setField("b");
 	dto2.setField2(2);
-	dto2.setField3(22);
+	dto2.setField3(2);
 	dto2.setField4(false);
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
 
-	PipedOkDTO dto3 = new PipedOkDTO();
-	dto3.setField1("c");
+	CopyOkDTO dto3 = new CopyOkDTO();
+	dto3.setField("c");
 	dto3.setField2(3);
-	dto3.setField3(33);
+	dto3.setField3(3);
 	dto3.setField4(false);
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
-	List<PipedOkDTO> list = new ArrayList<PipedOkDTO>();
+	List<CopyOkDTO> list = new ArrayList<CopyOkDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
 
-	/**
-	 * a b c
-	 * 
-	 */
-
-	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
+	Stack<CopyOkDTO> stack = new Stack<CopyOkDTO>();
 	stack.addAll(list);
 
 	ex.objectsToFile("data.copy", stack);

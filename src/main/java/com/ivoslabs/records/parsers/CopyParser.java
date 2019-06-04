@@ -54,14 +54,47 @@ public class CopyParser {
 	return Extractor.convertObjectsToStrings(data, Pic.class);
     }
 
+    public <T, U, V> void fileToObjects(String file,
+	    Class<T> headerType,
+	    Integer headerSize,
+	    ObjectConsumer<T> headerConsumer,
+	    Class<U> dataType,
+	    ObjectConsumer<U> dataConsumer,
+	    Class<V> tailType,
+	    Integer tailSize,
+	    ObjectConsumer<V> tailConsumer) {
+
+	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, Pic.class);
+    }
+
+    public <T, U, V> void fileToObjects(String file,
+	    Class<T> headerType,
+	    Integer headerSize,
+	    ObjectConsumer<T> headerConsumer,
+	    Class<U> dataType,
+	    ObjectConsumer<U> dataConsumer) {
+
+	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, Pic.class);
+    }
+
+    public <T, U, V> void fileToObjects(String file,
+	    Class<U> dataType,
+	    ObjectConsumer<U> dataConsumer,
+	    Class<V> tailType,
+	    Integer tailSize,
+	    ObjectConsumer<V> tailConsumer) {
+
+	Extractor.convertFileToObjects(file, dataType, dataConsumer, tailType, tailSize, tailConsumer, Pic.class);
+    }
+
     /**
      * 
      * @param file
      * @param type
      * @param action
      */
-    public <T> void fileToObjects(String file, Class<T> type, ObjectConsumer<T> action) {
-	Extractor.convertFileToObjects(file, type, action, Pic.class);
+    public <T> void fileToObjects(String file, Class<T> dataType, ObjectConsumer<T> dataConsumer) {
+	Extractor.convertFileToObjects(file, dataType, dataConsumer, Pic.class);
     }
 
     /**

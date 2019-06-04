@@ -9,6 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotation to indicate that the field can be handle as a pic in a copy file
  * 
  * @author www.ivoslabs.com
  *
@@ -18,12 +19,14 @@ import java.lang.annotation.Target;
 public @interface Pic {
 
     /**
+     * Gets the index where stats the field in copy file
      * 
      * @return
      */
     int beginIndex();
 
     /**
+     * Gets the size of the field in copy file
      * 
      * @return
      */

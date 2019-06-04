@@ -9,7 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specify the index where found the field in row separated by pipe
+ * Annotation to indicate that the field can be handle as a field in a piped file<br>
+ * Specify the index where will be found the field in row separated by pipe
  * 
  * @author www.ivoslabs.com
  *
@@ -19,7 +20,7 @@ import java.lang.annotation.Target;
 public @interface PipedField {
 
     /**
-     * Specify the index where found the field in row separated by pipe
+     * Specify the index where will be found the field in row separated by pipe
      * 
      * @return
      */

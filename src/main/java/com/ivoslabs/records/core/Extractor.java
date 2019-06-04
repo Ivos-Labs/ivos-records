@@ -188,26 +188,75 @@ public class Extractor {
     /**
      * 
      * @param file
-     * @param type
-     * @param action
+     * @param headerType
+     * @param headerSize
+     * @param headerConsumer
+     * @param dataType
+     * @param dataConsumer
+     * @param tailType
+     * @param tailSize
+     * @param tailConsumer
      * @param annon
      */
-    public static <T> void convertFileToObjects(String file, final Class<T> type, final ObjectConsumer<T> action, Class<? extends Annotation> annon) {
+    public static <T, U, V> void convertFileToObjects(String file,
+	    final Class<T> headerType,
+	    final Integer headerSize,
+	    final ObjectConsumer<T> headerConsumer,
+	    final Class<U> dataType,
+	    final ObjectConsumer<U> dataConsumer,
+	    final Class<V> tailType,
+	    Integer tailSize,
+	    final ObjectConsumer<V> tailConsumer,
+	    Class<? extends Annotation> annon) {
+
 	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(type, "type must not be null");
-	ParseUtils.notNull(action, "action must not be null");
+	ParseUtils.notNull(dataType, "type must not be null");
+	ParseUtils.notNull(dataConsumer, "action must not be null");
+
+	ParseUtils.isTrue(headerType != null && (headerSize == null || headerSize < 1), "headerSize have to be greater than 0");
+	ParseUtils.isTrue(tailType != null && (tailSize == null || tailSize < 1), "tailSize have to be greater than 0");
 
 	final MutableCounter rowNum = new MutableCounter();
-	final Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+
+	final Template extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
+	final Template headerExtracts;
+	final Template tailExtracts;
+
+	final Integer tailLine;
+
+	if (headerType != null) {
+	    headerExtracts = ParseUtils.getTemplate(headerType, annon, Boolean.TRUE);
+	} else {
+	    headerExtracts = null;
+	}
+
+	if (tailType != null) {
+	    tailLine = ParseUtils.countLinesNew(file) - tailSize;
+	    tailExtracts = ParseUtils.getTemplate(tailType, annon, Boolean.TRUE);
+	} else {
+	    tailLine = null;
+	    tailExtracts = null;
+	}
 
 	RowConsumer actionForRow = new RowConsumer() {
- 
-	    public void process(String row) {
-		T object;
+
+	    public void process(String row) throws Exception {
+
 		rowNum.increment();
-		object = Extractor.convertStringRowToObject(row, type, extracts);
-		action.process(object);
+
+		if (headerExtracts != null && rowNum.getValue() <= headerSize) {
+		    T object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
+		    headerConsumer.process(object);
+		} else if (tailLine != null && rowNum.getValue() > tailLine) {
+		    V object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
+		    tailConsumer.process(object);
+		} else {
+		    U object = Extractor.convertStringRowToObject(row, dataType, extracts);
+		    dataConsumer.process(object);
+		}
+
 	    }
+
 	};
 
 	try {
@@ -217,6 +266,62 @@ public class Extractor {
 	} catch (Exception e) {
 	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
 	}
+
+    }
+
+    /**
+     * 
+     * @param file
+     * @param dataType
+     * @param dataConsumer
+     * @param annon
+     */
+    public static <T> void convertFileToObjects(String file, final Class<T> dataType, final ObjectConsumer<T> dataConsumer, Class<? extends Annotation> annon) {
+	Extractor.convertFileToObjects(file, null, null, null, dataType, dataConsumer, null, null, null, annon);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param headerType
+     * @param headerSize
+     * @param headerConsumer
+     * @param dataType
+     * @param dataConsumer
+     * @param annon
+     */
+    public static <T, U, V> void convertFileToObjects(String file,
+	    Class<T> headerType,
+	    Integer headerSize,
+	    ObjectConsumer<T> headerConsumer,
+	    Class<U> dataType,
+	    ObjectConsumer<U> dataConsumer,
+	    Class<? extends Annotation> annon) {
+	
+	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, null, null, annon);
+
+    }
+
+    /**
+     * 
+     * @param file
+     * @param dataType
+     * @param dataConsumer
+     * @param tailType
+     * @param tailSize
+     * @param tailConsumer
+     * @param annon
+     */
+    public static <T, U, V> void convertFileToObjects(String file,
+	    Class<U> dataType,
+	    ObjectConsumer<U> dataConsumer,
+	    Class<V> tailType,
+	    Integer tailSize,
+	    ObjectConsumer<V> tailConsumer,
+	    Class<? extends Annotation> annon) {
+	
+	Extractor.convertFileToObjects(file, null, null, null, dataType, dataConsumer, tailType, tailSize, tailConsumer, annon);
+
     }
 
     /***
@@ -323,14 +428,14 @@ public class Extractor {
 
 	    } catch (IndexOutOfBoundsException e) {
 		// if is IndexOutOfBoundsException strValue is null
-		throw new RecordParserException("An error occurred getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; ", e);
+		throw new RecordParserException("An error has occurred while getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; ", e);
 	    } catch (ParseException e) {
 		// if is ParseException objValue is null
 		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
+		throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
 	    } catch (Exception e) {
 		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
+		throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
 	    }
 
 	}
@@ -366,9 +471,9 @@ public class Extractor {
 		try {
 		    value = field.get(data);
 		} catch (IllegalArgumentException e) {
-		    throw new RecordParserException("An error occurred getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+		    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
 		} catch (IllegalAccessException e) {
-		    throw new RecordParserException("An error occurred getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+		    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
 		}
 
 		Class<? extends FieldConverter<?>> conv = null;
@@ -390,16 +495,16 @@ public class Extractor {
 
 		} catch (InstantiationException e) {
 		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 		} catch (IllegalAccessException e) {
 		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 		} catch (ClassCastException e) {
 		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 		} catch (Exception e) {
 		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 		}
 
 	    }
@@ -442,9 +547,9 @@ public class Extractor {
 	    try {
 		value = field.get(data);
 	    } catch (IllegalArgumentException e) {
-		throw new RecordParserException("An error occurred getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+		throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
 	    } catch (IllegalAccessException e) {
-		throw new RecordParserException("An error occurred getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+		throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
 	    }
 
 	    Class<? extends FieldConverter<?>> conv = null;
@@ -482,16 +587,16 @@ public class Extractor {
 
 	    } catch (InstantiationException e) {
 		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 	    } catch (IllegalAccessException e) {
 		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 	    } catch (ClassCastException e) {
 		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 	    } catch (Exception e) {
 		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error occurred converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
 	    }
 
 	}

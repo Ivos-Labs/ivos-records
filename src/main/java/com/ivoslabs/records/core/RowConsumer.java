@@ -12,6 +12,6 @@ public interface RowConsumer {
     /**
      * @param row
      */
-    void process(String row);
+    void process(String row) throws Exception;
 
 }

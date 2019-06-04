@@ -1,10 +1,13 @@
 package com.ivoslabs.records.utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -19,11 +22,12 @@ import org.slf4j.LoggerFactory;
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
-import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.Extract;
+import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.RowSuplier;
 import com.ivoslabs.records.core.Template;
 import com.ivoslabs.records.core.Template.Type;
+import com.ivoslabs.records.exceptions.RecordParserException;
 
 /**
  * 
@@ -78,7 +82,7 @@ public class ParseUtils {
 	}
 
 	if (template.getExtracts().isEmpty()) {
-	    throw new IllegalArgumentException("Class: " + type.getCanonicalName() + " no has PipedField or Pic fields");
+	    throw new IllegalArgumentException("Class: " + type.getCanonicalName() + " doesn't have PipedField or Pic fields");
 	}
 
 	if (annon.equals(PipedField.class) && !isToObj) {
@@ -186,9 +190,11 @@ public class ParseUtils {
      * @param url
      * @param action
      */
-    public static void readTextFile(String url, RowConsumer action) {
+    public static void readTextFile(String url, RowConsumer action) throws RecordParserException {
 	BufferedReader br = null;
+
 	try {
+
 	    br = new BufferedReader(new FileReader(url));
 	    String sCurrentLine;
 
@@ -196,7 +202,9 @@ public class ParseUtils {
 		action.process(sCurrentLine);
 	    }
 
-	} catch (IOException e) {
+	} catch (RecordParserException e) {
+	    throw e;
+	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
 	    if (br != null) {
@@ -213,17 +221,20 @@ public class ParseUtils {
     public static <T> void writeFile(String path, Stack<T> objects, RowSuplier<T> action) {
 
 	BufferedWriter out = null;
+
 	try {
+
 	    LOGGER.debug("writing file: {}", path);
 
 	    out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
-	    
+
 	    while (!objects.empty()) {
 		out.write(action.get(objects.firstElement()) + "\n");
 		objects.remove(0);
 	    }
 
 	    LOGGER.debug("writed: {}", path);
+
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	} finally {
@@ -236,6 +247,62 @@ public class ParseUtils {
 	    }
 	}
 
+    }
+
+    private static final char BREAK_LINE = '\n';
+
+    /**
+     * 
+     * @param filename
+     * @return
+     * @throws IOException
+     */
+    public static int countLinesNew(String filename) {
+	InputStream is = null;
+	try {
+	    is = new BufferedInputStream(new FileInputStream(filename));
+	    byte[] c = new byte[1024];
+
+	    int readChars = is.read(c);
+	    if (readChars == -1) {
+		// bail out if nothing to read
+		return 0;
+	    }
+
+	    // make it easy for the optimizer to tune this loop
+	    int count = 0;
+	    while (readChars == 1024) {
+		for (int i = 0; i < 1024;) {
+		    if (c[i++] == BREAK_LINE) {
+			++count;
+		    }
+		}
+		readChars = is.read(c);
+	    }
+
+	    // count remaining characters
+	    while (readChars != -1) {
+//		System.out.println(readChars);
+		for (int i = 0; i < readChars; ++i) {
+		    if (c[i] == BREAK_LINE) {
+			++count;
+		    }
+		}
+		readChars = is.read(c);
+	    }
+
+	    return count == 0 ? 1 : count;
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	} finally {
+	    if (is != null) {
+		try {
+		    is.close();
+		} catch (Exception e2) {
+		    LOGGER.error(e2.getMessage(), e2);
+		}
+	    }
+	}
     }
 
     /**

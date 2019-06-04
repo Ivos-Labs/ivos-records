@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 import com.ivoslabs.records.converters.FieldConverter;
 
 /**
+ * Annotation to indicate the Class to convert a String to a field and a field to a String
+ * 
  * @author www.ivoslabs.com
  *
  */
@@ -19,10 +21,16 @@ import com.ivoslabs.records.converters.FieldConverter;
 public @interface Converter {
 
     /**
+     * Gets the FieldConverter
      * 
-     * @return
+     * @return the converter
      */
     Class<? extends FieldConverter<? extends Object>> value();
 
+    /**
+     * Gets the arguments
+     * 
+     * @return arguments to be passed to the converter
+     */
     String[] args() default "";
 }
