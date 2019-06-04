@@ -16,38 +16,68 @@ import com.ivoslabs.records.converters.FieldConverter;
  */
 public class Template {
 
-    private List<Extract> extracts = new ArrayList<Extract>();
+    /** */
+    private List<FieldParseDTO> extracts = new ArrayList<FieldParseDTO>();
 
+    /** The type (pic or pipe) */
     private Type type;
 
+    /** Map of converter classes a sigleton instance */
     private Map<Class<?>, FieldConverter<?>> map = new HashMap<Class<?>, FieldConverter<?>>();
 
-    // for piped
-    private Map<Integer, Extract> extractMap = new HashMap<Integer, Extract>();
+    /** Map of Extracts by index (used in piped file) **/
+    private Map<Integer, FieldParseDTO> extractMap = new HashMap<Integer, FieldParseDTO>();
 
+    /** Last index */
     private Integer lastIndex;
 
+    /**
+     * 
+     * @author
+     *
+     */
     public enum Type {
 	PIC, PIPE
     }
 
+    /**
+     * 
+     * @param type
+     */
     public Template(Type type) {
 	this.type = type;
     }
 
+    /**
+     * 
+     * @param converter
+     */
     void addConverter(FieldConverter<?> converter) {
 	this.map.put(converter.getClass(), converter);
     }
 
+    /**
+     * 
+     * @param clazz
+     * @return
+     */
     FieldConverter<?> getConverter(Class<? extends FieldConverter<?>> clazz) {
 	return this.map.get(clazz);
     }
 
-    public List<Extract> getExtracts() {
+    /**
+     * 
+     * @return
+     */
+    public List<FieldParseDTO> getExtracts() {
 	return this.extracts;
     }
 
-    public void add(Extract extract) {
+    /**
+     * 
+     * @param extract
+     */
+    public void add(FieldParseDTO extract) {
 	this.extracts.add(extract);
     }
 
@@ -56,7 +86,7 @@ public class Template {
      * 
      * @return {@code Map<Integer,Extract>} the extractMap
      */
-    public Map<Integer, Extract> getExtractMap() {
+    public Map<Integer, FieldParseDTO> getExtractMap() {
 	return extractMap;
     }
 
@@ -65,7 +95,7 @@ public class Template {
      *
      * @param extractMap {@code Map<Integer,Extract>} the extractMap to set
      */
-    public void addExtractMap(int key, Extract extract) {
+    public void addExtractMap(int key, FieldParseDTO extract) {
 	this.extractMap.put(key, extract);
     }
 

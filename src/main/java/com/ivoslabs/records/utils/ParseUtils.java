@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
-import com.ivoslabs.records.core.Extract;
+import com.ivoslabs.records.core.FieldParseDTO;
 import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.RowSuplier;
 import com.ivoslabs.records.core.Template;
@@ -36,22 +36,25 @@ import com.ivoslabs.records.exceptions.RecordParserException;
  */
 public class ParseUtils {
 
+    /** The constant logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseUtils.class);
 
-    /** The constant true (1) */
+    /** The constant true (1) used to parse a boolean without converter */
     private static final String TRUE_1 = "1";
 
-    /** The constant true (Y) */
+    /** The constant true (Y) used to parse a boolean without converter */
     private static final String TRUE_Y = "Y";
 
-    /** The constant true (T) */
+    /** The constant true (T) used to parse a boolean without converter */
     private static final String TRUE_T = "T";
 
     /**
+     * Gets the template
      * 
-     * @param type
-     * @param annon PipedField or Pic
-     * @return
+     * @param type    Class to use
+     * @param annon   indicates the type of fields to read, Pic or PipedField
+     * @param isToObj indicates if the tampleate will be used to parse String to Object
+     * @return the Template generated
      */
     public static Template getTemplate(Class<?> type, Class<? extends Annotation> annon, boolean isToObj) {
 
@@ -62,17 +65,17 @@ public class ParseUtils {
 	Field fields[] = type.getDeclaredFields();
 
 	for (Field field : fields) {
-	    Extract ex = null;
+	    FieldParseDTO ex = null;
 
 	    if (annon.equals(PipedField.class)) {
 		PipedField pf = field.getAnnotation(PipedField.class);
 		if (pf != null) {
-		    ex = new Extract(field, pf, field.getAnnotation(Converter.class));
+		    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class));
 		}
 	    } else {
 		Pic pic = field.getAnnotation(Pic.class);
 		if (pic != null) {
-		    ex = new Extract(field, pic, field.getAnnotation(Converter.class));
+		    ex = new FieldParseDTO(field, pic, field.getAnnotation(Converter.class));
 		}
 	    }
 
@@ -86,14 +89,14 @@ public class ParseUtils {
 	}
 
 	if (annon.equals(PipedField.class) && !isToObj) {
-	    List<Extract> extracts = template.getExtracts();
-	    Collections.sort(extracts, new Comparator<Extract>() {
-		public int compare(Extract o1, Extract o2) {
+	    List<FieldParseDTO> extracts = template.getExtracts();
+	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
+		public int compare(FieldParseDTO o1, FieldParseDTO o2) {
 		    return Integer.compare(o1.getPipeField().value(), o2.getPipeField().value());
 		}
 	    });
 
-	    for (Extract extract : extracts) {
+	    for (FieldParseDTO extract : extracts) {
 		template.addExtractMap(extract.getPipeField().value(), extract);
 	    }
 
@@ -101,16 +104,16 @@ public class ParseUtils {
 
 	} else if (!isToObj) {
 
-	    List<Extract> extracts = template.getExtracts();
+	    List<FieldParseDTO> extracts = template.getExtracts();
 
-	    Collections.sort(extracts, new Comparator<Extract>() {
-		public int compare(Extract o1, Extract o2) {
-		    return Integer.compare(o1.getCopyField().beginIndex(), o2.getCopyField().beginIndex());
+	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
+		public int compare(FieldParseDTO o1, FieldParseDTO o2) {
+		    return Integer.compare(o1.getPic().beginIndex(), o2.getPic().beginIndex());
 		}
 	    });
 
-	    Extract last = extracts.get(extracts.size() - 1);
-	    template.setLastIndex(last.getCopyField().beginIndex() + last.getCopyField().size() - 1);
+	    FieldParseDTO last = extracts.get(extracts.size() - 1);
+	    template.setLastIndex(last.getPic().beginIndex() + last.getPic().size() - 1);
 
 	}
 
@@ -218,7 +221,17 @@ public class ParseUtils {
 
     }
 
-    public static <T> void writeFile(String path, Stack<T> objects, RowSuplier<T> action) {
+    /**
+     * 
+     * @param path
+     * @param headers
+     * @param rowHeaderSuplier
+     * @param data
+     * @param rowDataSuplier
+     * @param tails
+     * @param rowTailSuplier
+     */
+    public static <H, D, T> void writeFile(String path, Stack<H> headers, RowSuplier<H> rowHeaderSuplier, Stack<D> data, RowSuplier<D> rowDataSuplier, Stack<T> tails, RowSuplier<T> rowTailSuplier) {
 
 	BufferedWriter out = null;
 
@@ -228,9 +241,19 @@ public class ParseUtils {
 
 	    out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
 
-	    while (!objects.empty()) {
-		out.write(action.get(objects.firstElement()) + "\n");
-		objects.remove(0);
+	    while (headers != null && !headers.empty()) {
+		out.write(rowHeaderSuplier.get(headers.firstElement()) + "\n");
+		headers.remove(0);
+	    }
+
+	    while (!data.empty()) {
+		out.write(rowDataSuplier.get(data.firstElement()) + "\n");
+		data.remove(0);
+	    }
+
+	    while (tails != null && !tails.empty()) {
+		out.write(rowTailSuplier.get(tails.firstElement()) + "\n");
+		tails.remove(0);
 	    }
 
 	    LOGGER.debug("writed: {}", path);
@@ -246,9 +269,9 @@ public class ParseUtils {
 		}
 	    }
 	}
-
     }
 
+    /** */
     private static final char BREAK_LINE = '\n';
 
     /**
@@ -310,8 +333,7 @@ public class ParseUtils {
      * 
      * <pre>
      * public Foo(Bar bar, Baz baz) {
-     *     this.bar = ParseUtils.notNull(bar, "bar must not be null");
-     *     this.baz = ParseUtils.notNull(baz, "baz must not be null");
+     *     ParseUtils.notNull(bar, "bar must not be null");
      * }
      * </pre>
      * 
@@ -330,9 +352,19 @@ public class ParseUtils {
     }
 
     /**
-     * 
-     * @param cond
-     * @param message
+     * <p>
+     * Validate that the argument condition is {@code false}; otherwise throwing an exception.<br>
+     * This method is useful when validating according to an arbitrary boolean expression, such as validating a primitive number or using your own custom validation expression.
+     * </p>
+     *
+     * <pre>
+     * ParseUtils.notTrue(myObject.isOk(), "Message");
+     * </pre>
+     *
+     *
+     * @param expression the boolean expression to check
+     * @param message    the message
+     * @throws IllegalArgumentException if expression is {@code false}
      */
     public static void notTrue(boolean cond, String message) {
 	if (!cond) {
@@ -341,12 +373,22 @@ public class ParseUtils {
     }
 
     /**
+     * <p>
+     * Validate that the argument condition is {@code true}; otherwise throwing an exception.<br>
+     * This method is useful when validating according to an arbitrary boolean expression, such as validating a primitive number or using your own custom validation expression.
+     * </p>
+     *
+     * <pre>
+     * ParseUtils.isTrue(myObject.isOk(), "Message");
+     * </pre>
+     *
      * 
-     * @param cond
-     * @param message
+     * @param expression the boolean expression to check
+     * @param message    the message
+     * @throws IllegalArgumentException if expression is {@code false}
      */
-    public static void isTrue(boolean cond, String message) {
-	if (cond) {
+    public static void isTrue(boolean expression, String message) {
+	if (expression) {
 	    throw new IllegalArgumentException(message);
 	}
     }

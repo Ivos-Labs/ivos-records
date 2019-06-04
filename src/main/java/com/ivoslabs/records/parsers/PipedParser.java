@@ -99,12 +99,50 @@ public class PipedParser {
 
     /**
      * 
-     * @param file
-     * @param type
-     * @param action
      */
-    public <T> void objectsToFile(String file, Stack<T> objects) {
-	Extractor.convertObjectsToFile(file, objects, PipedField.class);
+
+    /**
+     * 
+     */
+
+    /**
+     * 
+     * @param file
+     * @param header
+     * @param data
+     * @param tails
+     */
+    public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
+	Extractor.convertObjectsToFile(file, header, data, tails, PipedField.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param header
+     * @param data
+     */
+    public <H, D> void objectsToFileHD(String file, Stack<H> header, Stack<D> data) {
+	Extractor.convertObjectsToFile(file, header, data, null, PipedField.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param data
+     * @param tails
+     */
+    public <D, T> void objectsToFileDT(String file, Stack<D> data, Stack<T> tails) {
+	Extractor.convertObjectsToFile(file, null, data, tails, PipedField.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param data
+     */
+    public <D> void objectsToFile(String file, Stack<D> data) {
+	Extractor.convertObjectsToFile(file, null, data, null, PipedField.class);
     }
 
 }

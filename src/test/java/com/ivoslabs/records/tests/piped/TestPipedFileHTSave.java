@@ -25,7 +25,6 @@ public class TestPipedFileHTSave {
 
     @Test
     public void testObjectsToFile() {
-	PipedParser ex = new PipedParser();
 
 	// header
 
@@ -40,11 +39,6 @@ public class TestPipedFileHTSave {
 	List<PipedHeader> headers = new ArrayList<PipedHeader>();
 	headers.add(header1);
 	headers.add(header2);
-
-	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
-	headerStack.addAll(headers);
-
-	ex.objectsToFile("pipedht.piped", headerStack);
 
 	PipedOkDTO dto1 = new PipedOkDTO();
 	dto1.setField1("a");
@@ -75,11 +69,6 @@ public class TestPipedFileHTSave {
 	list.add(dto2);
 	list.add(dto3);
 
-	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
-	stack.addAll(list);
-
-	ex.objectsToFile("pipedht.piped", stack);
-
 	// tail
 
 	PipedTail tail = new PipedTail();
@@ -89,10 +78,19 @@ public class TestPipedFileHTSave {
 	List<PipedTail> tails = new ArrayList<PipedTail>();
 	tails.add(tail);
 
+	// save objest in a Stacks
+
+	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
+	headerStack.addAll(headers);
+
+	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
+	stack.addAll(list);
+
 	Stack<PipedTail> tailStack = new Stack<PipedTail>();
 	tailStack.addAll(tails);
 
-	ex.objectsToFile("pipedht.piped", tailStack);
+	PipedParser ex = new PipedParser();
+	ex.objectsToFile("datahdt.piped", headerStack, stack, tailStack);
 
 	assertTrue(Boolean.TRUE);
 

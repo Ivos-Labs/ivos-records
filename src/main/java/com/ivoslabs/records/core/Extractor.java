@@ -87,45 +87,88 @@ public class Extractor {
 
     }
 
-    /**
-     * 
-     * @param file
-     * @param objects
-     */
-    public static <T> void convertObjectsToFile(String file, Stack<T> objects, Class<? extends Annotation> annon) {
+    public static <H, D, T> void convertObjectsToFile(String file, Stack<H> headers, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
+
 	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(objects, "objects must not be null");
-	ParseUtils.isTrue(objects.empty(), "objects must not be empty");
+	ParseUtils.notNull(data, "data must not be null");
+	ParseUtils.isTrue(data.empty(), "data must not be empty");
 
-	final Template template = ParseUtils.getTemplate(objects.get(0).getClass(), annon, Boolean.FALSE);
+	RowSuplier<H> rowHeaderSuplier=null;
+	RowSuplier<D> rowDataSuplier;
+	RowSuplier<T> rowTailSuplier=null;
+	
+	final Template headerTemplate;
+	final Template template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
+	final Template tailTemplate;
 
-	RowSuplier<T> rowSuplier;
-
-	if (annon.equals(PipedField.class)) {
-	    rowSuplier = new RowSuplier<T>() {
-
-		public String get(T object) {
-		    String row;
-		    row = Extractor.convertPipedObjectToString(object, template);
-		    return row;
-		}
-
-	    };
+	if (headers != null && !headers.empty()) {
+	    headerTemplate = ParseUtils.getTemplate(headers.get(0).getClass(), annon, Boolean.FALSE);
 	} else {
-	    rowSuplier = new RowSuplier<T>() {
-
-		public String get(T object) {
-		    String row;
-		    row = Extractor.convertCopyObjectToString(object, template);
-		    return row;
-		}
-
-	    };
+	    headerTemplate = null;
 	}
 
-	ParseUtils.writeFile(file, objects, rowSuplier);
+	if (tails != null && !tails.empty()) {
+	    tailTemplate = ParseUtils.getTemplate(tails.get(0).getClass(), annon, Boolean.FALSE);
+	} else {
+	    tailTemplate = null;
+	}
 
+
+
+	if (annon.equals(PipedField.class)) {
+
+	    if (headerTemplate != null) {
+		rowHeaderSuplier = new RowSuplier<H>() {
+		    public String get(H object) {
+			return Extractor.convertPipedObjectToString(object, headerTemplate);
+		    }
+		};
+	    }
+
+	    rowDataSuplier = new RowSuplier<D>() {
+		public String get(D object) {
+		    return Extractor.convertPipedObjectToString(object, template);
+		}
+	    };
+
+	    if (tailTemplate != null) {
+		rowTailSuplier = new RowSuplier<T>() {
+		    public String get(T object) {
+			return Extractor.convertPipedObjectToString(object, tailTemplate);
+		    }
+		};
+	    }
+
+	} else {
+	    
+	    if (headerTemplate != null) {
+		rowHeaderSuplier = new RowSuplier<H>() {
+		    public String get(H object) {
+			return Extractor.convertCopyObjectToString(object, headerTemplate);
+		    }
+		};
+	    }
+
+	    rowDataSuplier = new RowSuplier<D>() {
+
+		public String get(D object) {
+		    return Extractor.convertCopyObjectToString(object, template);
+		}
+
+	    };
+
+	    if (tailTemplate != null) {
+		rowTailSuplier = new RowSuplier<T>() {
+		    public String get(T object) {
+			return Extractor.convertCopyObjectToString(object, tailTemplate);
+		    }
+		};
+	    }
+	}
+
+	ParseUtils.writeFile(file, headers, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
     }
+ 
 
     /**********************************
      * Start String to object parsers *
@@ -297,7 +340,7 @@ public class Extractor {
 	    Class<U> dataType,
 	    ObjectConsumer<U> dataConsumer,
 	    Class<? extends Annotation> annon) {
-	
+
 	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, null, null, annon);
 
     }
@@ -319,7 +362,7 @@ public class Extractor {
 	    Integer tailSize,
 	    ObjectConsumer<V> tailConsumer,
 	    Class<? extends Annotation> annon) {
-	
+
 	Extractor.convertFileToObjects(file, null, null, null, dataType, dataConsumer, tailType, tailSize, tailConsumer, annon);
 
     }
@@ -380,11 +423,11 @@ public class Extractor {
 	    throw new RuntimeException(e);
 	}
 
-	for (Extract ex : template.getExtracts()) {
+	for (FieldParseDTO ex : template.getExtracts()) {
 
 	    Field field = ex.getField();
 	    PipedField pf = ex.getPipeField();
-	    Pic pic = ex.getCopyField();
+	    Pic pic = ex.getPic();
 
 	    Converter conv = ex.getConverter();
 
@@ -458,7 +501,7 @@ public class Extractor {
 
 	for (int idx = 0; idx <= last; idx++) {
 
-	    Extract extract = template.getExtractMap().get(idx);
+	    FieldParseDTO extract = template.getExtractMap().get(idx);
 	    if (extract != null) {
 
 		Field field = extract.getField();
@@ -533,9 +576,9 @@ public class Extractor {
 	    sb.append(SPACE);
 	}
 
-	List<Extract> extracts = template.getExtracts();
+	List<FieldParseDTO> extracts = template.getExtracts();
 
-	for (Extract extract : extracts) {
+	for (FieldParseDTO extract : extracts) {
 
 	    Field field = extract.getField();
 	    field.setAccessible(Boolean.TRUE);
@@ -570,7 +613,7 @@ public class Extractor {
 		    val = c.toString(value, extract.getConverter().args());
 		}
 
-		int fieldSize = extract.getCopyField().size();
+		int fieldSize = extract.getPic().size();
 		if (val.length() > fieldSize) {
 		    val = val.substring(0, fieldSize);
 		} else if (val.length() < fieldSize) {
@@ -582,7 +625,7 @@ public class Extractor {
 		    }
 		}
 
-		int start = extract.getCopyField().beginIndex();
+		int start = extract.getPic().beginIndex();
 		sb.replace(start, start + fieldSize, val);
 
 	    } catch (InstantiationException e) {

@@ -99,11 +99,50 @@ public class CopyParser {
 
     /**
      * 
+     */
+
+    /**
+     * 
+     */
+
+    /**
+     * 
+     * @param file
+     * @param header
+     * @param data
+     * @param tails
+     */
+    public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
+	Extractor.convertObjectsToFile(file, header, data, tails, Pic.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param header
+     * @param data
+     */
+    public <H, D> void objectsToFileHD(String file, Stack<H> header, Stack<D> data) {
+	Extractor.convertObjectsToFile(file, header, data, null, Pic.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param data
+     * @param tails
+     */
+    public <D, T> void objectsToFileDT(String file, Stack<D> data, Stack<T> tails) {
+	Extractor.convertObjectsToFile(file, null, data, tails, Pic.class);
+    }
+
+    /**
+     * 
      * @param file
      * @param type
      * @param action
      */
-    public <T> void objectsToFile(String file, Stack<T> objects) {
-	Extractor.convertObjectsToFile(file, objects, Pic.class);
+    public <D> void objectsToFile(String file, Stack<D> data) {
+	Extractor.convertObjectsToFile(file, null, data, null, Pic.class);
     }
 }
