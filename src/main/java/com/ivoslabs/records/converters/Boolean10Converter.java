@@ -7,7 +7,7 @@ package com.ivoslabs.records.converters;
  * @author www.ivoslabs.com
  *
  */
-public class Boolean10Converter implements FieldConverter<Boolean> {
+public class Boolean10Converter extends BooleanConverter {
 
     /** The constant true */
     public static final String TRUE = "1";
@@ -15,31 +15,31 @@ public class Boolean10Converter implements FieldConverter<Boolean> {
     /** The constant false */
     public static final String FALSE = "0";
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.ivoslabs.records.converters.Converter#toString(java.lang.Object)
      */
-    public String toString(Boolean object) {
-
-	String str;
-
-	if (object instanceof Boolean && ((Boolean) object)) {
-	    str = TRUE;
-	} else {
-	    str = FALSE;
-	}
-
-	return str;
+    public Boolean10Converter() {
+	super();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.ivoslabs.records.converters.Converter#toObject(java.lang.String)
+     * @see com.ivoslabs.records.converters.BooleanConverter#toString(java.lang.Boolean, java.lang.String[])
      */
-    public Boolean toObject(String string) {
-	return string != null && string.equals(TRUE);
+    @Override
+    public String toString(Boolean object, String... args) {
+	return super.toString(object, TRUE, FALSE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ivoslabs.records.converters.BooleanConverter#toObject(java.lang.String, java.lang.String[])
+     */
+    @Override
+    public Boolean toObject(String string, String... args) {
+	return super.toObject(string, TRUE, FALSE);
     }
 
 }

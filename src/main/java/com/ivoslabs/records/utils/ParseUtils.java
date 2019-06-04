@@ -1,7 +1,9 @@
 package com.ivoslabs.records.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +19,9 @@ import org.slf4j.LoggerFactory;
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
-import com.ivoslabs.records.core.Action;
+import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.Extract;
+import com.ivoslabs.records.core.RowSuplier;
 import com.ivoslabs.records.core.Template;
 import com.ivoslabs.records.core.Template.Type;
 
@@ -29,7 +33,7 @@ import com.ivoslabs.records.core.Template.Type;
 public class ParseUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseUtils.class);
-    
+
     /** The constant true (1) */
     private static final String TRUE_1 = "1";
 
@@ -182,18 +186,18 @@ public class ParseUtils {
      * @param url
      * @param action
      */
-    public static void readTextFile(String url, Action action) {
+    public static void readTextFile(String url, RowConsumer action) {
 	BufferedReader br = null;
 	try {
 	    br = new BufferedReader(new FileReader(url));
 	    String sCurrentLine;
 
 	    while ((sCurrentLine = br.readLine()) != null) {
-		action.event(sCurrentLine);
+		action.process(sCurrentLine);
 	    }
 
 	} catch (IOException e) {
-	    throw new RuntimeException("readTextFile", e);
+	    throw new RuntimeException(e);
 	} finally {
 	    if (br != null) {
 		try {
@@ -206,11 +210,36 @@ public class ParseUtils {
 
     }
 
+    public static <T> void writeFile(String path, Stack<T> objects, RowSuplier<T> action) {
+
+	BufferedWriter out = null;
+	try {
+	    LOGGER.debug("writing file: {}", path);
+
+	    out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
+	    
+	    while (!objects.empty()) {
+		out.write(action.get(objects.firstElement()) + "\n");
+		objects.remove(0);
+	    }
+
+	    LOGGER.debug("writed: {}", path);
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	} finally {
+	    if (out != null) {
+		try {
+		    out.close();
+		} catch (Exception e2) {
+		    LOGGER.error(e2.getMessage(), e2);
+		}
+	    }
+	}
+
+    }
+
     /**
-     * Checks that the specified object reference is not {@code null} and throws a
-     * customized {@link NullPointerException} if it is. This method is designed
-     * primarily for doing parameter validation in methods and constructors with
-     * multiple parameters, as demonstrated below: <blockquote>
+     * Checks that the specified object reference is not {@code null} and throws a customized {@link NullPointerException} if it is. This method is designed primarily for doing parameter validation in methods and constructors with multiple parameters, as demonstrated below: <blockquote>
      * 
      * <pre>
      * public Foo(Bar bar, Baz baz) {
@@ -230,6 +259,28 @@ public class ParseUtils {
     public static void notNull(Object obj, String message) {
 	if (obj == null) {
 	    throw new NullPointerException(message);
+	}
+    }
+
+    /**
+     * 
+     * @param cond
+     * @param message
+     */
+    public static void notTrue(boolean cond, String message) {
+	if (!cond) {
+	    throw new IllegalArgumentException(message);
+	}
+    }
+
+    /**
+     * 
+     * @param cond
+     * @param message
+     */
+    public static void isTrue(boolean cond, String message) {
+	if (cond) {
+	    throw new IllegalArgumentException(message);
 	}
     }
 }

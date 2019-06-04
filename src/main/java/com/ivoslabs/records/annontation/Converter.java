@@ -23,4 +23,6 @@ public @interface Converter {
      * @return
      */
     Class<? extends FieldConverter<? extends Object>> value();
+
+    String[] args() default "";
 }

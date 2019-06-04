@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
@@ -59,6 +60,8 @@ public class Extractor {
      */
     public static List<String> convertObjectsToStrings(List<?> data, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(data, "data must not be null");
+	ParseUtils.isTrue(data.isEmpty(), "data must not be empty");
+
 	List<String> list = new ArrayList<String>();
 
 	if (!data.isEmpty()) {
@@ -89,31 +92,38 @@ public class Extractor {
      * @param file
      * @param objects
      */
-    public static <T> void convertObjectsToFile(String file, List<T> objects, Class<? extends Annotation> annon) {
+    public static <T> void convertObjectsToFile(String file, Stack<T> objects, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(objects, "objests must not be null");
+	ParseUtils.notNull(objects, "objects must not be null");
+	ParseUtils.isTrue(objects.empty(), "objects must not be empty");
 
-	final MutableCounter rowNum = new MutableCounter();
-	final Template template = ParseUtils.getTemplate(objects.get(0).getClass(), annon, Boolean.TRUE);
-	
-	ActionString s;
-	
-	Action actionForRow;
-	
+	final Template template = ParseUtils.getTemplate(objects.get(0).getClass(), annon, Boolean.FALSE);
+
+	RowSuplier<T> rowSuplier;
+
 	if (annon.equals(PipedField.class)) {
-	    actionForRow = new Action() {
+	    rowSuplier = new RowSuplier<T>() {
 
-		public void event(String row) {
-		    String object;
-		    rowNum.increment();
-		    object = Extractor.convertPipedObjectToString(row, template);
-		   
+		public String get(T object) {
+		    String row;
+		    row = Extractor.convertPipedObjectToString(object, template);
+		    return row;
 		}
-		
+
+	    };
+	} else {
+	    rowSuplier = new RowSuplier<T>() {
+
+		public String get(T object) {
+		    String row;
+		    row = Extractor.convertCopyObjectToString(object, template);
+		    return row;
+		}
+
 	    };
 	}
-	
-	
+
+	ParseUtils.writeFile(file, objects, rowSuplier);
 
     }
 
@@ -134,7 +144,7 @@ public class Extractor {
 
 	T obj;
 	Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
-	obj = Extractor.convertStringRowToObject(data, type, extracts, null);
+	obj = Extractor.convertStringRowToObject(data, type, extracts);
 
 	return obj;
     }
@@ -156,12 +166,19 @@ public class Extractor {
 	    int rowNum = 0;
 	    Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
 
-	    for (String row : data) {
-		rowNum++;
-		T object;
-		object = Extractor.convertStringRowToObject(row, type, extracts, rowNum);
-		list.add(object);
+	    try {
+		for (String row : data) {
+		    rowNum++;
+		    T object;
+		    object = Extractor.convertStringRowToObject(row, type, extracts);
+		    list.add(object);
+		}
+	    } catch (RecordParserException e) {
+		throw new RecordParserException("An error has occurred while processing row: " + rowNum + "; Detail: " + e.getMessage(), e);
+	    } catch (Exception e) {
+		throw new RecordParserException("An error has occurred while processing row: " + rowNum, e);
 	    }
+
 	}
 
 	return list;
@@ -175,7 +192,7 @@ public class Extractor {
      * @param action
      * @param annon
      */
-    public static <T> void convertFileToObjects(String file, final Class<T> type, final ActionObj<T> action, Class<? extends Annotation> annon) {
+    public static <T> void convertFileToObjects(String file, final Class<T> type, final ObjectConsumer<T> action, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(file, "file must not be null");
 	ParseUtils.notNull(type, "type must not be null");
 	ParseUtils.notNull(action, "action must not be null");
@@ -183,18 +200,48 @@ public class Extractor {
 	final MutableCounter rowNum = new MutableCounter();
 	final Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
 
-	Action actionForRow = new Action() {
-
-	    public void event(String row) {
+	RowConsumer actionForRow = new RowConsumer() {
+ 
+	    public void process(String row) {
 		T object;
 		rowNum.increment();
-		object = Extractor.convertStringRowToObject(row, type, extracts, rowNum.getValue());
-		action.event(object);
+		object = Extractor.convertStringRowToObject(row, type, extracts);
+		action.process(object);
 	    }
 	};
 
-	ParseUtils.readTextFile(file, actionForRow);
+	try {
+	    ParseUtils.readTextFile(file, actionForRow);
+	} catch (RecordParserException e) {
+	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue() + "; Detail: " + e.getMessage(), e);
+	} catch (Exception e) {
+	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
+	}
     }
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
 
     /*************************
      * Start private methods *
@@ -210,7 +257,7 @@ public class Extractor {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, Template template, Integer rowNum) {
+    private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, Template template) {
 
 	T object;
 
@@ -265,7 +312,7 @@ public class Extractor {
 				c = clazzConv.newInstance();
 				template.addConverter(c);
 			    }
-			    objValue = c.toObject(strValue);
+			    objValue = c.toObject(strValue, conv.args());
 			}
 		    } catch (Exception e) {
 			throw new ParseException(e.getMessage(), e);
@@ -276,17 +323,14 @@ public class Extractor {
 
 	    } catch (IndexOutOfBoundsException e) {
 		// if is IndexOutOfBoundsException strValue is null
-		String row = rowNum != null ? "at row " + rowNum : "";
-		throw new RecordParserException("An error occurred getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; " + row, e);
+		throw new RecordParserException("An error occurred getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; ", e);
 	    } catch (ParseException e) {
 		// if is ParseException objValue is null
-		String row = rowNum != null ? "at row " + rowNum : "";
 		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; " + row, e);
+		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
 	    } catch (Exception e) {
-		String row = rowNum != null ? "at row " + rowNum : "";
 		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; " + row, e);
+		throw new RecordParserException("An error occurred setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
 	    }
 
 	}
@@ -341,7 +385,7 @@ public class Extractor {
 			    template.addConverter(c);
 			}
 
-			sb.append(c.toString(value));
+			sb.append(c.toString(value, extract.getConverter().args()));
 		    }
 
 		} catch (InstantiationException e) {
@@ -418,7 +462,7 @@ public class Extractor {
 			template.addConverter(c);
 		    }
 
-		    val = c.toString(value);
+		    val = c.toString(value, extract.getConverter().args());
 		}
 
 		int fieldSize = extract.getCopyField().size();

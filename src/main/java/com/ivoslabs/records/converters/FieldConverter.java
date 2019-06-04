@@ -14,12 +14,12 @@ public interface FieldConverter<E extends Object> {
      * @param object
      * @return
      */
-    String toString(E object) throws Exception;
+    String toString(E object, String... args) throws Exception;
 
     /**
      * 
      * @param string
      * @return
      */
-    E toObject(String string) throws Exception;
+    E toObject(String string, String... args) throws Exception;
 }

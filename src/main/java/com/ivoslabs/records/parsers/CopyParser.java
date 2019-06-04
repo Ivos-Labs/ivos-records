@@ -6,7 +6,7 @@ package com.ivoslabs.records.parsers;
 import java.util.List;
 
 import com.ivoslabs.records.annontation.Pic;
-import com.ivoslabs.records.core.ActionObj;
+import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.core.Extractor;
 
 /**
@@ -59,7 +59,7 @@ public class CopyParser {
      * @param type
      * @param action
      */
-    public <T> void fileToObjects(String file, Class<T> type, ActionObj<T> action) {
+    public <T> void fileToObjects(String file, Class<T> type, ObjectConsumer<T> action) {
 	Extractor.convertFileToObjects(file, type, action, Pic.class);
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.core.ActionObj;
+import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.dtos.PipedOkDTO;
 import com.ivoslabs.records.parsers.PipedParser;
 
@@ -23,13 +23,6 @@ import com.ivoslabs.records.parsers.PipedParser;
  *
  */
 public class TestPipedOk {
-    
-    @Test
-    public void testObjectsToFile() {
-	PipedParser ex = new PipedParser();
-	
-    
-    }
 
     @Test
     public void testToObject() {
@@ -120,9 +113,9 @@ public class TestPipedOk {
 
 	PipedParser ex = new PipedParser();
 
-	ActionObj<PipedOkDTO> action = new ActionObj<PipedOkDTO>() {
+	ObjectConsumer<PipedOkDTO> action = new ObjectConsumer<PipedOkDTO>() {
 
-	    public void event(PipedOkDTO object) {
+	    public void process(PipedOkDTO object) {
 		System.out.println(object.toString());
 	    }
 	};

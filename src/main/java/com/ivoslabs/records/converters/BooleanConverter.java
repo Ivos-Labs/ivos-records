@@ -3,31 +3,37 @@
  */
 package com.ivoslabs.records.converters;
 
+import com.ivoslabs.records.utils.ParseUtils;
+
 /**
- * @author www.ivoslabs.com
+ * @author www.ivos.mx
  *
  */
 public class BooleanConverter implements FieldConverter<Boolean> {
 
-    /** The constant true */
-    public static final String TRUE = "true";
-
-    /** The constant false */
-    public static final String FALSE = "false";
+    /**
+     * 
+     */
+    public BooleanConverter() {
+	super();
+    }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.ivoslabs.records.converters.Converter#toString(java.lang.Object)
+     * @see com.ivoslabs.records.converters.FieldConverter#toString(java.lang.Object, java.lang.String[])
      */
-    public String toString(Boolean object) {
 
+    public String toString(Boolean object, String... args) {
 	String str;
+	ParseUtils.notNull(args, "BooleanConverter requiere two arguments");
+	ParseUtils.notTrue(args.length == 2, "BooleanConverter requiere two arguments");
+	ParseUtils.isTrue(args[0].isEmpty(), "BooleanConverter requiere two arguments");
 
 	if (object instanceof Boolean && ((Boolean) object)) {
-	    str = TRUE;
+	    str = args[0];
 	} else {
-	    str = FALSE;
+	    str = args[1];
 	}
 
 	return str;
@@ -36,10 +42,15 @@ public class BooleanConverter implements FieldConverter<Boolean> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.ivoslabs.records.converters.Converter#toObject(java.lang.String)
+     * @see com.ivoslabs.records.converters.FieldConverter#toObject(java.lang.String, java.lang.String[])
      */
-    public Boolean toObject(String string) {
-	return string != null && string.equals(TRUE);
+
+    public Boolean toObject(String string, String... args) {
+	ParseUtils.notNull(args, "BooleanConverter requiere two arguments");
+	ParseUtils.notTrue(args.length == 2, "BooleanConverter requiere two arguments");
+	ParseUtils.isTrue(args[0].isEmpty(), "BooleanConverter requiere two arguments");
+
+	return string != null && string.equals(args[0]);
     }
 
 }
