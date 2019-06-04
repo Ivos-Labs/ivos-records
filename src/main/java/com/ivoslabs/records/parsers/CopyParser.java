@@ -4,10 +4,11 @@
 package com.ivoslabs.records.parsers;
 
 import java.util.List;
+import java.util.Stack;
 
 import com.ivoslabs.records.annontation.Pic;
-import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.core.Extractor;
+import com.ivoslabs.records.core.ObjectConsumer;
 
 /**
  * @author www.ivoslabs.com
@@ -61,5 +62,15 @@ public class CopyParser {
      */
     public <T> void fileToObjects(String file, Class<T> type, ObjectConsumer<T> action) {
 	Extractor.convertFileToObjects(file, type, action, Pic.class);
+    }
+
+    /**
+     * 
+     * @param file
+     * @param type
+     * @param action
+     */
+    public <T> void objectsToFile(String file, Stack<T> objects) {
+	Extractor.convertObjectsToFile(file, objects, Pic.class);
     }
 }

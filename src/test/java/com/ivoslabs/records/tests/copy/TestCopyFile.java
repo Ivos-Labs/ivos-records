@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.piped;
+package com.ivoslabs.records.tests.copy;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,23 +13,25 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.core.ObjectConsumer;
-import com.ivoslabs.records.dtos.PipedOkDTO;
-import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.parsers.CopyParser;
 
 /**
- * @author www.ivos.mx
+ * @author www.ivoslabs.com
  *
  */
-public class TestPipedFile {
+public class TestCopyFile {
 
     @Test
     public void testFileToObjects() {
-	PipedParser ex = new PipedParser();
-	ex.fileToObjects("pipeds.piped", PipedOkDTO.class, new ObjectConsumer<PipedOkDTO>() {
+
+	CopyParser ex = new CopyParser();
+	ex.fileToObjects("data.copy", PipedOkDTO.class, new ObjectConsumer<PipedOkDTO>() {
 
 	    public void process(PipedOkDTO object) {
 		System.out.println(object.toString());
 	    }
+
 	});
 
 	assertTrue(Boolean.TRUE);
@@ -38,7 +40,7 @@ public class TestPipedFile {
 
     @Test
     public void testObjectsToFile() {
-	PipedParser ex = new PipedParser();
+	CopyParser ex = new CopyParser();
 
 	PipedOkDTO dto1 = new PipedOkDTO();
 	dto1.setField1("a");
@@ -70,16 +72,14 @@ public class TestPipedFile {
 	list.add(dto3);
 
 	/**
-	 * a
-	 * b
-	 * c
+	 * a b c
 	 * 
 	 */
-	
+
 	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
 	stack.addAll(list);
 
-	ex.objectsToFile("pipeds.piped", stack);
+	ex.objectsToFile("data.copy", stack);
 
 	assertTrue(Boolean.TRUE);
 
