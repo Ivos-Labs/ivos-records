@@ -43,9 +43,12 @@ public class TestPipedFileHTRead {
 	    }
 	};
 
-	PipedParser ex = new PipedParser(); 
+	PipedParser ex = new PipedParser();
 
-	ex.fileToObjects("pipedht.piped", PipedHeader.class, 2, headerCons, PipedOkDTO.class, dataCons, PipedTail.class, 1, tailCons);
+	int headerSize = 2;
+	int tailSize = 1;
+
+	ex.fileToObjects("pipedht.piped", PipedHeader.class, headerSize, headerCons, PipedOkDTO.class, dataCons, PipedTail.class, tailSize, tailCons);
 
 	assertTrue(Boolean.TRUE);
 

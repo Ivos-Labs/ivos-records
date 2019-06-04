@@ -26,7 +26,7 @@ public class TestPipedFileHTSave {
     @Test
     public void testObjectsToFile() {
 
-	// header
+	// headers
 
 	PipedHeader header1 = new PipedHeader();
 	header1.setField1("headerA");
@@ -39,6 +39,8 @@ public class TestPipedFileHTSave {
 	List<PipedHeader> headers = new ArrayList<PipedHeader>();
 	headers.add(header1);
 	headers.add(header2);
+	
+	// data
 
 	PipedOkDTO dto1 = new PipedOkDTO();
 	dto1.setField1("a");
