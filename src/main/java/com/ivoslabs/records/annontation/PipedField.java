@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to indicate that the field can be handle as a field in a piped file<br>
- * Specify the index where will be found the field in row separated by pipe
+ * Specify the index where will be found the field in a row separated by pipe
  * 
  * @author www.ivoslabs.com
  *

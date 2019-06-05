@@ -5,13 +5,13 @@ package com.ivoslabs.records.utils;
  * @author www.ivoslabs.com
  *
  */
-public class MutableCounter {
+public final class MutableCounter {
 
     /** The counter value */
     private int value;
 
     /**
-     * increments one the counter value
+     * increments by one the counter value
      */
     public void increment() {
 	value++;

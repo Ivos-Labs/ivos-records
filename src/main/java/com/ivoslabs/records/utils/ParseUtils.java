@@ -25,8 +25,8 @@ import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.core.FieldParseDTO;
 import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.RowSuplier;
-import com.ivoslabs.records.core.Template;
-import com.ivoslabs.records.core.Template.Type;
+import com.ivoslabs.records.core.ClassParseDTO;
+import com.ivoslabs.records.core.ClassParseDTO.Type;
 import com.ivoslabs.records.exceptions.RecordParserException;
 
 /**
@@ -56,11 +56,11 @@ public class ParseUtils {
      * @param isToObj indicates if the tampleate will be used to parse String to Object
      * @return the Template generated
      */
-    public static Template getTemplate(Class<?> type, Class<? extends Annotation> annon, boolean isToObj) {
+    public static ClassParseDTO getTemplate(Class<?> type, Class<? extends Annotation> annon, boolean isToObj) {
 
 	Type t = annon.equals(PipedField.class) ? Type.PIPE : Type.PIC;
 
-	Template template = new Template(t);
+	ClassParseDTO template = new ClassParseDTO(t);
 
 	Field fields[] = type.getDeclaredFields();
 
@@ -84,12 +84,12 @@ public class ParseUtils {
 	    }
 	}
 
-	if (template.getExtracts().isEmpty()) {
+	if (template.getFieldParseDTOs().isEmpty()) {
 	    throw new IllegalArgumentException("Class: " + type.getCanonicalName() + " doesn't have PipedField or Pic fields");
 	}
 
 	if (annon.equals(PipedField.class) && !isToObj) {
-	    List<FieldParseDTO> extracts = template.getExtracts();
+	    List<FieldParseDTO> extracts = template.getFieldParseDTOs();
 	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
 		public int compare(FieldParseDTO o1, FieldParseDTO o2) {
 		    return Integer.compare(o1.getPipeField().value(), o2.getPipeField().value());
@@ -104,7 +104,7 @@ public class ParseUtils {
 
 	} else if (!isToObj) {
 
-	    List<FieldParseDTO> extracts = template.getExtracts();
+	    List<FieldParseDTO> extracts = template.getFieldParseDTOs();
 
 	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
 		public int compare(FieldParseDTO o1, FieldParseDTO o2) {

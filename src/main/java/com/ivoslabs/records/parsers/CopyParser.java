@@ -8,7 +8,7 @@ import java.util.Stack;
 
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.core.Extractor;
-import com.ivoslabs.records.core.ObjectConsumer;
+import com.ivoslabs.records.function.ObjectConsumer;
 
 /**
  * @author www.ivoslabs.com

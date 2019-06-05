@@ -15,6 +15,7 @@ import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.converters.FieldConverter;
 import com.ivoslabs.records.exceptions.ParseException;
 import com.ivoslabs.records.exceptions.RecordParserException;
+import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.utils.MutableCounter;
 import com.ivoslabs.records.utils.ParseUtils;
 
@@ -42,7 +43,7 @@ public class Extractor {
     public static String convertObjectToString(Object data, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(data, "data must not be null");
 	String obj;
-	Template template = ParseUtils.getTemplate(data.getClass(), annon, Boolean.FALSE);
+	ClassParseDTO template = ParseUtils.getTemplate(data.getClass(), annon, Boolean.FALSE);
 	if (annon.equals(PipedField.class)) {
 	    obj = Extractor.convertPipedObjectToString(data, template);
 	} else {
@@ -65,7 +66,7 @@ public class Extractor {
 	List<String> list = new ArrayList<String>();
 
 	if (!data.isEmpty()) {
-	    Template template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
+	    ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
 
 	    if (annon.equals(PipedField.class)) {
 		for (Object row : data) {
@@ -93,13 +94,13 @@ public class Extractor {
 	ParseUtils.notNull(data, "data must not be null");
 	ParseUtils.isTrue(data.empty(), "data must not be empty");
 
-	RowSuplier<H> rowHeaderSuplier=null;
+	RowSuplier<H> rowHeaderSuplier = null;
 	RowSuplier<D> rowDataSuplier;
-	RowSuplier<T> rowTailSuplier=null;
-	
-	final Template headerTemplate;
-	final Template template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
-	final Template tailTemplate;
+	RowSuplier<T> rowTailSuplier = null;
+
+	final ClassParseDTO headerTemplate;
+	final ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
+	final ClassParseDTO tailTemplate;
 
 	if (headers != null && !headers.empty()) {
 	    headerTemplate = ParseUtils.getTemplate(headers.get(0).getClass(), annon, Boolean.FALSE);
@@ -112,8 +113,6 @@ public class Extractor {
 	} else {
 	    tailTemplate = null;
 	}
-
-
 
 	if (annon.equals(PipedField.class)) {
 
@@ -140,7 +139,7 @@ public class Extractor {
 	    }
 
 	} else {
-	    
+
 	    if (headerTemplate != null) {
 		rowHeaderSuplier = new RowSuplier<H>() {
 		    public String get(H object) {
@@ -168,7 +167,6 @@ public class Extractor {
 
 	ParseUtils.writeFile(file, headers, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
     }
- 
 
     /**********************************
      * Start String to object parsers *
@@ -186,7 +184,7 @@ public class Extractor {
 	ParseUtils.notNull(type, "type must not be null");
 
 	T obj;
-	Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+	ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
 	obj = Extractor.convertStringRowToObject(data, type, extracts);
 
 	return obj;
@@ -207,7 +205,7 @@ public class Extractor {
 
 	if (!data.isEmpty()) {
 	    int rowNum = 0;
-	    Template extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+	    ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
 
 	    try {
 		for (String row : data) {
@@ -261,9 +259,9 @@ public class Extractor {
 
 	final MutableCounter rowNum = new MutableCounter();
 
-	final Template extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
-	final Template headerExtracts;
-	final Template tailExtracts;
+	final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
+	final ClassParseDTO headerExtracts;
+	final ClassParseDTO tailExtracts;
 
 	final Integer tailLine;
 
@@ -405,13 +403,13 @@ public class Extractor {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, Template template) {
+    private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, ClassParseDTO template) {
 
 	T object;
 
 	String values[] = null;
 
-	if (template.getType().equals(Template.Type.PIPE)) {
+	if (template.getType().equals(ClassParseDTO.Type.PIPE)) {
 	    values = data.split(PIPE_SEPARATOR, -1);
 	}
 
@@ -423,7 +421,7 @@ public class Extractor {
 	    throw new RuntimeException(e);
 	}
 
-	for (FieldParseDTO ex : template.getExtracts()) {
+	for (FieldParseDTO ex : template.getFieldParseDTOs()) {
 
 	    Field field = ex.getField();
 	    PipedField pf = ex.getPipeField();
@@ -437,7 +435,7 @@ public class Extractor {
 	    Class<? extends FieldConverter<Object>> clazzConv = null;
 
 	    try {
-		if (template.getType().equals(Template.Type.PIPE)) {
+		if (template.getType().equals(ClassParseDTO.Type.PIPE)) {
 		    int indx = pf.value();
 		    strValue = values[indx];
 		} else {
@@ -493,7 +491,7 @@ public class Extractor {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private static String convertPipedObjectToString(Object data, Template template) {
+    private static String convertPipedObjectToString(Object data, ClassParseDTO template) {
 
 	StringBuilder sb = new StringBuilder();
 
@@ -567,7 +565,7 @@ public class Extractor {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private static String convertCopyObjectToString(Object data, Template template) {
+    private static String convertCopyObjectToString(Object data, ClassParseDTO template) {
 
 	int size = template.getLastIndex();
 
@@ -576,7 +574,7 @@ public class Extractor {
 	    sb.append(SPACE);
 	}
 
-	List<FieldParseDTO> extracts = template.getExtracts();
+	List<FieldParseDTO> extracts = template.getFieldParseDTOs();
 
 	for (FieldParseDTO extract : extracts) {
 

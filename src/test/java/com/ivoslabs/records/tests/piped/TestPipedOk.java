@@ -14,8 +14,8 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**

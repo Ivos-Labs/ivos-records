@@ -12,8 +12,8 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.dtos.copy.CopyOkDTO;
+import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**

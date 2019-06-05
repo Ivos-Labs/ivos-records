@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 import com.ivoslabs.records.converters.FieldConverter;
 
 /**
- * Annotation to indicate the Class to convert a String to a field and a field to a String
+ * Annotation to indicate the Class to be used to convert a String to a field and a field to a String
  * 
  * @author www.ivoslabs.com
  *

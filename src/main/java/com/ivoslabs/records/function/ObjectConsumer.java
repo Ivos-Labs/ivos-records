@@ -1,10 +1,11 @@
 /**
  * 
  */
-package com.ivoslabs.records.core;
+package com.ivoslabs.records.function;
 
 /**
- * Action to do for each Object, ej. save in data base
+ * Action to do for each Object, <br>
+ * Ej. save in data base
  * 
  * @author www.ivoslabs.com
  *
@@ -12,6 +13,8 @@ package com.ivoslabs.records.core;
 public interface ObjectConsumer<T> {
 
     /**
+     * Action to do for each Object, <br>
+     * Ej. save in data base
      * 
      * @param object
      */

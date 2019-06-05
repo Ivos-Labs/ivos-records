@@ -7,10 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.core.ObjectConsumer;
 import com.ivoslabs.records.dtos.piped.PipedHeader;
 import com.ivoslabs.records.dtos.piped.PipedOkDTO;
 import com.ivoslabs.records.dtos.piped.PipedTail;
+import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**
