@@ -12,7 +12,7 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
@@ -26,9 +26,9 @@ public class TestPipedFile {
     public void testFileToObjects() {
 	
 	PipedParser ex = new PipedParser();
-	ex.fileToObjects("pipeds.piped", PipedOkDTO.class, new ObjectConsumer<PipedOkDTO>() {
+	ex.fileToObjects("pipeds.piped", PipedDataDTO.class, new ObjectConsumer<PipedDataDTO>() {
 
-	    public void process(PipedOkDTO object) {
+	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());
 	    }
 	    
@@ -42,7 +42,7 @@ public class TestPipedFile {
     public void testObjectsToFile() {
 	PipedParser ex = new PipedParser();
 
-	PipedOkDTO dto1 = new PipedOkDTO();
+	PipedDataDTO dto1 = new PipedDataDTO();
 	dto1.setField1("a");
 	dto1.setField2(1);
 	dto1.setField3(1);
@@ -50,7 +50,7 @@ public class TestPipedFile {
 	dto1.setField5(1.1);
 	dto1.setField6(new Date());
 
-	PipedOkDTO dto2 = new PipedOkDTO();
+	PipedDataDTO dto2 = new PipedDataDTO();
 	dto2.setField1("b");
 	dto2.setField2(2);
 	dto2.setField3(22);
@@ -58,7 +58,7 @@ public class TestPipedFile {
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
 
-	PipedOkDTO dto3 = new PipedOkDTO();
+	PipedDataDTO dto3 = new PipedDataDTO();
 	dto3.setField1("c");
 	dto3.setField2(3);
 	dto3.setField3(33);
@@ -66,7 +66,7 @@ public class TestPipedFile {
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
-	List<PipedOkDTO> list = new ArrayList<PipedOkDTO>();
+	List<PipedDataDTO> list = new ArrayList<PipedDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
@@ -78,7 +78,7 @@ public class TestPipedFile {
 	 * 
 	 */
 	
-	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
+	Stack<PipedDataDTO> stack = new Stack<PipedDataDTO>();
 	stack.addAll(list);
 
 	ex.objectsToFile("pipeds.piped", stack);

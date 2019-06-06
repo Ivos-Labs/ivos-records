@@ -1,58 +1,55 @@
 /**
  * 
  */
-package com.ivoslabs.records.dtos.copy;
+package com.ivoslabs.records.dtos.piped;
 
 import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
-import com.ivoslabs.records.annontation.Pic;
-import com.ivoslabs.records.converters.Boolean10Converter;
+import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.converters.DateLatinConverver;
 
 /**
  * @author www.ivoslabs.com
  *
  */
-public class CopyOkDTO {
+public class PipedDataDTO {
 
-    /** */
-    @Pic(beginIndex = 0, size = 1)
-    private String field;
+    @PipedField(0)
+    private String field1;
 
-    @Pic(beginIndex = 1, size = 1)
+    @PipedField(1)
     private Integer field2;
 
-    @Pic(beginIndex = 2, size = 1)
+    @PipedField(2)
     private int field3;
 
-    @Converter(Boolean10Converter.class)
-    @Pic(beginIndex = 3, size = 1)
+    @PipedField(3)
     private Boolean field4;
 
-    @Pic(beginIndex = 4, size = 3)
+    @PipedField(4)
     private Double field5;
 
     @Converter(DateLatinConverver.class)
-    @Pic(beginIndex = 7, size = 14)
+    @PipedField(5)
     private Date field6;
 
     /**
-     * Gets the field
+     * Gets the field1
      *
-     * @return {@code String} The field
+     * @return {@code String} The field1
      */
-    public String getField() {
-	return this.field;
+    public String getField1() {
+	return this.field1;
     }
 
     /**
-     * Sets the field
+     * Sets the field1
      *
-     * @param field {@code String} The field to set
+     * @param field1 {@code String} The field1 to set
      */
-    public void setField(String field) {
-	this.field = field;
+    public void setField1(String field1) {
+	this.field1 = field1;
     }
 
     /**
@@ -152,7 +149,7 @@ public class CopyOkDTO {
      */
     @Override
     public String toString() {
-	return "CopyOkDTO [field=" + field + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + "]";
+	return "PipedOkDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + "]";
     }
 
 }

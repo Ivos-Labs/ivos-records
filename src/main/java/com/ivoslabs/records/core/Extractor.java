@@ -442,7 +442,13 @@ public class Extractor {
 		    // extracts - Type is equals to Template.Type.PIC
 		    int begin = pic.beginIndex();
 		    int size = pic.size();
-		    strValue = data.substring(begin, begin + size);
+		    
+		    if ((begin + size) > data.length()) {
+			strValue = data.substring(begin);
+		    } else {
+			strValue = data.substring(begin, begin + size);
+		    }
+
 		}
 
 		if (strValue != null) {
@@ -612,7 +618,7 @@ public class Extractor {
 		}
 
 		int fieldSize = extract.getPic().size();
-		if (val.length() > fieldSize) {
+ 		if (val.length() > fieldSize) {
 		    val = val.substring(0, fieldSize);
 		} else if (val.length() < fieldSize) {
 		    StringBuilder ssb = new StringBuilder(fieldSize);
@@ -621,6 +627,7 @@ public class Extractor {
 		    for (int i = 0; i < lim; i++) {
 			ssb.append(SPACE);
 		    }
+		    val = ssb.toString();
 		}
 
 		int start = extract.getPic().beginIndex();

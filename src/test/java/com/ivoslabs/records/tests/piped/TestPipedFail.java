@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
 import com.ivoslabs.records.dtos.piped.PipedFailDTO;
-import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**
@@ -31,7 +31,7 @@ public class TestPipedFail {
 
 	String actual = null;
 	try {
-	    ex.toObjects(rows, PipedOkDTO.class);
+	    ex.toObjects(rows, PipedDataDTO.class);
 	} catch (Exception e) {
 	    // e.printStackTrace();
 	    actual = e.getMessage();

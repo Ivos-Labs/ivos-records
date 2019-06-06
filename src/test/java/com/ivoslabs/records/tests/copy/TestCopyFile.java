@@ -12,7 +12,7 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.dtos.copy.CopyOkDTO;
+import com.ivoslabs.records.dtos.copy.CopyDataDTO;
 import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
@@ -26,9 +26,9 @@ public class TestCopyFile {
     public void testFileToObjects() {
 
 	CopyParser ex = new CopyParser();
-	ex.fileToObjects("data.copy", CopyOkDTO.class, new ObjectConsumer<CopyOkDTO>() {
+	ex.fileToObjects("data.copy", CopyDataDTO.class, new ObjectConsumer<CopyDataDTO>() {
 
-	    public void process(CopyOkDTO object) {
+	    public void process(CopyDataDTO object) {
 		System.out.println(object.toString());
 	    }
 
@@ -42,7 +42,7 @@ public class TestCopyFile {
     public void testObjectsToFile() {
 	CopyParser ex = new CopyParser();
 
-	CopyOkDTO dto1 = new CopyOkDTO();
+	CopyDataDTO dto1 = new CopyDataDTO();
 	dto1.setField("a");
 	dto1.setField2(1);
 	dto1.setField3(1);
@@ -50,7 +50,7 @@ public class TestCopyFile {
 	dto1.setField5(1.1);
 	dto1.setField6(new Date());
 
-	CopyOkDTO dto2 = new CopyOkDTO();
+	CopyDataDTO dto2 = new CopyDataDTO();
 	dto2.setField("b");
 	dto2.setField2(2);
 	dto2.setField3(2);
@@ -58,7 +58,7 @@ public class TestCopyFile {
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
 
-	CopyOkDTO dto3 = new CopyOkDTO();
+	CopyDataDTO dto3 = new CopyDataDTO();
 	dto3.setField("c");
 	dto3.setField2(3);
 	dto3.setField3(3);
@@ -66,12 +66,12 @@ public class TestCopyFile {
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
-	List<CopyOkDTO> list = new ArrayList<CopyOkDTO>();
+	List<CopyDataDTO> list = new ArrayList<CopyDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
 
-	Stack<CopyOkDTO> stack = new Stack<CopyOkDTO>();
+	Stack<CopyDataDTO> stack = new Stack<CopyDataDTO>();
 	stack.addAll(list);
 
 	ex.objectsToFile("data.copy", stack);

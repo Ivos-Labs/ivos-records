@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.dtos.copy.CopyOkDTO;
+import com.ivoslabs.records.dtos.copy.CopyDataDTO;
 import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
@@ -28,7 +28,7 @@ public class TestCopyOk {
     public void testToObject() {
 	CopyParser cex = new CopyParser();
 
-	CopyOkDTO cdto = cex.toObject("d1204.420190306120232", CopyOkDTO.class);
+	CopyDataDTO cdto = cex.toObject("d1204.420190306120232", CopyDataDTO.class);
 
 	String expected = "CopyOkDTO [field=d, field2=1, field3=2, field4=false, field5=4.4, field6=Wed Mar 06 12:02:32 CST 2019]";
 	String actual = cdto.toString();
@@ -44,11 +44,11 @@ public class TestCopyOk {
 	crows.add("a2304.520190306120232");
 	crows.add("d1204.420190306120232");
 
-	List<CopyOkDTO> cdtos = cex.toObjects(crows, CopyOkDTO.class);
+	List<CopyDataDTO> cdtos = cex.toObjects(crows, CopyDataDTO.class);
 
 	String expected = "CopyOkDTO [field=d, field2=1, field3=2, field4=false, field5=4.4, field6=Wed Mar 06 12:02:32 CST 2019]";
 	String actual = null;
-	for (CopyOkDTO dataDTO : cdtos) {
+	for (CopyDataDTO dataDTO : cdtos) {
 	    actual = dataDTO.toString();
 //	    System.out.println(actual);
 	}
@@ -60,7 +60,7 @@ public class TestCopyOk {
     public void testString() {
 	CopyParser cex = new CopyParser();
 
-	CopyOkDTO dto = new CopyOkDTO();
+	CopyDataDTO dto = new CopyDataDTO();
 	dto.setField("d");
 	dto.setField2(1);
 	dto.setField3(2);
@@ -83,7 +83,7 @@ public class TestCopyOk {
     public void testStrings() {
 	CopyParser cex = new CopyParser();
 
-	CopyOkDTO dto = new CopyOkDTO();
+	CopyDataDTO dto = new CopyDataDTO();
 	dto.setField("d");
 	dto.setField2(1);
 	dto.setField3(2);
@@ -107,14 +107,14 @@ public class TestCopyOk {
 
 	CopyParser ex = new CopyParser();
 
-	ObjectConsumer<CopyOkDTO> action = new ObjectConsumer<CopyOkDTO>() {
+	ObjectConsumer<CopyDataDTO> action = new ObjectConsumer<CopyDataDTO>() {
 
-	    public void process(CopyOkDTO object) {
+	    public void process(CopyDataDTO object) {
 		System.out.println(object.toString());
 	    }
 	};
 
-	ex.fileToObjects("src/test/resources/copy.cbl", CopyOkDTO.class, action);
+	ex.fileToObjects("src/test/resources/copy.cbl", CopyDataDTO.class, action);
 
 	assertTrue(true);
     }

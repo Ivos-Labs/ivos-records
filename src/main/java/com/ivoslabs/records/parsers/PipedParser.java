@@ -36,6 +36,18 @@ public class PipedParser {
 	return Extractor.convertStringsToObjects(data, type, PipedField.class);
     }
 
+    /**
+     * 
+     * @param file
+     * @param headerType
+     * @param headerSize
+     * @param headerConsumer
+     * @param dataType
+     * @param dataConsumer
+     * @param tailType
+     * @param tailSize
+     * @param tailConsumer
+     */
     public <T, U, V> void fileToObjects(String file,
 	    Class<T> headerType,
 	    Integer headerSize,
@@ -49,6 +61,15 @@ public class PipedParser {
 	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
     }
 
+    /**
+     * 
+     * @param file
+     * @param headerType
+     * @param headerSize
+     * @param headerConsumer
+     * @param dataType
+     * @param dataConsumer
+     */
     public <T, U, V> void fileToObjects(String file,
 	    Class<T> headerType,
 	    Integer headerSize,
@@ -59,6 +80,15 @@ public class PipedParser {
 	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, PipedField.class);
     }
 
+    /**
+     * 
+     * @param file
+     * @param dataType
+     * @param dataConsumer
+     * @param tailType
+     * @param tailSize
+     * @param tailConsumer
+     */
     public <T, U, V> void fileToObjects(String file,
 	    Class<U> dataType,
 	    ObjectConsumer<U> dataConsumer,
@@ -72,8 +102,8 @@ public class PipedParser {
     /**
      * 
      * @param file
-     * @param type
-     * @param action
+     * @param dataType
+     * @param dataConsumer
      */
     public <T> void fileToObjects(String file, Class<T> dataType, ObjectConsumer<T> dataConsumer) {
 	Extractor.convertFileToObjects(file, dataType, dataConsumer, PipedField.class);

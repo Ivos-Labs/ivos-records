@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.dtos.piped.PipedOkDTO;
+import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.function.ObjectConsumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
@@ -28,7 +28,7 @@ public class TestPipedOk {
     public void testToObject() {
 	PipedParser ex = new PipedParser();
 
-	PipedOkDTO dto = ex.toObject("b|2|1|false|2.2|20190306120232", PipedOkDTO.class);
+	PipedDataDTO dto = ex.toObject("b|2|1|false|2.2|20190306120232", PipedDataDTO.class);
 
 	String expected = "PipedOkDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 12:02:32 CST 2019]";
 	String actual = dto.toString();
@@ -44,11 +44,11 @@ public class TestPipedOk {
 	rows.add("a|1|1|true |1.1|20190306120232");
 	rows.add("b|2|1|false|2.2|20190306120232");
 
-	List<PipedOkDTO> dtos = ex.toObjects(rows, PipedOkDTO.class);
+	List<PipedDataDTO> dtos = ex.toObjects(rows, PipedDataDTO.class);
 
 	String expected = "PipedOkDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 12:02:32 CST 2019]";
 	String actual = null;
-	for (PipedOkDTO dataDTO : dtos) {
+	for (PipedDataDTO dataDTO : dtos) {
 	    actual = dataDTO.toString();
 //	    System.out.println(actual);
 	}
@@ -60,7 +60,7 @@ public class TestPipedOk {
     public void testToString() {
 	PipedParser ex = new PipedParser();
 
-	PipedOkDTO dto = new PipedOkDTO();
+	PipedDataDTO dto = new PipedDataDTO();
 	dto.setField1("b");
 	dto.setField2(2);
 	dto.setField3(1);
@@ -82,14 +82,14 @@ public class TestPipedOk {
     public void testToStrings() {
 	PipedParser ex = new PipedParser();
 
-	PipedOkDTO dto1 = new PipedOkDTO();
+	PipedDataDTO dto1 = new PipedDataDTO();
 	dto1.setField1("1");
 	dto1.setField2(2);
 	dto1.setField3(1);
 	dto1.setField4(true);
 	dto1.setField5(2.2);
 
-	PipedOkDTO dto = new PipedOkDTO();
+	PipedDataDTO dto = new PipedDataDTO();
 	dto.setField1("b");
 	dto.setField2(2);
 	dto.setField3(1);
@@ -113,14 +113,14 @@ public class TestPipedOk {
 
 	PipedParser ex = new PipedParser();
 
-	ObjectConsumer<PipedOkDTO> action = new ObjectConsumer<PipedOkDTO>() {
+	ObjectConsumer<PipedDataDTO> action = new ObjectConsumer<PipedDataDTO>() {
 
-	    public void process(PipedOkDTO object) {
+	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());
 	    }
 	};
 
-	ex.fileToObjects("src/test/resources/piped.piped", PipedOkDTO.class, action);
+	ex.fileToObjects("src/test/resources/piped.piped", PipedDataDTO.class, action);
 
 	assertTrue(true);
     }

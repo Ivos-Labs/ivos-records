@@ -1,9 +1,12 @@
 # ivos-records
 
-Reading and saving piped file
+Utility to parse piped files and COPYs to pojos
 
 
-Header pojo example
+**Reading and saving piped file**
+
+
+Example piped header pojo
 
 
 ``` java
@@ -20,12 +23,12 @@ public class PipedHeader {
     ...
 ```
 
-Data pojo example
+Example piped data pojo 
 
 
 ``` java
 
-public class PipedOkDTO {
+public class PipedDataDTO {
 
     @PipedField(0)
     private String field1;
@@ -51,10 +54,11 @@ public class PipedOkDTO {
     
 ```
 
-Tail pojo example
+Example piped tail pojo
 
 
 ``` java
+
 public class PipedTail {
 
     @PipedField(0)
@@ -68,9 +72,10 @@ public class PipedTail {
 
 ```
 
-Saving piped file
+Saving a piped file
 
 ``` java
+
 	// headers
 
 	PipedHeader header1 = new PipedHeader();
@@ -81,13 +86,14 @@ Saving piped file
 	header2.setField1("headerB");
 	header2.setField2(2);
 
+   // 
 	List<PipedHeader> headers = new ArrayList<PipedHeader>();
 	headers.add(header1);
 	headers.add(header2);
 	
 	// data
 
-	PipedOkDTO dto1 = new PipedOkDTO();
+	PipedDataDTO dto1 = new PipedDataDTO();
 	dto1.setField1("a");
 	dto1.setField2(1);
 	dto1.setField3(1);
@@ -95,7 +101,7 @@ Saving piped file
 	dto1.setField5(1.1);
 	dto1.setField6(new Date());
 
-	PipedOkDTO dto2 = new PipedOkDTO();
+	PipedDataDTO dto2 = new PipedDataDTO();
 	dto2.setField1("b");
 	dto2.setField2(2);
 	dto2.setField3(22);
@@ -103,7 +109,7 @@ Saving piped file
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
 
-	PipedOkDTO dto3 = new PipedOkDTO();
+	PipedDataDTO dto3 = new PipedDataDTO();
 	dto3.setField1("c");
 	dto3.setField2(3);
 	dto3.setField3(33);
@@ -111,7 +117,7 @@ Saving piped file
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
-	List<PipedOkDTO> list = new ArrayList<PipedOkDTO>();
+	List<PipedDataDTO> list = new ArrayList<PipedDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
@@ -130,14 +136,15 @@ Saving piped file
 	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
 	headerStack.addAll(headers);
 
-	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
-	stack.addAll(list);
+	Stack<PipedDataDTO> dataStack = new Stack<PipedDataDTO>();
+	dataStack.addAll(list);
 
 	Stack<PipedTail> tailStack = new Stack<PipedTail>();
 	tailStack.addAll(tails);
 
-	PipedParser ex = new PipedParser();
-	ex.objectsToFile("datahdt.piped", headerStack, stack, tailStack);
+	PipedParser pipedParser = new PipedParser();
+	pipedParser.objectsToFile("datahdt.piped", headerStack, dataStack, tailStack);
+
 
 ```
 
@@ -153,66 +160,79 @@ datahdt.piped expected content
 	1|tailA
 ```
 
-Reading piped file
+**Reading piped file**
 
 ``` java
-	ObjectConsumer<PipedHeader> headerCons = new ObjectConsumer<PipedHeader>() {
 
+
+	// PipedHeader consumer (action to do for each PipedHeader)
+	ObjectConsumer<PipedHeader> headerConsumer = new ObjectConsumer<PipedHeader>() {
+	    
 	    public void process(PipedHeader object) {
-		System.out.println(object.toString());
+		    System.out.println(object.toString());
 	    }
+	    
 	};
 
-	ObjectConsumer<PipedOkDTO> dataCons = new ObjectConsumer<PipedOkDTO>() {
-
-	    public void process(PipedOkDTO object) {
-		System.out.println(object.toString());
+	// PipedDataDTO consumer (action to do for each PipedDataDTO)
+	ObjectConsumer<PipedDataDTO> dataConsumer = new ObjectConsumer<PipedDataDTO>() {
+	    
+	    public void process(PipedDataDTO object) {
+		    System.out.println(object.toString());
 	    }
+	    
 	};
 
-	ObjectConsumer<PipedTail> tailCons = new ObjectConsumer<PipedTail>() {
-
+	// PipedTail consumer (action to do for each PipedTail)
+	ObjectConsumer<PipedTail> tailConsumer = new ObjectConsumer<PipedTail>() {
 	    public void process(PipedTail object) {
-		System.out.println(object.toString());
+		    System.out.println(object.toString());
 	    }
 	};
 
-	PipedParser ex = new PipedParser();
+	PipedParser pipedParser = new PipedParser();
 
 	int headerSize = 2;
 	int tailSize = 1;
 
-	ex.fileToObjects("pipedht.piped", 
-	     PipedHeader.class, headerSize, headerCons, 
-	     PipedOkDTO.class, dataCons, 
-	     PipedTail.class, tailSize, tailCons);
+	String file = "pipedht.piped";
+	
+	// read file
+	pipedParser.fileToObjects(file,
+		PipedHeader.class, headerSize, headerConsumer,
+		PipedDataDTO.class, dataConsumer,
+		PipedTail.class, tailSize, tailConsumer);
 
 
 
 ```
 
-Reading and saving COPY file
+**Reading and saving COPY file**
 
 
-Hader pojo example
+Example COPY header pojo
 
 
 ``` java
 
 public class CopyHeader {
 
-    @Pic(beginIndex = 0, size = 5)
+    @Pic(beginIndex = 0, size = 7)
     private String field1;
 
-    @Pic(beginIndex = 6, size = 10)
-    private String field2;
+    @Pic(beginIndex = 7, size = 5)
+    private int field2;
+
+    @Pic(beginIndex = 12, size = 5)
+    private int field3;
     
 ```
 
-Data pojo example
+Example COPY data pojo
 
 ``` java
-public class CopyOkDTO {
+
+public class CopyDataDTO {
 
     @Pic(beginIndex = 0, size = 1)
     private String field;
@@ -240,14 +260,16 @@ public class CopyOkDTO {
 ```
 
 
-Saving piped file
+Saving a COPY file
 
 ``` java
+
 	// headers
 
 	CopyHeader header1 = new CopyHeader();
 	header1.setField1("headerA");
 	header1.setField2(1);
+	header1.setField3(2);
 
 	CopyHeader header2 = new CopyHeader();
 	header2.setField1("headerB");
@@ -256,52 +278,52 @@ Saving piped file
 	List<CopyHeader> headers = new ArrayList<CopyHeader>();
 	headers.add(header1);
 	headers.add(header2);
-	
+
 	// data
 
-	CopyOkDTO dto1 = new CopyOkDTO();
-	dto1.setField1("a");
+	CopyDataDTO dto1 = new CopyDataDTO();
+	dto1.setField("");
 	dto1.setField2(1);
 	dto1.setField3(1);
 	dto1.setField4(true);
 	dto1.setField5(1.1);
 	dto1.setField6(new Date());
 
-	CopyOkDTO dto2 = new CopyOkDTO();
-	dto2.setField1("b");
+	CopyDataDTO dto2 = new CopyDataDTO();
+	dto2.setField("b");
 	dto2.setField2(2);
 	dto2.setField3(22);
 	dto2.setField4(false);
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
 
-	CopyOkDTO dto3 = new CopyOkDTO();
-	dto3.setField1("c");
+	CopyDataDTO dto3 = new CopyDataDTO();
+	dto3.setField("c");
 	dto3.setField2(3);
 	dto3.setField3(33);
 	dto3.setField4(false);
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
-	List<CopyOkDTO> list = new ArrayList<CopyOkDTO>();
+	List<CopyDataDTO> list = new ArrayList<CopyDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
 
-	
-
 	// save objest in a Stacks
 
-	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
+	Stack<CopyHeader> headerStack = new Stack<CopyHeader>();
 	headerStack.addAll(headers);
 
-	Stack<PipedOkDTO> stack = new Stack<PipedOkDTO>();
-	stack.addAll(list);
+	Stack<CopyDataDTO> dataStack = new Stack<CopyDataDTO>();
+	dataStack.addAll(list);
 
-
-
-	CopyParser ex = new CopyParser();
-	ex.objectsToFile("data.copy", headerStack, stack);
+	CopyParser copyParser = new CopyParser();
+	
+	String file = "data.copy";
+	
+	copyParser.objectsToFileHD(file, headerStack, dataStack);
+	
 
 ```
 
@@ -309,39 +331,45 @@ data.copy expected content
 
 
 ``` copy
-a1204.120190306120232
-b2214.120190306120232
-c3204.120190306120232
-d4204.120190306120232
+headerA1    2
+headerB2    0
+ 1111.120190606173408
+b2202.220190606173408
+c3303.320190606173408
 
 ```
 
 Reading copy file
 
 ``` java
-	ObjectConsumer<CopyHeader> headerCons = new ObjectConsumer<CopyHeader>() {
+
+   // CopyHeader consumer (action to do for each CopyHeader)
+	ObjectConsumer<CopyHeader> headerConsumer = new ObjectConsumer<CopyHeader>() {
 
 	    public void process(CopyHeader object) {
 		     System.out.println(object.toString());
 	    }
+	    
 	};
 
-	ObjectConsumer<CopyOkDTO> dataCons = new ObjectConsumer<CopyOkDTO>() {
+   // CopyDataDTO consumer (action to do for each CopyDataDTO)
+	ObjectConsumer<CopyDataDTO> dataConsumer = new ObjectConsumer<CopyDataDTO>() {
 
-	    public void process(CopyOkDTO object) {
+	    public void process(CopyDataDTO object) {
 		     System.out.println(object.toString());
 	    }
 	};
 
 
-	CopyParser ex = new CopyParser();
+	CopyParser copyParser = new CopyParser();
 
 	int headerSize = 2;
-	int tailSize = 1;
+	
+	String file = "pipe.copy";
 
-	ex.fileToObjects("pipe.copy", 
-	     CopyHeader.class, headerSize, headerCons, 
-	     CopyOkDTO.class, dataCons);
+	copyParser.fileToObjects(file, 
+	     CopyHeader.class, headerSize, headerConsumer, 
+	     CopyDataDTO.class, dataConsumer);
 
 
 

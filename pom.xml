@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>ivos-records</name>
-	<description>Artifact to parse piped files and COPYs to pojos</description>
+	<description>Utility to parse piped files and COPYs to pojos</description>
 	<url>https://github.com/Ivos-Labs/ivos-records</url>
 
 	<licenses>
