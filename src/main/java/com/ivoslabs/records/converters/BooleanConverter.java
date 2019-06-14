@@ -44,7 +44,6 @@ public class BooleanConverter implements FieldConverter<Boolean> {
      * 
      * @see com.ivoslabs.records.converters.FieldConverter#toObject(java.lang.String, java.lang.String[])
      */
-
     public Boolean toObject(String string, String... args) {
 	ParseUtils.notNull(args, "BooleanConverter requiere two arguments");
 	ParseUtils.notTrue(args.length == 2, "BooleanConverter requiere two arguments");

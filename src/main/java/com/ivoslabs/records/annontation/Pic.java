@@ -9,10 +9,33 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to indicate that the field can be handle as a pic in a copy file
+ * Annotation to indicate that the field can be handle as a pic in a copy file <br>
+ * <br>
+ * <b>Example</b>
+ * 
+ * <pre>
+ * <code>
+    // text field
+    &#64;Pic(beginIndex = 0, size = 7)
+    private String field1;
+    
+    // number fielf
+    &#64;Pic(beginIndex = 7, size = 3)
+    private Integer field2;
+    
+    // date field (or whatever that require a converter)
+    &#64;Converter(DateLatinConverver.class)
+    &#64;Pic(beginIndex = 10, size = 14)
+    private Date field3;
+    
+    </code>
+ * </pre>
  * 
  * @author www.ivoslabs.com
- *
+ * @see com.ivoslabs.records.annontation.Pic#beginIndex() Pic#beginIndex
+ * @see com.ivoslabs.records.annontation.Pic#size() Pic#size
+ * @see com.ivoslabs.records.annontation.Converter Converter
+ * 
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -21,14 +44,21 @@ public @interface Pic {
     /**
      * Gets the index where stats the field in copy file
      * 
-     * @return
+     * @return The begin index
+     * 
+     * @see com.ivoslabs.records.annontation.Pic#size() Pic#size
+     * @see com.ivoslabs.records.annontation.Pic Pic
+     * @see com.ivoslabs.records.annontation.Converter Converter
      */
     int beginIndex();
 
     /**
      * Gets the size of the field in copy file
      * 
-     * @return
+     * @return The field size
+     * @see com.ivoslabs.records.annontation.Pic#beginIndex() Pic#beginIndex
+     * @see com.ivoslabs.records.annontation.Pic Pic
+     * @see com.ivoslabs.records.annontation.Converter Converter
      */
     int size();
 

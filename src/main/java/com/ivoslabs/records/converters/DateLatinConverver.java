@@ -7,7 +7,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 /**
- * Format date YYYYMMDDHHmmss
+ * Format date YYYYMMDD
  * 
  * @author www.ivoslabs.com
  *
@@ -15,7 +15,7 @@ import java.util.Date;
 public class DateLatinConverver extends DateConverter {
 
     /** */
-    private static final String FORMAT = "yyyyMMddHHmmss";
+    private static final String FORMAT = "YYYYMMDD";
 
     /**
      * 
