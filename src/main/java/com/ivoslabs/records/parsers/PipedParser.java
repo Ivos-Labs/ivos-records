@@ -11,6 +11,7 @@ import com.ivoslabs.records.core.Extractor;
 import com.ivoslabs.records.function.ObjectConsumer;
 
 /**
+ * 
  * @author www.ivoslabs.com
  *
  */
