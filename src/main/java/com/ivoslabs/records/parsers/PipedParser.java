@@ -11,53 +11,74 @@ import com.ivoslabs.records.core.Extractor;
 import com.ivoslabs.records.function.ObjectConsumer;
 
 /**
+ * Utilizty to parse piped data to pojos
  * 
  * @author www.ivoslabs.com
  *
  */
 public class PipedParser {
 
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /**********************************
+     * Start String-To-Object methods *
+     **********************************/
+
     /**
+     * Creates a new instance of T using the received data content
      * 
-     * @param data
-     * @param type
-     * @return
+     * @param      <T> Required type
+     * @param data values separated by pipes
+     * @param type Required type
+     * @return A T instance
      */
     public <T> T toObject(String data, Class<T> type) {
 	return Extractor.convertStringToObject(data, type, PipedField.class);
     }
 
     /**
+     * Creates a list of instances of T using the received data content
      * 
-     * @param data
-     * @param type
-     * @return
+     * @param      <T> Required type
+     * @param data List of values separated by pipes
+     * @param type Required type
+     * @return A List of T instance
      */
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
 	return Extractor.convertStringsToObjects(data, type, PipedField.class);
     }
 
     /**
+     * Creates a instance of T for each row in a file and execute the respective received ObjectConsumer
      * 
-     * @param file
-     * @param headerType
-     * @param headerSize
-     * @param headerConsumer
-     * @param dataType
-     * @param dataConsumer
-     * @param tailType
-     * @param tailSize
-     * @param tailConsumer
+     * @param                <H> Header type
+     * @param                <D> Data type
+     * @param                <T> Tail type
+     * @param file           file path
+     * @param headerType     Header type
+     * @param headerSize     Header size
+     * @param headerConsumer action to do for each header instance
+     * @param dataType       Data type
+     * @param dataConsumer   action to do for each data instance
+     * @param tailType       Tail type
+     * @param tailSize       Tail size
+     * @param tailConsumer   action to do for each tail instance
      */
-    public <T, U, V> void fileToObjects(String file,
-	    Class<T> headerType,
+    public <H, D, T> void fileToObjects(String file,
+	    Class<H> headerType,
 	    Integer headerSize,
-	    ObjectConsumer<T> headerConsumer,
-	    Class<U> dataType,
-	    ObjectConsumer<U> dataConsumer,
-	    Class<V> tailType,
+	    ObjectConsumer<H> headerConsumer,
+	    Class<D> dataType,
+	    ObjectConsumer<D> dataConsumer,
+	    Class<T> tailType,
 	    Integer tailSize,
-	    ObjectConsumer<V> tailConsumer) {
+	    ObjectConsumer<T> tailConsumer) {
 
 	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
     }
@@ -110,6 +131,22 @@ public class PipedParser {
 	Extractor.convertFileToObjects(file, dataType, dataConsumer, PipedField.class);
     }
 
+    /********************************
+     * End String-To-Object methods *
+     ********************************/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /**********************************
+     * Start Object-To-String methods *
+     **********************************/
+
     /**
      * 
      * @param data
@@ -128,13 +165,21 @@ public class PipedParser {
 	return Extractor.convertObjectsToStrings(data, PipedField.class);
     }
 
-    /**
-     * 
-     */
+    /********************************
+     * End Object-To-String methods *
+     ********************************/
 
-    /**
-     * 
-     */
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /********************************
+     * Start Object-To-File methods *
+     ********************************/
 
     /**
      * 

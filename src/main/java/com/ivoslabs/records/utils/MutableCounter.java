@@ -14,7 +14,7 @@ public final class MutableCounter {
      * increments by one the counter value
      */
     public void increment() {
-	value++;
+	this.value++;
     }
 
     /**
@@ -23,7 +23,7 @@ public final class MutableCounter {
      * @return {@code int} the value
      */
     public int getValue() {
-	return value;
+	return this.value;
     }
 
 }
