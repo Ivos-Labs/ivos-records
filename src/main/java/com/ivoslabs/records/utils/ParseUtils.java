@@ -20,13 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ivoslabs.records.annontation.Converter;
+import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.core.ClassParseDTO;
+import com.ivoslabs.records.core.ClassParseDTO.Type;
 import com.ivoslabs.records.core.FieldParseDTO;
 import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.RowSuplier;
-import com.ivoslabs.records.core.ClassParseDTO;
-import com.ivoslabs.records.core.ClassParseDTO.Type;
 import com.ivoslabs.records.exceptions.RecordParserException;
 
 /**
@@ -67,15 +68,19 @@ public class ParseUtils {
 	for (Field field : fields) {
 	    FieldParseDTO ex = null;
 
+	    IfNull ifNull = field.getDeclaredAnnotation(IfNull.class);
+	    String ifNullValue = ifNull != null ? ifNull.value() : null;
+
 	    if (annon.equals(PipedField.class)) {
 		PipedField pf = field.getAnnotation(PipedField.class);
 		if (pf != null) {
-		    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class));
+		    Integer maxSize = pf.maxSize() > 0 ? pf.maxSize() : null;
+		    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class), ifNullValue, maxSize);
 		}
 	    } else {
 		Pic pic = field.getAnnotation(Pic.class);
 		if (pic != null) {
-		    ex = new FieldParseDTO(field, pic, field.getAnnotation(Converter.class));
+		    ex = new FieldParseDTO(field, pic, field.getAnnotation(Converter.class), ifNullValue);
 		}
 	    }
 

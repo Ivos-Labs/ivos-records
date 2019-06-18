@@ -11,7 +11,7 @@ import com.ivoslabs.records.core.Extractor;
 import com.ivoslabs.records.function.ObjectConsumer;
 
 /**
- * Utilizty to parse piped data to pojos
+ * Utility to parse piped data to pojos
  * 
  * @author www.ivoslabs.com
  *

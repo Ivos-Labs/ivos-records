@@ -15,7 +15,7 @@ import java.util.Date;
 public class DateUSAConverver extends DateConverter {
 
     /** */
-    private static final String FORMAT = "MMDDYYYY";
+    private static final String FORMAT = "MMddyyyy";
 
     /**
      * 

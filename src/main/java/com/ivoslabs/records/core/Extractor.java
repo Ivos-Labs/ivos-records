@@ -442,7 +442,7 @@ public class Extractor {
 		    // extracts - Type is equals to Template.Type.PIC
 		    int begin = pic.beginIndex();
 		    int size = pic.size();
-		    
+
 		    if ((begin + size) > data.length()) {
 			strValue = data.substring(begin);
 		    } else {
@@ -526,8 +526,12 @@ public class Extractor {
 		Class<? extends FieldConverter<?>> conv = null;
 		try {
 
-		    if (extract.getConverter() == null) {
-			sb.append(value != null ? value.toString() : EMPTY);
+		    String strValue;
+
+		    if (value == null && extract.getIfNull() != null) {
+			strValue = extract.getIfNull();
+		    } else if (extract.getConverter() == null) {
+			strValue = value != null ? value.toString() : EMPTY;
 		    } else {
 			conv = extract.getConverter().value();
 			FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
@@ -537,8 +541,14 @@ public class Extractor {
 			    template.addConverter(c);
 			}
 
-			sb.append(c.toString(value, extract.getConverter().args()));
+			strValue = c.toString(value, extract.getConverter().args());
 		    }
+
+		    if (extract.getMaxSize() != null && strValue.length() > extract.getMaxSize()) {
+			strValue = strValue.substring(0, extract.getMaxSize());
+		    }
+
+		    sb.append(strValue);
 
 		} catch (InstantiationException e) {
 		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
@@ -604,7 +614,10 @@ public class Extractor {
 	    try {
 
 		String val;
-		if (extract.getConverter() == null) {
+
+		if (value != null && extract.getIfNull() != null) {
+		    val = extract.getIfNull();
+		} else if (extract.getConverter() == null) {
 		    val = value != null ? value.toString() : EMPTY;
 		} else {
 		    conv = extract.getConverter().value();
@@ -618,7 +631,7 @@ public class Extractor {
 		}
 
 		int fieldSize = extract.getPic().size();
- 		if (val.length() > fieldSize) {
+		if (val.length() > fieldSize) {
 		    val = val.substring(0, fieldSize);
 		} else if (val.length() < fieldSize) {
 		    StringBuilder ssb = new StringBuilder(fieldSize);

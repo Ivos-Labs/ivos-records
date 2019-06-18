@@ -51,4 +51,11 @@ public @interface PipedField {
      */
     int value();
 
+    /**
+     * Specify the max size of the field as String
+     * 
+     * @return The max size
+     */
+    int maxSize() default 0;
+
 }

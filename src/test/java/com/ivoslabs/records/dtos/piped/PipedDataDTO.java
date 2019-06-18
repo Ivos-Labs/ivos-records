@@ -6,6 +6,7 @@ package com.ivoslabs.records.dtos.piped;
 import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
+import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.converters.DateLatinConverver;
 
@@ -15,7 +16,8 @@ import com.ivoslabs.records.converters.DateLatinConverver;
  */
 public class PipedDataDTO {
 
-    @PipedField(0)
+    @IfNull("-")
+    @PipedField(value=0, maxSize=3)
     private String field1;
 
     @PipedField(1)

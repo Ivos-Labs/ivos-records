@@ -29,6 +29,12 @@ public class FieldParseDTO {
     /** The converter */
     private Converter converter;
 
+    /** The maxSize (piped field) */
+    private Integer maxSize;
+
+    /** The if-null */
+    private String ifNull;
+
     /**
      * Create a new FieldParseDTO to will be used with a COPY file field
      * 
@@ -36,11 +42,12 @@ public class FieldParseDTO {
      * @param copyField
      * @param converter
      */
-    public FieldParseDTO(Field field, Pic copyField, Converter converter) {
+    public FieldParseDTO(Field field, Pic copyField, Converter converter, String ifNull) {
 	super();
 	this.field = field;
 	this.pic = copyField;
 	this.converter = converter;
+	this.ifNull = ifNull;
     }
 
     /**
@@ -50,11 +57,13 @@ public class FieldParseDTO {
      * @param pipeField
      * @param converter
      */
-    public FieldParseDTO(Field field, PipedField pipeField, Converter converter) {
+    public FieldParseDTO(Field field, PipedField pipeField, Converter converter, String ifNull, Integer maxSize) {
 	super();
 	this.field = field;
 	this.pipeField = pipeField;
 	this.converter = converter;
+	this.ifNull = ifNull;
+	this.maxSize = maxSize;
     }
 
     /**
@@ -127,6 +136,24 @@ public class FieldParseDTO {
      */
     public void setConverter(Converter converter) {
 	this.converter = converter;
+    }
+
+    /**
+     * Gets the ifNull
+     *
+     * @return {@code String} The ifNull
+     */
+    public String getIfNull() {
+	return this.ifNull;
+    }
+
+    /**
+     * Gets the maxSize
+     *
+     * @return {@code Integer} The maxSize
+     */
+    public Integer getMaxSize() {
+	return this.maxSize;
     }
 
 }

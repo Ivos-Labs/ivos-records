@@ -15,7 +15,7 @@ import java.util.Date;
 public class DateLatinConverver extends DateConverter {
 
     /** */
-    private static final String FORMAT = "YYYYMMDD";
+    private static final String FORMAT = "yyyyMMdd";
 
     /**
      * 
