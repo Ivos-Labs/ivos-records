@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IfNull {
+
     /**
      * Gets the default value as String when the field is null
      * 
