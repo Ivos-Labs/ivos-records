@@ -12,9 +12,9 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
 
 /**
  * @author www.ivoslabs.com

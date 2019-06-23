@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.dtos.piped;
+package com.ivoslabs.records.tests.piped.dtos;
 
 import com.ivoslabs.records.converters.FieldConverter;
 

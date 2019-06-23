@@ -12,9 +12,9 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.dtos.copy.CopyDataDTO;
 import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.CopyParser;
+import com.ivoslabs.records.tests.copy.dtos.CopyDataDTO;
 
 /**
  * @author www.ivoslabs.com

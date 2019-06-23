@@ -14,10 +14,10 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.dtos.piped.PipedDataDTO;
-import com.ivoslabs.records.dtos.piped.SubField;
 import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
+import com.ivoslabs.records.tests.piped.dtos.SubField;
 
 /**
  * @author www.ivoslabs.com

@@ -12,9 +12,9 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
-import com.ivoslabs.records.dtos.piped.PipedFailDTO;
-import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
+import com.ivoslabs.records.tests.piped.dtos.PipedFailDTO;
 
 /**
  * @author www.ivoslabs.com

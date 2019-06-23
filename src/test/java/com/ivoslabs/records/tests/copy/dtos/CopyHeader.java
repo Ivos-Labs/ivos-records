@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.dtos.copy;
+package com.ivoslabs.records.tests.copy.dtos;
 
 import com.ivoslabs.records.annontation.Pic;
 

@@ -12,10 +12,10 @@ import java.util.Stack;
 
 import org.junit.Test;
 
-import com.ivoslabs.records.dtos.piped.PipedHeader;
-import com.ivoslabs.records.dtos.piped.PipedDataDTO;
-import com.ivoslabs.records.dtos.piped.PipedTail;
 import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
+import com.ivoslabs.records.tests.piped.dtos.PipedHeader;
+import com.ivoslabs.records.tests.piped.dtos.PipedTail;
 
 /**
  * @author
