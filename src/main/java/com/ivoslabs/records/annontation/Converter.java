@@ -33,45 +33,9 @@ import com.ivoslabs.records.converters.FieldConverter;
     private Boolean field3;</code>
  * </pre>
  * 
- * <b>Custom converter</b>
- * 
- * <pre>
- * <code>public class UserConverter implements FieldConverter&lt;Integer> {
-
- 
-    public UserConverter() {
-	super();
-    }
-
- 
-    public String toString(Integer object, String... args) {
-	String str;
-	ParseUtils.notNull(args, "BooleanConverter requiere two arguments");
-	ParseUtils.notTrue(args.length == 2, "BooleanConverter requiere two arguments");
-	ParseUtils.isTrue(args[0].isEmpty(), "BooleanConverter requiere two arguments");
-
-	if (object instanceof Boolean && ((Boolean) object)) {
-	    str = args[0];
-	} else {
-	    str = args[1];
-	}
-
-	return str;
-    }
-
- 
-    public Integer toObject(String string, String... args) {
-	ParseUtils.notNull(args, "BooleanConverter requiere two arguments");
-	ParseUtils.notTrue(args.length == 2, "BooleanConverter requiere two arguments");
-	ParseUtils.isTrue(args[0].isEmpty(), "BooleanConverter requiere two arguments");
-
-	return string != null && string.equals(args[0]);
-    }
-    
-  }</code>
- * </pre>
  * 
  * @author www.ivoslabs.com
+ * @see FieldConverter
  *
  */
 @Target({ ElementType.FIELD })

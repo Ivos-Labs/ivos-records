@@ -7,7 +7,15 @@ import java.text.ParseException;
 import java.util.Date;
 
 /**
- * Format date YYYYMMDDHHmmss
+ * Converter to parse Date fields to String and vice versa using the 'yyyyMMddHHmmss' format <br>
+ * <br>
+ * <b>Example</b>
+ * 
+ * <pre>
+ <code> &#64;Converter(DateTimeLatinConverver.class )
+  &#64PipedField(0)
+  private Date field1;</code>
+ * </pre>
  * 
  * @author www.ivoslabs.com
  *

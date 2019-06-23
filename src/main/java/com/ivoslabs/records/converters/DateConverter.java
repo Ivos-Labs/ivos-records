@@ -10,15 +10,14 @@ import java.util.Date;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Converter to parse Date fields to String and viceversa <br>
+ * Converter to parse Date fields to String and vice versa <br>
  * <br>
  * <b>Example</b>
  * 
  * <pre>
  <code> &#64;Converter(value=DateConverver.class, args="MM-dd-yyyy")
   &#64PipedField(0)
-  private Date field1;
- </code>
+  private Date field1;</code>
  * </pre>
  * 
  * @author www.ivoslabs.com
@@ -27,9 +26,7 @@ import org.apache.commons.lang3.Validate;
  */
 public class DateConverter implements FieldConverter<Date> {
 
-    /**
-     * 
-     */
+    /** */
     public DateConverter() {
 	super();
     }
@@ -39,7 +36,6 @@ public class DateConverter implements FieldConverter<Date> {
      * 
      * @see com.ivoslabs.records.converters.FieldConverter#toString(java.lang.Object, java.lang.String[])
      */
-
     public String toString(Date object, String... args) {
 	String date = null;
 	Validate.notNull(args, "DateConverter requiere one arguments (pattern date)");

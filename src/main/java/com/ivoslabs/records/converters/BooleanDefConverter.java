@@ -4,6 +4,16 @@
 package com.ivoslabs.records.converters;
 
 /**
+ * Converter to parse Boolean fields to String and vice versa using the 'true' String as the true value and the 'false' String as the false value<br>
+ * <br>
+ * <b>Example</b>
+ * 
+ * <pre>
+ <code> &#64;Converter(BooleanDefConverter.class )
+  &#64PipedField(0)
+  private Boolean field1;</code>
+ * </pre>
+ * 
  * @author www.ivoslabs.com
  *
  */

@@ -4,6 +4,16 @@
 package com.ivoslabs.records.converters;
 
 /**
+ * Converter to parse Boolean fields to String and vice versa using the 'Y' String as the true value and the 'N' String as the false value<br>
+ * <br>
+ * <b>Example</b>
+ * 
+ * <pre>
+ <code> &#64;Converter(BooleanYNConverter.class )
+  &#64PipedField(0)
+  private Boolean field1;</code>
+ * </pre>
+ * 
  * @author www.ivoslabs.com
  *
  */
