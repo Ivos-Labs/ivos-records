@@ -7,7 +7,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 /**
- * Converter to parse Date fields to String and viceversa <br>
+ * Converter to parse Date fields to String and viceversa using the 'yyyyMMdd' format <br>
  * <br>
  * <b>Example</b>
  * 

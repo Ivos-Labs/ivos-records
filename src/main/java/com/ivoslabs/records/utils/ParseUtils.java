@@ -53,7 +53,7 @@ public class ParseUtils {
     private static final char BREAK_LINE = '\n';
 
     /**
-     * Gets the template
+     * Gets the ClassParseDTO
      * 
      * @param type    Class to use
      * @param annon   indicates the type of fields to read, Pic or PipedField
@@ -134,13 +134,14 @@ public class ParseUtils {
     }
 
     /**
-     * Parse a string value to a type
+     * Parse a string value to a Object
      * 
-     * @param value
-     * @param type
-     * @return
+     * @param value a string representation of a Object
+     * @param type  required type
+     * @return the object represented by the received String
      */
     public static Object parse(String value, Class<?> type) {
+
 	Object v = null;
 
 	if (type != String.class) {
@@ -201,26 +202,33 @@ public class ParseUtils {
     }
 
     /**
+     * Read a file and for each row execute the received RowConsumer
      * 
-     * @param url
-     * @param action
+     * @param url    path file to be read
+     * @param action action to do for each row
+     * @throws RecordParserException when occur an Exception processing a row
      */
     public static void readTextFile(String url, RowConsumer action) throws RecordParserException {
 	BufferedReader br = null;
-
+	int rowNumber = 0;
 	try {
 
 	    br = new BufferedReader(new FileReader(url));
 	    String sCurrentLine;
 
 	    while ((sCurrentLine = br.readLine()) != null) {
-		action.process(sCurrentLine);
+		rowNumber++;
+		action.process(sCurrentLine, rowNumber);
 	    }
 
 	} catch (RecordParserException e) {
 	    throw e;
 	} catch (Exception e) {
-	    throw new RuntimeException(e);
+	    if (rowNumber > 0) {
+		throw new RecordParserException("An error has occurred while processing file: " + url + "; row: " + rowNumber + "; Detail: " + e.getMessage(), e);
+	    } else {
+		throw new RuntimeException(e);
+	    }
 	} finally {
 	    if (br != null) {
 		try {
@@ -284,10 +292,10 @@ public class ParseUtils {
     }
 
     /**
+     * Count the number of lines in a file
      * 
-     * @param filename
-     * @return
-     * @throws IOException
+     * @param filename path file
+     * @return the number of lines
      */
     public static int countLinesNew(String filename) {
 	InputStream is = null;
@@ -337,68 +345,4 @@ public class ParseUtils {
 	}
     }
 
-    /**
-     * Checks that the specified object reference is not {@code null} and throws a customized {@link NullPointerException} if it is. This method is designed primarily for doing parameter validation in methods and constructors with multiple parameters, as demonstrated below: <blockquote>
-     * 
-     * <pre>
-     * public Foo(Bar bar, Baz baz) {
-     *     ParseUtils.notNull(bar, "bar must not be null");
-     * }
-     * </pre>
-     * 
-     * </blockquote>
-     *
-     * @param obj     the object reference to check for nullity
-     * @param message detail message to be used in the event that a {@code
-     *                NullPointerException} is thrown
-     * @param         <T> the type of the reference
-     * @throws NullPointerException if {@code obj} is {@code null}
-     */
-    public static void notNull(Object obj, String message) {
-	if (obj == null) {
-	    throw new NullPointerException(message);
-	}
-    }
-
-    /**
-     * <p>
-     * Validate that the argument condition is {@code false}; otherwise throwing an exception.<br>
-     * This method is useful when validating according to an arbitrary boolean expression, such as validating a primitive number or using your own custom validation expression.
-     * </p>
-     *
-     * <pre>
-     * ParseUtils.notTrue(myObject.isOk(), "Message");
-     * </pre>
-     *
-     *
-     * @param expression the boolean expression to check
-     * @param message    the message
-     * @throws IllegalArgumentException if expression is {@code false}
-     */
-    public static void notTrue(boolean cond, String message) {
-	if (!cond) {
-	    throw new IllegalArgumentException(message);
-	}
-    }
-
-    /**
-     * <p>
-     * Validate that the argument condition is {@code true}; otherwise throwing an exception.<br>
-     * This method is useful when validating according to an arbitrary boolean expression, such as validating a primitive number or using your own custom validation expression.
-     * </p>
-     *
-     * <pre>
-     * ParseUtils.isTrue(myObject.isOk(), "Message");
-     * </pre>
-     *
-     * 
-     * @param expression the boolean expression to check
-     * @param message    the message
-     * @throws IllegalArgumentException if expression is {@code false}
-     */
-    public static void isTrue(boolean expression, String message) {
-	if (expression) {
-	    throw new IllegalArgumentException(message);
-	}
-    }
 }

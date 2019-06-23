@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.lang3.Validate;
+
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
@@ -16,7 +18,7 @@ import com.ivoslabs.records.converters.FieldConverter;
 import com.ivoslabs.records.exceptions.ParseException;
 import com.ivoslabs.records.exceptions.RecordParserException;
 import com.ivoslabs.records.function.Consumer;
-import com.ivoslabs.records.utils.MutableCounter;
+import com.ivoslabs.records.utils.MutableInt;
 import com.ivoslabs.records.utils.ParseUtils;
 
 /**
@@ -57,8 +59,8 @@ public class Extractor {
      * @return a T instance
      */
     public static <T extends Object> T convertStringToObject(String data, Class<T> type, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.notNull(type, "type must not be null");
+	Validate.notNull(data, "data must not be null");
+	Validate.notNull(type, "type must not be null");
 
 	T obj;
 	ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
@@ -78,8 +80,8 @@ public class Extractor {
      * @return a List of T instance
      */
     public static <T extends Object> List<T> convertStringsToObjects(List<String> data, Class<T> type, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.notNull(type, "type must not be null");
+	Validate.notNull(data, "data must not be null");
+	Validate.notNull(type, "type must not be null");
 
 	List<T> list = new ArrayList<T>();
 
@@ -138,14 +140,12 @@ public class Extractor {
 	    final Consumer<T> tailConsumer,
 	    Class<? extends Annotation> annon) {
 
-	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(dataType, "type must not be null");
-	ParseUtils.notNull(dataConsumer, "action must not be null");
+	Validate.notNull(file, "file must not be null");
+	Validate.notNull(dataType, "type must not be null");
+	Validate.notNull(dataConsumer, "action must not be null");
 
-	ParseUtils.isTrue(headerType != null && (headerSize == null || headerSize < 1), "headerSize have to be greater than 0");
-	ParseUtils.isTrue(tailType != null && (tailSize == null || tailSize < 1), "tailSize have to be greater than 0");
-
-	final MutableCounter rowNum = new MutableCounter();
+	Validate.isTrue(headerType == null || (headerSize != null && headerSize > 0), "headerSize have to be greater than 0");
+	Validate.isTrue(tailType == null || (tailSize != null && tailSize > 0), "tailSize have to be greater than 0");
 
 	final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
 	final ClassParseDTO headerExtracts;
@@ -167,16 +167,16 @@ public class Extractor {
 	    tailExtracts = null;
 	}
 
+	final MutableInt rowNum = new MutableInt();
+
 	RowConsumer actionForRow = new RowConsumer() {
 
-	    public void process(String row) throws Exception {
-
-		rowNum.increment();
-
-		if (headerExtracts != null && rowNum.getValue() <= headerSize) {
+	    public void process(String row, int rowNumber) throws Exception {
+		rowNum.setValue(rowNumber);
+		if (headerExtracts != null && rowNumber <= headerSize) {
 		    H object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
 		    headerConsumer.process(object);
-		} else if (tailLine != null && rowNum.getValue() > tailLine) {
+		} else if (tailLine != null && rowNumber > tailLine) {
 		    T object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
 		    tailConsumer.process(object);
 		} else {
@@ -224,7 +224,7 @@ public class Extractor {
      * @return a string representation of the value of the received object
      */
     public static String convertObjectToString(Object data, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
+	Validate.notNull(data, "data must not be null");
 	String obj;
 	ClassParseDTO template = ParseUtils.getTemplate(data.getClass(), annon, Boolean.FALSE);
 	if (annon.equals(PipedField.class)) {
@@ -244,8 +244,8 @@ public class Extractor {
      * @return a list of string representation of the value of each item in the received object list
      */
     public static List<String> convertObjectsToStrings(List<?> data, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.isTrue(data.isEmpty(), "data must not be empty");
+	Validate.notNull(data, "data must not be null");
+	Validate.isTrue(!data.isEmpty(), "data must not be empty");
 
 	List<String> list = new ArrayList<String>();
 
@@ -298,9 +298,9 @@ public class Extractor {
      */
     public static <H, D, T> void convertObjectsToFile(String file, Stack<H> headers, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
 
-	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.isTrue(data.empty(), "data must not be empty");
+	Validate.notNull(file, "file must not be null");
+	Validate.notNull(data, "data must not be null");
+	Validate.isTrue(!data.empty(), "data must not be empty");
 
 	RowSuplier<H> rowHeaderSuplier = null;
 	RowSuplier<D> rowDataSuplier;

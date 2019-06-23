@@ -6,7 +6,6 @@ package com.ivoslabs.records.core;
 /**
  * Interface to be implemented to process a file row<br>
  * Evaluate if the line is a header, data or tail<br>
- * Used to process line from a file
  * 
  * @author www.ivoslabs.com
  *
@@ -14,8 +13,12 @@ package com.ivoslabs.records.core;
 public interface RowConsumer {
 
     /**
-     * @param row
+     * Evaluate if the line is a header, data or tail en execute the respetive Parser
+     * 
+     * @param row       line content
+     * @param rowNumber row number
+     * @throws Exception
      */
-    void process(String row) throws Exception;
+    void process(String row, int rowNumber) throws Exception;
 
 }

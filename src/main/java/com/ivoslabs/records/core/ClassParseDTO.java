@@ -11,12 +11,14 @@ import java.util.Map;
 import com.ivoslabs.records.converters.FieldConverter;
 
 /**
+ * DTO
+ * 
  * @author www.ivoslabs.com
  *
  */
 public class ClassParseDTO {
 
-    /** */
+    /** The fieldParseDTOs */
     private List<FieldParseDTO> fieldParseDTOs = new ArrayList<FieldParseDTO>();
 
     /** The type (pic or pipe) */
