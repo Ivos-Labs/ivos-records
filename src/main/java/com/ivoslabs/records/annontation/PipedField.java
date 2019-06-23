@@ -15,8 +15,7 @@ import java.lang.annotation.Target;
  * <b>Example</b>
  * 
  * <pre>
- * <code>
-    // text field
+ * <code>   // text field
     &#64;PipedField(0)
     private String field1;
     
@@ -27,13 +26,11 @@ import java.lang.annotation.Target;
     // date field (or whatever that require a converter)
     &#64;Converter(DateLatinConverver.class)
     &#64;PipedField(3)
-    private Date field3;
-    
-    </code>
+    private Date field3; </code>
  * </pre>
  * 
  * @author www.ivoslabs.com
- * @see com.ivoslabs.records.annontation.PipedField#value() PipedField#value
+ * @see com.ivoslabs.records.annontation.PipedField#value() &#64;PipedField#value
  * @see com.ivoslabs.records.annontation.Converter Converter
  *
  */
@@ -45,12 +42,11 @@ public @interface PipedField {
      * Specify the index where will be found the field in row separated by pipe
      * 
      * @return The index where will be found the field
-     * @see com.ivoslabs.records.annontation.PipedField PipedField
+     * @see com.ivoslabs.records.annontation.PipedField &#64;PipedField
      * @see com.ivoslabs.records.annontation.Converter Converter
      * 
      */
     int value();
-     
 
     /**
      * Specify the max size of the field as String

@@ -14,10 +14,10 @@ import com.ivoslabs.records.converters.DateLatinConverver;
  * @author www.ivoslabs.com
  *
  */
+@IfNull("-")
 public class PipedDataDTO {
 
-    @IfNull("-")
-    @PipedField(value=0, maxSize=3)
+    @PipedField(value = 0, maxSize = 3)
     private String field1;
 
     @PipedField(1)
@@ -35,6 +35,10 @@ public class PipedDataDTO {
     @Converter(DateLatinConverver.class)
     @PipedField(5)
     private Date field6;
+
+    @Converter(SubConverter.class)
+    @PipedField(6)
+    private SubField field7;
 
     /**
      * Gets the field1
@@ -144,6 +148,24 @@ public class PipedDataDTO {
 	this.field6 = field6;
     }
 
+    /**
+     * Gets the field7
+     *
+     * @return {@code SubField} The field7
+     */
+    public SubField getField7() {
+	return this.field7;
+    }
+
+    /**
+     * Sets the field7
+     *
+     * @param field7 {@code SubField} The field7 to set
+     */
+    public void setField7(SubField field7) {
+	this.field7 = field7;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -151,7 +173,7 @@ public class PipedDataDTO {
      */
     @Override
     public String toString() {
-	return "PipedOkDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + "]";
+	return "PipedDataDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + ", field7=" + field7 + "]";
     }
 
 }

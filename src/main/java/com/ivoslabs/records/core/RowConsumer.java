@@ -8,7 +8,7 @@ package com.ivoslabs.records.core;
  * Evaluate if the line is a header, data or tail<br>
  * Used to process line from a file
  * 
- * @author www.ivoslabs.mx
+ * @author www.ivoslabs.com
  *
  */
 public interface RowConsumer {

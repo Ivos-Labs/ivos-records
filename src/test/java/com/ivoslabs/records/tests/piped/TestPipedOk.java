@@ -15,7 +15,8 @@ import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
 import com.ivoslabs.records.dtos.piped.PipedDataDTO;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.dtos.piped.SubField;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**
@@ -24,13 +25,13 @@ import com.ivoslabs.records.parsers.PipedParser;
  */
 public class TestPipedOk {
 
-    //@Test
+    @Test
     public void testToObject() {
 	PipedParser ex = new PipedParser();
 
-	PipedDataDTO dto = ex.toObject("b|2|1|false|2.2|20190306120232", PipedDataDTO.class);
+	PipedDataDTO dto = ex.toObject("b|2|1|false|2.2|20190306|cc,dd", PipedDataDTO.class);
 
-	String expected = "PipedOkDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 12:02:32 CST 2019]";
+	String expected = "PipedDataDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 00:00:00 CST 2019, field7=SubField [a=cc, b=dd]]";
 	String actual = dto.toString();
 
 	assertEquals(expected, actual);
@@ -46,7 +47,7 @@ public class TestPipedOk {
 
 	List<PipedDataDTO> dtos = ex.toObjects(rows, PipedDataDTO.class);
 
-	String expected = "PipedOkDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 12:02:32 CST 2019]";
+	String expected = "PipedDataDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 12:02:32 CST 2019]";
 	String actual = null;
 	for (PipedDataDTO dataDTO : dtos) {
 	    actual = dataDTO.toString();
@@ -67,19 +68,21 @@ public class TestPipedOk {
 	dto.setField4(false);
 	dto.setField5(2.2);
 	
+	
 	try {
 	    dto.setField6(new DateLatinConverver().toObject("20190306"));
 	} catch (ParseException e) {
 	    e.printStackTrace();
 	}
+	dto.setField7(new SubField("aa", "bb"));
 
-	String expected = "-|2|1|false|2.2|20190306";
+	String expected = "-|2|1|false|2.2|20190306|aa,bb";
 	String actual = ex.toString(dto);
 
 	assertEquals(expected, actual);
     }
 
-    //@Test
+//    @Test
     public void testToStrings() {
 	PipedParser ex = new PipedParser();
 
@@ -114,14 +117,14 @@ public class TestPipedOk {
 
 	PipedParser ex = new PipedParser();
 
-	ObjectConsumer<PipedDataDTO> action = new ObjectConsumer<PipedDataDTO>() {
+	Consumer<PipedDataDTO> action = new Consumer<PipedDataDTO>() {
 
 	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());
 	    }
 	};
 
-	ex.fileToObjects("src/test/resources/piped.piped", PipedDataDTO.class, action);
+	ex.processFile("src/test/resources/piped.piped", PipedDataDTO.class, action);
 
 	assertTrue(true);
     }

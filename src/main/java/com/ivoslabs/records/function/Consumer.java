@@ -10,7 +10,7 @@ package com.ivoslabs.records.function;
  * @author www.ivoslabs.com
  *
  */
-public interface ObjectConsumer<T> {
+public interface Consumer<T> {
 
     /**
      * Action to do for each Object, <br>

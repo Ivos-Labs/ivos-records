@@ -49,6 +49,9 @@ public class ParseUtils {
     /** The constant true (T) used to parse a boolean without converter */
     private static final String TRUE_T = "T";
 
+    /** The constant \n */
+    private static final char BREAK_LINE = '\n';
+
     /**
      * Gets the template
      * 
@@ -65,14 +68,18 @@ public class ParseUtils {
 
 	Field fields[] = type.getDeclaredFields();
 
+	// generic if-null value
+	IfNull genIfNull = type.getDeclaredAnnotation(IfNull.class);
+	String genIfNullValue = genIfNull != null ? genIfNull.value() : null;
+
 	for (Field field : fields) {
 	    FieldParseDTO ex = null;
 
 	    IfNull ifNull = field.getDeclaredAnnotation(IfNull.class);
-	    String ifNullValue = ifNull != null ? ifNull.value() : null;
+	    String ifNullValue = ifNull != null ? ifNull.value() : genIfNullValue;
 
 	    if (annon.equals(PipedField.class)) {
-		PipedField pf = field.getAnnotation(PipedField.class);
+		PipedField pf = field.getDeclaredAnnotation(PipedField.class);
 		if (pf != null) {
 		    Integer maxSize = pf.maxSize() > 0 ? pf.maxSize() : null;
 		    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class), ifNullValue, maxSize);
@@ -275,9 +282,6 @@ public class ParseUtils {
 	    }
 	}
     }
-
-    /** */
-    private static final char BREAK_LINE = '\n';
 
     /**
      * 

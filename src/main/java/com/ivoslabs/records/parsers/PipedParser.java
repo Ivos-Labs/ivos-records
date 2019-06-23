@@ -8,13 +8,15 @@ import java.util.Stack;
 
 import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.core.Extractor;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 
 /**
- * Utility to parse piped data to pojos
+ * Utility to parse piped data to POJOs (using {@code @PipedField } annotation) and viceversa
  * 
  * @author www.ivoslabs.com
- *
+ * @see PipedField &#64;PipedField
+ * @see com.ivoslabs.records.annontation.PipedField#value() &#64;PipedField#value
+ * @see com.ivoslabs.records.annontation.Converter Converter
  */
 public class PipedParser {
 
@@ -31,104 +33,119 @@ public class PipedParser {
      **********************************/
 
     /**
-     * Creates a new instance of T using the received data content
+     * Creates a new instance of T using the received data
      * 
      * @param      <T> Required type
      * @param data values separated by pipes
-     * @param type Required type
-     * @return A T instance
+     * @param type required type
+     * @return a T instance
      */
     public <T> T toObject(String data, Class<T> type) {
 	return Extractor.convertStringToObject(data, type, PipedField.class);
     }
 
     /**
-     * Creates a list of instances of T using the received data content
+     * Creates a new instance of T using each item in the received data list
      * 
      * @param      <T> Required type
-     * @param data List of values separated by pipes
-     * @param type Required type
-     * @return A List of T instance
+     * @param data list of values separated by pipes
+     * @param type required type
+     * @return a List of T instance
      */
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
 	return Extractor.convertStringsToObjects(data, type, PipedField.class);
     }
 
     /**
-     * Creates a instance of T for each row in a file and execute the respective received ObjectConsumer
+     * Creates an instance of H, D, or T for each row in a file and execute the respective received ObjectConsumer
      * 
      * @param                <H> Header type
      * @param                <D> Data type
      * @param                <T> Tail type
      * @param file           file path
-     * @param headerType     Header type
-     * @param headerSize     Header size
+     * @param headerType     header type
+     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
      * @param headerConsumer action to do for each header instance
-     * @param dataType       Data type
+     * @param dataType       data type
      * @param dataConsumer   action to do for each data instance
-     * @param tailType       Tail type
-     * @param tailSize       Tail size
+     * @param tailType       tail type
+     * @param tailSize       number of last rows to be processed with tailType and tailConsumer
      * @param tailConsumer   action to do for each tail instance
      */
-    public <H, D, T> void fileToObjects(String file,
+    public <H, D, T> void processFile(String file,
+	    // header
 	    Class<H> headerType,
 	    Integer headerSize,
-	    ObjectConsumer<H> headerConsumer,
+	    Consumer<H> headerConsumer,
+	    // data
 	    Class<D> dataType,
-	    ObjectConsumer<D> dataConsumer,
+	    Consumer<D> dataConsumer,
+	    // tail
 	    Class<T> tailType,
 	    Integer tailSize,
-	    ObjectConsumer<T> tailConsumer) {
+	    Consumer<T> tailConsumer) {
 
-	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
+	Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
     }
 
     /**
+     * Creates an instance of H or T for each row in a file and execute the respective received ObjectConsumer
      * 
-     * @param file
-     * @param headerType
-     * @param headerSize
-     * @param headerConsumer
-     * @param dataType
-     * @param dataConsumer
+     * @param                <H> Header type
+     * @param                <D> Data type
+     * @param file           file path
+     * @param headerType     header type
+     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
+     * @param headerConsumer action to do for each header instance
+     * @param dataType       data type
+     * @param dataConsumer   action to do for each data instance
      */
-    public <T, U, V> void fileToObjects(String file,
-	    Class<T> headerType,
+    public <H, D> void processFile(String file,
+	    // header
+	    Class<H> headerType,
 	    Integer headerSize,
-	    ObjectConsumer<T> headerConsumer,
-	    Class<U> dataType,
-	    ObjectConsumer<U> dataConsumer) {
+	    Consumer<H> headerConsumer,
+	    // data
+	    Class<D> dataType,
+	    Consumer<D> dataConsumer) {
 
-	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, PipedField.class);
+	this.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, null, null);
     }
 
     /**
+     * Creates an instance of D or T for each row in a file and execute the respective received ObjectConsumer
      * 
-     * @param file
-     * @param dataType
-     * @param dataConsumer
-     * @param tailType
-     * @param tailSize
-     * @param tailConsumer
+     * @param              <D> Data type
+     * @param              <T> Tail type
+     * @param file         file path
+     * @param dataType     data type
+     * @param dataConsumer action to do for each data instance
+     * @param tailType     tail type
+     * @param tailSize     number of last rows to be processed with tailType and tailConsumer
+     * @param tailConsumer action to do for each tail instance
      */
-    public <T, U, V> void fileToObjects(String file,
-	    Class<U> dataType,
-	    ObjectConsumer<U> dataConsumer,
-	    Class<V> tailType,
+    public <D, T> void processFile(String file,
+	    // Data
+	    Class<D> dataType,
+	    Consumer<D> dataConsumer,
+	    // Tail
+	    Class<T> tailType,
 	    Integer tailSize,
-	    ObjectConsumer<V> tailConsumer) {
+	    Consumer<T> tailConsumer) {
 
-	Extractor.convertFileToObjects(file, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
+	this.processFile(file, null, null, null, dataType, dataConsumer, tailType, tailSize, tailConsumer);
     }
 
     /**
+     * Creates an instance of D for each row in a file and execute the respective received ObjectConsumer
      * 
-     * @param file
-     * @param dataType
-     * @param dataConsumer
+     * @param              <D> Data type
+     * @param file         file path
+     * @param dataType     fata type
+     * @param dataConsumer action to do for each data instance
      */
-    public <T> void fileToObjects(String file, Class<T> dataType, ObjectConsumer<T> dataConsumer) {
-	Extractor.convertFileToObjects(file, dataType, dataConsumer, PipedField.class);
+    public <D> void processFile(String file, Class<D> dataType, Consumer<D> dataConsumer) {
+	this.processFile(file, null, null, null, dataType, dataConsumer, null, null, null);
     }
 
     /********************************
@@ -148,18 +165,20 @@ public class PipedParser {
      **********************************/
 
     /**
+     * Creates a {@code String} object representing the received object
      * 
-     * @param data
-     * @return
+     * @param data the {@code Object} to be converted to a {@code Strings}
+     * @return a string representation of the value of the received object
      */
     public String toString(Object data) {
 	return Extractor.convertObjectToString(data, PipedField.class);
     }
 
     /**
+     * Creates a {@code String} object representing each item in the received object list
      * 
-     * @param data
-     * @return
+     * @param data the {@code Object} list to be converted to a {@code Strings}
+     * @return a list of string representation of the value of each item in the received object list
      */
     public List<String> toStrings(List<?> data) {
 	return Extractor.convertObjectsToStrings(data, PipedField.class);
@@ -182,43 +201,55 @@ public class PipedParser {
      ********************************/
 
     /**
+     * Creates a {@code String} object representing each item in the received object lists and append it into a file
      * 
-     * @param file
-     * @param header
-     * @param data
-     * @param tails
+     * @param        <H> Header type
+     * @param        <D> Data type
+     * @param        <T> Tail type
+     * @param file   path file to save string representations of the value of each item in the received object lists
+     * @param header objects to be appended into the fist rows of the file
+     * @param data   objects to be appended into after header rows
+     * @param tails  objects to be appended into the last rows of the file
      */
     public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
 	Extractor.convertObjectsToFile(file, header, data, tails, PipedField.class);
     }
 
     /**
+     * Creates a {@code String} object representing each item in the received object lists and append it into a file
      * 
-     * @param file
-     * @param header
-     * @param data
+     * @param        <H> Header type
+     * @param        <D> Data type
+     * @param file   path file to save string representations of the value of each item in the received object lists
+     * @param header objects to be appended into the fist rows of the file
+     * @param data   objects to be appended into after header rows
      */
     public <H, D> void objectsToFileHD(String file, Stack<H> header, Stack<D> data) {
-	Extractor.convertObjectsToFile(file, header, data, null, PipedField.class);
+	this.objectsToFile(file, header, data, null);
     }
 
     /**
+     * Creates a {@code String} object representing each item in the received object lists and append it into a file
      * 
-     * @param file
-     * @param data
-     * @param tails
+     * @param       <D> Data type
+     * @param       <T> Tail type
+     * @param file  path file to save string representations of the value of each item in the received object lists
+     * @param data  objects to be appended into after header rows
+     * @param tails objects to be appended into the last rows of the file
      */
     public <D, T> void objectsToFileDT(String file, Stack<D> data, Stack<T> tails) {
-	Extractor.convertObjectsToFile(file, null, data, tails, PipedField.class);
+	this.objectsToFile(file, null, data, tails);
     }
 
     /**
+     * Creates a {@code String} object representing each item in the received object list and append it into a file
      * 
-     * @param file
-     * @param data
+     * @param      <D> Data type
+     * @param file path file to save string representations of the value of each item in the received object list
+     * @param data objects to be appended into the file
      */
     public <D> void objectsToFile(String file, Stack<D> data) {
-	Extractor.convertObjectsToFile(file, null, data, null, PipedField.class);
+	this.objectsToFile(file, null, data, null);
     }
 
 }

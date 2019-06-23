@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.ivoslabs.records.dtos.copy.CopyDataDTO;
 import com.ivoslabs.records.dtos.copy.CopyHeader;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**
@@ -19,7 +19,7 @@ public class TestCopyFileHTRead {
     @Test
     public void testFileToObjects() {
 	// CopyHeader consumer (action to do for each CopyHeader)
-	ObjectConsumer<CopyHeader> headerConsumer = new ObjectConsumer<CopyHeader>() {
+	Consumer<CopyHeader> headerConsumer = new Consumer<CopyHeader>() {
 
 	    public void process(CopyHeader object) {
 		System.out.println(object.toString());
@@ -28,7 +28,7 @@ public class TestCopyFileHTRead {
 	};
 
 	// CopyDataDTO consumer (action to do for each CopyDataDTO)
-	ObjectConsumer<CopyDataDTO> dataConsumer = new ObjectConsumer<CopyDataDTO>() {
+	Consumer<CopyDataDTO> dataConsumer = new Consumer<CopyDataDTO>() {
 
 	    public void process(CopyDataDTO object) {
 		System.out.println(object.toString());
@@ -41,7 +41,7 @@ public class TestCopyFileHTRead {
 
 	String file = "data.copy";
 
-	copyParser.fileToObjects(file,
+	copyParser.processFile(file,
 		CopyHeader.class, headerSize, headerConsumer,
 		CopyDataDTO.class, dataConsumer);
     }

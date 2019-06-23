@@ -13,7 +13,7 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.dtos.copy.CopyDataDTO;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**
@@ -26,7 +26,7 @@ public class TestCopyFile {
     public void testFileToObjects() {
 
 	CopyParser ex = new CopyParser();
-	ex.fileToObjects("data.copy", CopyDataDTO.class, new ObjectConsumer<CopyDataDTO>() {
+	ex.processFile("data.copy", CopyDataDTO.class, new Consumer<CopyDataDTO>() {
 
 	    public void process(CopyDataDTO object) {
 		System.out.println(object.toString());

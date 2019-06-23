@@ -16,9 +16,7 @@ import com.ivoslabs.records.converters.FieldConverter;
  * <b>Example</b>
  * 
  * <pre>
- * <code>
-    
-    &#64;Converter(DateLatinConverver.class)
+ * <code>   &#64;Converter(DateLatinConverver.class)
     &#64;PipedField(0)
     private Date field1;
     
@@ -32,17 +30,12 @@ import com.ivoslabs.records.converters.FieldConverter;
     
     &#64;Converter(BooleanConverter.class, args={"trueValue","falseValue"})
     &#64;PipedField(2)
-    private Boolean field3;
-    
-    </code>
- * </pre>
- * 
- * <br>
+    private Boolean field3;</code></pre>
+ *  
  * <b>Custom converter</b>
  * 
  * <pre>
- * <code>
- public class UserConverter implements FieldConverter&lt;Integer> {
+ * <code>public class UserConverter implements FieldConverter&lt;Integer> {
 
  
     public UserConverter() {
@@ -72,7 +65,9 @@ import com.ivoslabs.records.converters.FieldConverter;
 	ParseUtils.isTrue(args[0].isEmpty(), "BooleanConverter requiere two arguments");
 
 	return string != null && string.equals(args[0]);
-    }</code>
+    }
+    
+  }</code>
  * </pre>
  * 
  * @author www.ivoslabs.com

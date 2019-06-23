@@ -13,11 +13,11 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.dtos.piped.PipedDataDTO;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**
- * @author www.ivos.mx
+ * @author www.ivoslabs.com
  *
  */
 public class TestPipedFile {
@@ -26,7 +26,7 @@ public class TestPipedFile {
     public void testFileToObjects() {
 	
 	PipedParser ex = new PipedParser();
-	ex.fileToObjects("pipeds.piped", PipedDataDTO.class, new ObjectConsumer<PipedDataDTO>() {
+	ex.processFile("pipeds.piped", PipedDataDTO.class, new Consumer<PipedDataDTO>() {
 
 	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());

@@ -10,7 +10,19 @@ import java.util.Date;
 import com.ivoslabs.records.utils.ParseUtils;
 
 /**
- * @author www.ivos.mx
+ * Converter to parse Date fields to String and viceversa <br>
+ * <br>
+ * <b>Example</b>
+ * 
+ * <pre>
+ <code> &#64;Converter(value=DateConverver.class, args="MM-dd-yyyy")
+  &#64PipedField(0)
+  private Date field1;
+ </code>
+ * </pre>
+ * 
+ * @author www.ivoslabs.com
+ * 
  *
  */
 public class DateConverter implements FieldConverter<Date> {

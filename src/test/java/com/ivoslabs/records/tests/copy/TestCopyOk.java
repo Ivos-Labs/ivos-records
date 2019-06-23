@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.ivoslabs.records.converters.DateLatinConverver;
 import com.ivoslabs.records.dtos.copy.CopyDataDTO;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.CopyParser;
 
 /**
@@ -107,14 +107,14 @@ public class TestCopyOk {
 
 	CopyParser ex = new CopyParser();
 
-	ObjectConsumer<CopyDataDTO> action = new ObjectConsumer<CopyDataDTO>() {
+	Consumer<CopyDataDTO> action = new Consumer<CopyDataDTO>() {
 
 	    public void process(CopyDataDTO object) {
 		System.out.println(object.toString());
 	    }
 	};
 
-	ex.fileToObjects("src/test/resources/copy.cbl", CopyDataDTO.class, action);
+	ex.processFile("src/test/resources/copy.cbl", CopyDataDTO.class, action);
 
 	assertTrue(true);
     }

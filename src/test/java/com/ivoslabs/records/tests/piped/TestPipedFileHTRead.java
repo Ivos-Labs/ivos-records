@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.ivoslabs.records.dtos.piped.PipedHeader;
 import com.ivoslabs.records.dtos.piped.PipedDataDTO;
 import com.ivoslabs.records.dtos.piped.PipedTail;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
 
 /**
@@ -23,7 +23,7 @@ public class TestPipedFileHTRead {
     public void testFileToObjects() {
 
 	// PipedHeader consumer (action to do for each PipedHeader)
-	ObjectConsumer<PipedHeader> headerConsumer = new ObjectConsumer<PipedHeader>() {
+	Consumer<PipedHeader> headerConsumer = new Consumer<PipedHeader>() {
 	    
 	    public void process(PipedHeader object) {
 		System.out.println(object.toString());
@@ -32,7 +32,7 @@ public class TestPipedFileHTRead {
 	};
 
 	// PipedDataDTO consumer (action to do for each PipedDataDTO)
-	ObjectConsumer<PipedDataDTO> dataConsumer = new ObjectConsumer<PipedDataDTO>() {
+	Consumer<PipedDataDTO> dataConsumer = new Consumer<PipedDataDTO>() {
 	    
 	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());
@@ -41,7 +41,7 @@ public class TestPipedFileHTRead {
 	};
 
 	// PipedTail consumer (action to do for each PipedTail)
-	ObjectConsumer<PipedTail> tailConsumer = new ObjectConsumer<PipedTail>() {
+	Consumer<PipedTail> tailConsumer = new Consumer<PipedTail>() {
 	    public void process(PipedTail object) {
 		System.out.println(object.toString());
 	    }
@@ -55,7 +55,7 @@ public class TestPipedFileHTRead {
 	String file = "datahdt.piped";
 	
 	// read file
-	pipedParser.fileToObjects(file,
+	pipedParser.processFile(file,
 		PipedHeader.class, headerSize, headerConsumer,
 		PipedDataDTO.class, dataConsumer,
 		PipedTail.class, tailSize, tailConsumer);

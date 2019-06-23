@@ -15,7 +15,7 @@ import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.converters.FieldConverter;
 import com.ivoslabs.records.exceptions.ParseException;
 import com.ivoslabs.records.exceptions.RecordParserException;
-import com.ivoslabs.records.function.ObjectConsumer;
+import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.utils.MutableCounter;
 import com.ivoslabs.records.utils.ParseUtils;
 
@@ -34,11 +34,194 @@ public class Extractor {
     /** The constant pipe separator */
     private static final String PIPE_SEPARATOR = "\\|";
 
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /**********************************
+     * Start String-To-Object methods *
+     **********************************/
+
     /**
      * 
-     * @param data
-     * @param annon
-     * @return
+     * Creates a new instance of T using the received data
+     * 
+     * @param       <T> Required type
+     * @param data  values separated by pipes
+     * @param type  required type
+     * @param annon annotation to indicate if is Piped or COPY file
+     * @return a T instance
+     */
+    public static <T extends Object> T convertStringToObject(String data, Class<T> type, Class<? extends Annotation> annon) {
+	ParseUtils.notNull(data, "data must not be null");
+	ParseUtils.notNull(type, "type must not be null");
+
+	T obj;
+	ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+	obj = Extractor.convertStringRowToObject(data, type, extracts);
+
+	return obj;
+    }
+
+    /**
+     * 
+     * Creates a new instance of T using each item in the received data list
+     * 
+     * @param       <T> Required type
+     * @param data  list of values separated by pipes
+     * @param type  required type
+     * @param annon annotation to indicate if is Piped or COPY file
+     * @return a List of T instance
+     */
+    public static <T extends Object> List<T> convertStringsToObjects(List<String> data, Class<T> type, Class<? extends Annotation> annon) {
+	ParseUtils.notNull(data, "data must not be null");
+	ParseUtils.notNull(type, "type must not be null");
+
+	List<T> list = new ArrayList<T>();
+
+	if (!data.isEmpty()) {
+	    int rowNum = 0;
+	    ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+
+	    try {
+		for (String row : data) {
+		    rowNum++;
+		    T object;
+		    object = Extractor.convertStringRowToObject(row, type, extracts);
+		    list.add(object);
+		}
+	    } catch (RecordParserException e) {
+		throw new RecordParserException("An error has occurred while processing row: " + rowNum + "; Detail: " + e.getMessage(), e);
+	    } catch (Exception e) {
+		throw new RecordParserException("An error has occurred while processing row: " + rowNum, e);
+	    }
+
+	}
+
+	return list;
+
+    }
+
+    /**
+     * 
+     * Creates an instance of H, D or T for each row in a file and execute the respective received ObjectConsumer
+     * 
+     * @param                <H> Header type
+     * @param                <D> Data type
+     * @param                <T> Tail type
+     * @param file           file path
+     * @param headerType     header type
+     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
+     * @param headerConsumer action to do for each header instance
+     * @param dataType       data type
+     * @param dataConsumer   action to do for each data instance
+     * @param tailType       tail type
+     * @param tailSize       number of last rows to be processed with tailType and tailConsumer
+     * @param tailConsumer   action to do for each tail instance
+     * @param annon          annotation to indicate if is Piped or COPY file
+     */
+    public static <H, D, T> void processFile(String file,
+	    // header
+	    final Class<H> headerType,
+	    final Integer headerSize,
+	    final Consumer<H> headerConsumer,
+	    // data
+	    final Class<D> dataType,
+	    final Consumer<D> dataConsumer,
+	    // tail
+	    final Class<T> tailType,
+	    Integer tailSize,
+	    final Consumer<T> tailConsumer,
+	    Class<? extends Annotation> annon) {
+
+	ParseUtils.notNull(file, "file must not be null");
+	ParseUtils.notNull(dataType, "type must not be null");
+	ParseUtils.notNull(dataConsumer, "action must not be null");
+
+	ParseUtils.isTrue(headerType != null && (headerSize == null || headerSize < 1), "headerSize have to be greater than 0");
+	ParseUtils.isTrue(tailType != null && (tailSize == null || tailSize < 1), "tailSize have to be greater than 0");
+
+	final MutableCounter rowNum = new MutableCounter();
+
+	final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
+	final ClassParseDTO headerExtracts;
+	final ClassParseDTO tailExtracts;
+
+	final Integer tailLine;
+
+	if (headerType != null) {
+	    headerExtracts = ParseUtils.getTemplate(headerType, annon, Boolean.TRUE);
+	} else {
+	    headerExtracts = null;
+	}
+
+	if (tailType != null) {
+	    tailLine = ParseUtils.countLinesNew(file) - tailSize;
+	    tailExtracts = ParseUtils.getTemplate(tailType, annon, Boolean.TRUE);
+	} else {
+	    tailLine = null;
+	    tailExtracts = null;
+	}
+
+	RowConsumer actionForRow = new RowConsumer() {
+
+	    public void process(String row) throws Exception {
+
+		rowNum.increment();
+
+		if (headerExtracts != null && rowNum.getValue() <= headerSize) {
+		    H object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
+		    headerConsumer.process(object);
+		} else if (tailLine != null && rowNum.getValue() > tailLine) {
+		    T object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
+		    tailConsumer.process(object);
+		} else {
+		    D object = Extractor.convertStringRowToObject(row, dataType, extracts);
+		    dataConsumer.process(object);
+		}
+
+	    }
+
+	};
+
+	try {
+	    ParseUtils.readTextFile(file, actionForRow);
+	} catch (RecordParserException e) {
+	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue() + "; Detail: " + e.getMessage(), e);
+	} catch (Exception e) {
+	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
+	}
+
+    }
+
+    /********************************
+     * End String-To-Object methods *
+     ********************************/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /**********************************
+     * Start Object-To-String methods *
+     **********************************/
+
+    /**
+     * 
+     * Creates a {@code String} object representing the received object
+     * 
+     * @param data  the {@code Object} to be converted to a {@code Strings}
+     * @param annon annotation to indicate if is Piped or COPY file
+     * 
+     * @return a string representation of the value of the received object
      */
     public static String convertObjectToString(Object data, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(data, "data must not be null");
@@ -54,10 +237,11 @@ public class Extractor {
     }
 
     /**
+     * Creates a {@code String} object representing each item in the received object list
      * 
-     * @param data
-     * @param annon
-     * @return
+     * @param data  the {@code Object} list to be converted to a {@code Strings}
+     * @param annon annotation to indicate if is Piped or COPY file
+     * @return a list of string representation of the value of each item in the received object list
      */
     public static List<String> convertObjectsToStrings(List<?> data, Class<? extends Annotation> annon) {
 	ParseUtils.notNull(data, "data must not be null");
@@ -88,6 +272,31 @@ public class Extractor {
 
     }
 
+    /********************************
+     * End Object-To-String methods *
+     ********************************/
+
+    /***
+     * *
+     ***/
+
+    /***
+     * *
+     ***/
+
+    /********************************
+     * Start Object-To-File methods *
+     ********************************/
+
+    
+    /**
+     * 
+     * @param file
+     * @param headers
+     * @param data
+     * @param tails
+     * @param annon
+     */
     public static <H, D, T> void convertObjectsToFile(String file, Stack<H> headers, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
 
 	ParseUtils.notNull(file, "file must not be null");
@@ -166,203 +375,6 @@ public class Extractor {
 	}
 
 	ParseUtils.writeFile(file, headers, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
-    }
-
-    /**********************************
-     * Start String to object parsers *
-     **********************************/
-
-    /**
-     * 
-     * @param data
-     * @param type
-     * @param annon
-     * @return
-     */
-    public static <T extends Object> T convertStringToObject(String data, Class<T> type, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.notNull(type, "type must not be null");
-
-	T obj;
-	ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
-	obj = Extractor.convertStringRowToObject(data, type, extracts);
-
-	return obj;
-    }
-
-    /**
-     * 
-     * @param data
-     * @param type
-     * @param annon
-     * @return
-     */
-    public static <T extends Object> List<T> convertStringsToObjects(List<String> data, Class<T> type, Class<? extends Annotation> annon) {
-	ParseUtils.notNull(data, "data must not be null");
-	ParseUtils.notNull(type, "type must not be null");
-
-	List<T> list = new ArrayList<T>();
-
-	if (!data.isEmpty()) {
-	    int rowNum = 0;
-	    ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
-
-	    try {
-		for (String row : data) {
-		    rowNum++;
-		    T object;
-		    object = Extractor.convertStringRowToObject(row, type, extracts);
-		    list.add(object);
-		}
-	    } catch (RecordParserException e) {
-		throw new RecordParserException("An error has occurred while processing row: " + rowNum + "; Detail: " + e.getMessage(), e);
-	    } catch (Exception e) {
-		throw new RecordParserException("An error has occurred while processing row: " + rowNum, e);
-	    }
-
-	}
-
-	return list;
-
-    }
-
-    /**
-     * 
-     * @param file
-     * @param headerType
-     * @param headerSize
-     * @param headerConsumer
-     * @param dataType
-     * @param dataConsumer
-     * @param tailType
-     * @param tailSize
-     * @param tailConsumer
-     * @param annon
-     */
-    public static <T, U, V> void convertFileToObjects(String file,
-	    final Class<T> headerType,
-	    final Integer headerSize,
-	    final ObjectConsumer<T> headerConsumer,
-	    final Class<U> dataType,
-	    final ObjectConsumer<U> dataConsumer,
-	    final Class<V> tailType,
-	    Integer tailSize,
-	    final ObjectConsumer<V> tailConsumer,
-	    Class<? extends Annotation> annon) {
-
-	ParseUtils.notNull(file, "file must not be null");
-	ParseUtils.notNull(dataType, "type must not be null");
-	ParseUtils.notNull(dataConsumer, "action must not be null");
-
-	ParseUtils.isTrue(headerType != null && (headerSize == null || headerSize < 1), "headerSize have to be greater than 0");
-	ParseUtils.isTrue(tailType != null && (tailSize == null || tailSize < 1), "tailSize have to be greater than 0");
-
-	final MutableCounter rowNum = new MutableCounter();
-
-	final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
-	final ClassParseDTO headerExtracts;
-	final ClassParseDTO tailExtracts;
-
-	final Integer tailLine;
-
-	if (headerType != null) {
-	    headerExtracts = ParseUtils.getTemplate(headerType, annon, Boolean.TRUE);
-	} else {
-	    headerExtracts = null;
-	}
-
-	if (tailType != null) {
-	    tailLine = ParseUtils.countLinesNew(file) - tailSize;
-	    tailExtracts = ParseUtils.getTemplate(tailType, annon, Boolean.TRUE);
-	} else {
-	    tailLine = null;
-	    tailExtracts = null;
-	}
-
-	RowConsumer actionForRow = new RowConsumer() {
-
-	    public void process(String row) throws Exception {
-
-		rowNum.increment();
-
-		if (headerExtracts != null && rowNum.getValue() <= headerSize) {
-		    T object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
-		    headerConsumer.process(object);
-		} else if (tailLine != null && rowNum.getValue() > tailLine) {
-		    V object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
-		    tailConsumer.process(object);
-		} else {
-		    U object = Extractor.convertStringRowToObject(row, dataType, extracts);
-		    dataConsumer.process(object);
-		}
-
-	    }
-
-	};
-
-	try {
-	    ParseUtils.readTextFile(file, actionForRow);
-	} catch (RecordParserException e) {
-	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue() + "; Detail: " + e.getMessage(), e);
-	} catch (Exception e) {
-	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
-	}
-
-    }
-
-    /**
-     * 
-     * @param file
-     * @param dataType
-     * @param dataConsumer
-     * @param annon
-     */
-    public static <T> void convertFileToObjects(String file, final Class<T> dataType, final ObjectConsumer<T> dataConsumer, Class<? extends Annotation> annon) {
-	Extractor.convertFileToObjects(file, null, null, null, dataType, dataConsumer, null, null, null, annon);
-    }
-
-    /**
-     * 
-     * @param file
-     * @param headerType
-     * @param headerSize
-     * @param headerConsumer
-     * @param dataType
-     * @param dataConsumer
-     * @param annon
-     */
-    public static <T, U, V> void convertFileToObjects(String file,
-	    Class<T> headerType,
-	    Integer headerSize,
-	    ObjectConsumer<T> headerConsumer,
-	    Class<U> dataType,
-	    ObjectConsumer<U> dataConsumer,
-	    Class<? extends Annotation> annon) {
-
-	Extractor.convertFileToObjects(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, null, null, annon);
-
-    }
-
-    /**
-     * 
-     * @param file
-     * @param dataType
-     * @param dataConsumer
-     * @param tailType
-     * @param tailSize
-     * @param tailConsumer
-     * @param annon
-     */
-    public static <T, U, V> void convertFileToObjects(String file,
-	    Class<U> dataType,
-	    ObjectConsumer<U> dataConsumer,
-	    Class<V> tailType,
-	    Integer tailSize,
-	    ObjectConsumer<V> tailConsumer,
-	    Class<? extends Annotation> annon) {
-
-	Extractor.convertFileToObjects(file, null, null, null, dataType, dataConsumer, tailType, tailSize, tailConsumer, annon);
-
     }
 
     /***

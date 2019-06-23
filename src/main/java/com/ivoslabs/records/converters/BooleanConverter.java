@@ -6,7 +6,7 @@ package com.ivoslabs.records.converters;
 import com.ivoslabs.records.utils.ParseUtils;
 
 /**
- * @author www.ivos.mx
+ * @author www.ivoslabs.com
  *
  */
 public class BooleanConverter implements FieldConverter<Boolean> {
