@@ -25,22 +25,13 @@ public class ClassParseDTO {
     private Type type;
 
     /** Map of converter classes a their sigleton instance */
-    private Map<Class<?>, FieldConverter<?>> map = new HashMap<Class<?>, FieldConverter<?>>();
+    private Map<Class<?>, FieldConverter<?>> fieldConverterMap = new HashMap<Class<?>, FieldConverter<?>>();
 
     /** Map of Extracts by index (used in piped file) **/
-    private Map<Integer, FieldParseDTO> extractMap = new HashMap<Integer, FieldParseDTO>();
+    private Map<Integer, FieldParseDTO> fieldParserDTOMap = new HashMap<Integer, FieldParseDTO>();
 
     /** Last index */
     private Integer lastIndex;
-
-    /**
-     * 
-     * @author
-     *
-     */
-    public enum Type {
-	PIC, PIPE
-    }
 
     /**
      * 
@@ -51,54 +42,61 @@ public class ClassParseDTO {
     }
 
     /**
+     * Gets the FieldConverter
      * 
-     * @param converter
+     * @param clazz type of the required converter
+     * @return the converter
+     * @throws IllegalAccessException
+     * @throws InstantiationException
      */
-    void addConverter(FieldConverter<?> converter) {
-	this.map.put(converter.getClass(), converter);
+    FieldConverter<?> getConverter(Class<? extends FieldConverter<?>> clazz) throws InstantiationException, IllegalAccessException {
+	FieldConverter<?> c = this.fieldConverterMap.get(clazz);
+
+	if (c == null) {
+	    c = clazz.newInstance();
+	    this.fieldConverterMap.put(clazz, c);
+	}
+	return c;
     }
 
     /**
+     * Gets the fieldParseDTOs
      * 
-     * @param clazz
-     * @return
-     */
-    FieldConverter<?> getConverter(Class<? extends FieldConverter<?>> clazz) {
-	return this.map.get(clazz);
-    }
-
-    /**
-     * 
-     * @return
+     * @return the fieldParseDTOs
      */
     public List<FieldParseDTO> getFieldParseDTOs() {
 	return this.fieldParseDTOs;
     }
 
     /**
+     * Appends the specified element to the end of this fieldParseDTOs list
      * 
-     * @param extract
+     * @param fieldParseDTO
      */
     public void add(FieldParseDTO fieldParseDTO) {
 	this.fieldParseDTOs.add(fieldParseDTO);
     }
 
     /**
-     * Gets the extractMap
+     * Gets a FieldParseDTO by index (used in piped file)
      * 
-     * @return {@code Map<Integer,Extract>} the extractMap
+     * @return {@code FieldParseDTO} the FieldParseDTO
      */
-    public Map<Integer, FieldParseDTO> getExtractMap() {
-	return extractMap;
+    public FieldParseDTO getFieldParseDTO(int index) {
+	return this.fieldParserDTOMap.get(index);
     }
 
     /**
-     * Sets the extractMap
+     * 
+     * 
+     * Add a FieldParseDTO to the fieldParserDTOMap (used in piped file)
      *
-     * @param extractMap {@code Map<Integer,Extract>} the extractMap to set
+     * @param key            index of the FieldParseDTO field
+     * @param fieldParserDTO the {@code FieldParseDTO} to add
+     * 
      */
-    public void addExtractMap(int key, FieldParseDTO extract) {
-	this.extractMap.put(key, extract);
+    public void addFieldParserDTO(int key, FieldParseDTO fieldParserDTO) {
+	this.fieldParserDTOMap.put(key, fieldParserDTO);
     }
 
     /**

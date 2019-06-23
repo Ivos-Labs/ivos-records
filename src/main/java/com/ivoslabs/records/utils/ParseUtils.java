@@ -24,10 +24,10 @@ import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.core.ClassParseDTO;
-import com.ivoslabs.records.core.ClassParseDTO.Type;
 import com.ivoslabs.records.core.FieldParseDTO;
 import com.ivoslabs.records.core.RowConsumer;
 import com.ivoslabs.records.core.RowSuplier;
+import com.ivoslabs.records.core.Type;
 import com.ivoslabs.records.exceptions.RecordParserException;
 
 /**
@@ -53,12 +53,12 @@ public class ParseUtils {
     private static final char BREAK_LINE = '\n';
 
     /**
-     * Gets the ClassParseDTO
+     * Gets the ClassParseDTO with Converters and default values to parse Objest to Strings and vice versa
      * 
      * @param type    Class to use
      * @param annon   indicates the type of fields to read, Pic or PipedField
      * @param isToObj indicates if the tampleate will be used to parse String to Object
-     * @return the Template generated
+     * @return the ClassParseDTO generated
      */
     public static ClassParseDTO getTemplate(Class<?> type, Class<? extends Annotation> annon, boolean isToObj) {
 
@@ -109,7 +109,7 @@ public class ParseUtils {
 	    });
 
 	    for (FieldParseDTO extract : extracts) {
-		template.addExtractMap(extract.getPipeField().value(), extract);
+		template.addFieldParserDTO(extract.getPipeField().value(), extract);
 	    }
 
 	    template.setLastIndex(extracts.get(extracts.size() - 1).getPipeField().value());

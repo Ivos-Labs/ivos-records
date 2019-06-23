@@ -36,9 +36,9 @@ public class BooleanConverter implements FieldConverter<Boolean> {
 
     public String toString(Boolean object, String... args) {
 	String str;
-	Validate.notNull(args, "BooleanConverter requiere two arguments");
-	Validate.isTrue(args.length == 2, "BooleanConverter requiere two arguments");
-	Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requiere two arguments");
+	Validate.notNull(args, "BooleanConverter requires two arguments");
+	Validate.isTrue(args.length == 2, "BooleanConverter requires two arguments");
+	Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requires two arguments");
 
 	if (object != null && object) {
 	    str = args[0];
@@ -55,9 +55,9 @@ public class BooleanConverter implements FieldConverter<Boolean> {
      * @see com.ivoslabs.records.converters.FieldConverter#toObject(java.lang.String, java.lang.String[])
      */
     public Boolean toObject(String string, String... args) {
-	Validate.notNull(args, "BooleanConverter requiere two arguments");
-	Validate.isTrue(args.length == 2, "BooleanConverter requiere two arguments");
-	Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requiere two arguments");
+	Validate.notNull(args, "BooleanConverter requires two arguments");
+	Validate.isTrue(args.length == 2, "BooleanConverter requires two arguments");
+	Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requires two arguments");
 
 	return string != null && string.equals(args[0]);
     }

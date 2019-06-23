@@ -289,14 +289,19 @@ public class Extractor {
      ********************************/
 
     /**
+     * Creates a {@code String} object representing each item in the received object lists and append it into a file
      * 
-     * @param file
-     * @param headers
-     * @param data
-     * @param tails
-     * @param annon
+     * @param        <H> Header type
+     * @param        <D> Data type
+     * @param        <T> Tail type
+     * @param file   path file to save string representations of the value of each item in the received object lists
+     * @param header objects to be appended into the fist rows of the file
+     * @param data   objects to be appended into after header rows
+     * @param tails  objects to be appended into the last rows of the file
+     * @param annon  annotation to indicate if is Piped or COPY file
+     * 
      */
-    public static <H, D, T> void convertObjectsToFile(String file, Stack<H> headers, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
+    public static <H, D, T> void convertObjectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
 
 	Validate.notNull(file, "file must not be null");
 	Validate.notNull(data, "data must not be null");
@@ -310,8 +315,8 @@ public class Extractor {
 	final ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
 	final ClassParseDTO tailTemplate;
 
-	if (headers != null && !headers.empty()) {
-	    headerTemplate = ParseUtils.getTemplate(headers.get(0).getClass(), annon, Boolean.FALSE);
+	if (header != null && !header.empty()) {
+	    headerTemplate = ParseUtils.getTemplate(header.get(0).getClass(), annon, Boolean.FALSE);
 	} else {
 	    headerTemplate = null;
 	}
@@ -373,7 +378,7 @@ public class Extractor {
 	    }
 	}
 
-	ParseUtils.writeFile(file, headers, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
+	ParseUtils.writeFile(file, header, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
     }
 
     /***
@@ -405,22 +410,23 @@ public class Extractor {
      *************************/
 
     /**
-     * Conver a string to a dto object
+     * Conver a string to a DTO object
      * 
-     * @param data
-     * @param type
-     * @param template
-     * @param rowNum
-     * @return
+     * @param          <T> Required type
+     * @param data     a string representation of a DTO object
+     * @param type     required type
+     * @param template DTO with the the required converters to convert the object
+     * @return a new T instance
      */
     @SuppressWarnings("unchecked")
     private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, ClassParseDTO template) {
 
 	T object;
 
+	// array with values when is a piped String
 	String values[] = null;
 
-	if (template.getType().equals(ClassParseDTO.Type.PIPE)) {
+	if (template.getType().equals(Type.PIPE)) {
 	    values = data.split(PIPE_SEPARATOR, -1);
 	}
 
@@ -446,15 +452,19 @@ public class Extractor {
 	    Class<? extends FieldConverter<Object>> clazzConv = null;
 
 	    try {
-		if (template.getType().equals(ClassParseDTO.Type.PIPE)) {
+		if (template.getType().equals(Type.PIPE)) {
+		    // if is a piped file, get value from the array
 		    int indx = pf.value();
 		    strValue = values[indx];
 		} else {
-		    // extracts - Type is equals to Template.Type.PIC
+		    // template.type is equals to ClassParseDTO.Type.PIC
+		    // if is a piped file, get value from data
+		    // using beginIndex and size values in Pic Annotation
 		    int begin = pic.beginIndex();
 		    int size = pic.size();
 
 		    if ((begin + size) > data.length()) {
+			// avoid IndexOutOfBoundsException if data is shorter than expected
 			strValue = data.substring(begin);
 		    } else {
 			strValue = data.substring(begin, begin + size);
@@ -462,27 +472,21 @@ public class Extractor {
 
 		}
 
-		if (strValue != null) {
-
-		    field.setAccessible(Boolean.TRUE);
-		    try {
-			if (conv == null) {
-			    objValue = ParseUtils.parse(strValue, field.getType());
-			} else {
-			    clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
-			    FieldConverter<?> c = template.getConverter(clazzConv);
-			    if (c == null) {
-				c = clazzConv.newInstance();
-				template.addConverter(c);
-			    }
-			    objValue = c.toObject(strValue, conv.args());
-			}
-		    } catch (Exception e) {
-			throw new ParseException(e.getMessage(), e);
+		field.setAccessible(Boolean.TRUE);
+		try {
+		    if (conv == null) {
+			objValue = ParseUtils.parse(strValue, field.getType());
+		    } else {
+			clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
+			// get the converter in the ClassParseDTO
+			FieldConverter<?> c = template.getConverter(clazzConv);
+			objValue = c.toObject(strValue, conv.args());
 		    }
-
-		    field.set(object, objValue);
+		} catch (Exception e) {
+		    throw new ParseException(e.getMessage(), e);
 		}
+
+		field.set(object, objValue);
 
 	    } catch (IndexOutOfBoundsException e) {
 		// if is IndexOutOfBoundsException strValue is null
@@ -502,10 +506,12 @@ public class Extractor {
     }
 
     /**
+     * Creates a {@code String} object representing the received object
      * 
-     * @param data
-     * @param template
-     * @return
+     * @param data     the {@code Object} to be converted to a {@code Strings}
+     * @param template DTO with the the required converters to convert the object
+     * @return a string representation of the value of the received object
+     * 
      */
     @SuppressWarnings("unchecked")
     private static String convertPipedObjectToString(Object data, ClassParseDTO template) {
@@ -516,7 +522,8 @@ public class Extractor {
 
 	for (int idx = 0; idx <= last; idx++) {
 
-	    FieldParseDTO extract = template.getExtractMap().get(idx);
+	    FieldParseDTO extract = template.getFieldParseDTO(idx);
+
 	    if (extract != null) {
 
 		Field field = extract.getField();
@@ -546,15 +553,10 @@ public class Extractor {
 		    } else {
 			conv = extract.getConverter().value();
 			FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
-
-			if (c == null) {
-			    c = (FieldConverter<Object>) conv.newInstance();
-			    template.addConverter(c);
-			}
-
 			strValue = c.toString(value, extract.getConverter().args());
 		    }
 
+		    // cut if is longer than max size
 		    if (extract.getMaxSize() != null && strValue.length() > extract.getMaxSize()) {
 			strValue = strValue.substring(0, extract.getMaxSize());
 		    }
@@ -586,10 +588,12 @@ public class Extractor {
     }
 
     /**
+     * Creates a {@code String} object representing the received object
      * 
-     * @param data
-     * @param template
-     * @return
+     * @param data     the {@code Object} to be converted to a {@code Strings}
+     * @param template DTO with the the required converters to convert the object
+     * @return a string representation of the value of the received object
+     * 
      */
     @SuppressWarnings("unchecked")
     private static String convertCopyObjectToString(Object data, ClassParseDTO template) {
@@ -633,18 +637,15 @@ public class Extractor {
 		} else {
 		    conv = extract.getConverter().value();
 		    FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
-		    if (c == null) {
-			c = (FieldConverter<Object>) conv.newInstance();
-			template.addConverter(c);
-		    }
-
 		    val = c.toString(value, extract.getConverter().args());
 		}
 
 		int fieldSize = extract.getPic().size();
+		// cut string if is longer than fieldSize
 		if (val.length() > fieldSize) {
 		    val = val.substring(0, fieldSize);
 		} else if (val.length() < fieldSize) {
+		    // add spaces is is shorter than fieldSize
 		    StringBuilder ssb = new StringBuilder(fieldSize);
 		    ssb.append(val);
 		    int lim = fieldSize - val.length();
