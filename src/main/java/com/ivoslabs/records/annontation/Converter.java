@@ -30,8 +30,9 @@ import com.ivoslabs.records.converters.FieldConverter;
     
     &#64;Converter(BooleanConverter.class, args={"trueValue","falseValue"})
     &#64;PipedField(2)
-    private Boolean field3;</code></pre>
- *  
+    private Boolean field3;</code>
+ * </pre>
+ * 
  * <b>Custom converter</b>
  * 
  * <pre>

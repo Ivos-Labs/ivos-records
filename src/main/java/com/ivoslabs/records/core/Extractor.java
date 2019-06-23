@@ -288,7 +288,6 @@ public class Extractor {
      * Start Object-To-File methods *
      ********************************/
 
-    
     /**
      * 
      * @param file
