@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.tests.piped.dtos;
+package com.ivoslabs.records.tests.commons.dtos;
 
 import com.ivoslabs.records.converters.FieldConverter;
 
@@ -26,7 +26,6 @@ public class SubConverter implements FieldConverter<SubField> {
      * @see com.ivoslabs.records.converters.FieldConverter#toObject(java.lang.String, java.lang.String[])
      */
     public SubField toObject(String string, String... args) throws Exception {
-
 	return new SubField(string.split(",")[0], string.split(",")[1]);
     }
 

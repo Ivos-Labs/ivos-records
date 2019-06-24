@@ -13,6 +13,7 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.parsers.PipedParser;
+import com.ivoslabs.records.tests.commons.dtos.SubField;
 import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
 import com.ivoslabs.records.tests.piped.dtos.PipedHeader;
 import com.ivoslabs.records.tests.piped.dtos.PipedTail;
@@ -34,11 +35,11 @@ public class TestPipedFileHTSave {
 	header2.setField1("headerB");
 	header2.setField2(2);
 
-   // 
+	//
 	List<PipedHeader> headers = new ArrayList<PipedHeader>();
 	headers.add(header1);
 	headers.add(header2);
-	
+
 	// data
 
 	PipedDataDTO dto1 = new PipedDataDTO();
@@ -56,6 +57,7 @@ public class TestPipedFileHTSave {
 	dto2.setField4(false);
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
+	dto2.setField7(new SubField("QW", "WE"));
 
 	PipedDataDTO dto3 = new PipedDataDTO();
 	dto3.setField1("c");
@@ -91,7 +93,7 @@ public class TestPipedFileHTSave {
 	tailStack.addAll(tails);
 
 	PipedParser pipedParser = new PipedParser();
-	pipedParser.objectsToFile("datahdt.piped", headerStack, dataStack, tailStack);
+	pipedParser.objectsToFile("datahdt.psv", headerStack, dataStack, tailStack);
 
 	assertTrue(Boolean.TRUE);
 

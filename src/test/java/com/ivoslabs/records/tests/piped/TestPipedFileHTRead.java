@@ -24,20 +24,20 @@ public class TestPipedFileHTRead {
 
 	// PipedHeader consumer (action to do for each PipedHeader)
 	Consumer<PipedHeader> headerConsumer = new Consumer<PipedHeader>() {
-	    
+
 	    public void process(PipedHeader object) {
 		System.out.println(object.toString());
 	    }
-	    
+
 	};
 
 	// PipedDataDTO consumer (action to do for each PipedDataDTO)
 	Consumer<PipedDataDTO> dataConsumer = new Consumer<PipedDataDTO>() {
-	    
+
 	    public void process(PipedDataDTO object) {
 		System.out.println(object.toString());
 	    }
-	    
+
 	};
 
 	// PipedTail consumer (action to do for each PipedTail)
@@ -52,8 +52,8 @@ public class TestPipedFileHTRead {
 	int headerSize = 2;
 	int tailSize = 1;
 
-	String file = "datahdt.piped";
-	
+	String file = "datahdt.psv";
+
 	// read file
 	pipedParser.processFile(file,
 		PipedHeader.class, headerSize, headerConsumer,

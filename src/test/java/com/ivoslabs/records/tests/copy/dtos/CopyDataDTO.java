@@ -6,18 +6,23 @@ package com.ivoslabs.records.tests.copy.dtos;
 import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
+import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.Pic;
+import com.ivoslabs.records.annontation.PipedField;
 import com.ivoslabs.records.converters.Boolean10Converter;
 import com.ivoslabs.records.converters.DateLatinConverver;
+import com.ivoslabs.records.tests.commons.dtos.SubConverter;
+import com.ivoslabs.records.tests.commons.dtos.SubField;
 
 /**
  * @author www.ivoslabs.com
  *
  */
+@IfNull("-")
 public class CopyDataDTO {
 
     @Pic(beginIndex = 0, size = 1)
-    private String field;
+    private String field1;
 
     @Pic(beginIndex = 1, size = 1)
     private Integer field2;
@@ -33,30 +38,34 @@ public class CopyDataDTO {
     private Double field5;
 
     @Converter(DateLatinConverver.class)
-    @Pic(beginIndex = 7, size = 14)
+    @Pic(beginIndex = 7, size = 8)
     private Date field6;
 
+    @Converter(SubConverter.class)
+    @Pic(beginIndex = 15, size = 5)
+    private SubField field7;
+
     /**
-     * Gets the field
-     *
-     * @return {@code String} The field
+     * Gets the field1
+     * 
+     * @return {@code String} The field1
      */
-    public String getField() {
-	return this.field;
+    public String getField1() {
+	return this.field1;
     }
 
     /**
-     * Sets the field
+     * Sets the field1
      *
-     * @param field {@code String} The field to set
+     * @param field1 {@code String} The field1 to set
      */
-    public void setField(String field) {
-	this.field = field;
+    public void setField1(String field1) {
+	this.field1 = field1;
     }
 
     /**
      * Gets the field2
-     *
+     * 
      * @return {@code Integer} The field2
      */
     public Integer getField2() {
@@ -74,7 +83,7 @@ public class CopyDataDTO {
 
     /**
      * Gets the field3
-     *
+     * 
      * @return {@code int} The field3
      */
     public int getField3() {
@@ -92,7 +101,7 @@ public class CopyDataDTO {
 
     /**
      * Gets the field4
-     *
+     * 
      * @return {@code Boolean} The field4
      */
     public Boolean getField4() {
@@ -110,7 +119,7 @@ public class CopyDataDTO {
 
     /**
      * Gets the field5
-     *
+     * 
      * @return {@code Double} The field5
      */
     public Double getField5() {
@@ -128,7 +137,7 @@ public class CopyDataDTO {
 
     /**
      * Gets the field6
-     *
+     * 
      * @return {@code Date} The field6
      */
     public Date getField6() {
@@ -144,6 +153,24 @@ public class CopyDataDTO {
 	this.field6 = field6;
     }
 
+    /**
+     * Gets the field7
+     * 
+     * @return {@code SubField} The field7
+     */
+    public SubField getField7() {
+	return this.field7;
+    }
+
+    /**
+     * Sets the field7
+     *
+     * @param field7 {@code SubField} The field7 to set
+     */
+    public void setField7(SubField field7) {
+	this.field7 = field7;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -151,7 +178,7 @@ public class CopyDataDTO {
      */
     @Override
     public String toString() {
-	return "CopyOkDTO [field=" + field + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + "]";
+	return "CopyDataDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + ", field7=" + field7 + "]";
     }
 
 }

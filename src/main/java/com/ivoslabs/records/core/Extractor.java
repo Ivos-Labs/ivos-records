@@ -426,7 +426,9 @@ public class Extractor {
 	// array with values when is a piped String
 	String values[] = null;
 
-	if (template.getType().equals(Type.PIPE)) {
+	boolean isPiped = template.getType().equals(Type.PIPE);
+
+	if (isPiped) {
 	    values = data.split(PIPE_SEPARATOR, -1);
 	}
 
@@ -438,13 +440,13 @@ public class Extractor {
 	    throw new RuntimeException(e);
 	}
 
-	for (FieldParseDTO ex : template.getFieldParseDTOs()) {
+	for (FieldParseDTO fieldParseDTO : template.getFieldParseDTOs()) {
 
-	    Field field = ex.getField();
-	    PipedField pf = ex.getPipeField();
-	    Pic pic = ex.getPic();
+	    Field field = fieldParseDTO.getField();
+	    PipedField pf = fieldParseDTO.getPipeField();
+	    Pic pic = fieldParseDTO.getPic();
 
-	    Converter conv = ex.getConverter();
+	    Converter conv = fieldParseDTO.getConverter();
 
 	    String fieldName = field.getName();
 	    String strValue = null;
@@ -474,14 +476,19 @@ public class Extractor {
 
 		field.setAccessible(Boolean.TRUE);
 		try {
-		    if (conv == null) {
-			objValue = ParseUtils.parse(strValue, field.getType());
-		    } else {
-			clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
-			// get the converter in the ClassParseDTO
-			FieldConverter<?> c = template.getConverter(clazzConv);
-			objValue = c.toObject(strValue, conv.args());
+		    String ifNull = fieldParseDTO.getIfNull();
+		    if ((isPiped && !strValue.equals(ifNull)) || (!isPiped && !strValue.trim().equals(ifNull))) {
+
+			if (conv == null) {
+			    objValue = ParseUtils.parse(strValue, field.getType());
+			} else {
+			    clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
+			    // get the converter in the ClassParseDTO
+			    FieldConverter<?> c = template.getConverter(clazzConv);
+			    objValue = c.toObject(strValue, conv.args());
+			}
 		    }
+
 		} catch (Exception e) {
 		    throw new ParseException(e.getMessage(), e);
 		}
@@ -630,7 +637,7 @@ public class Extractor {
 
 		String val;
 
-		if (value != null && extract.getIfNull() != null) {
+		if (value == null && extract.getIfNull() != null) {
 		    val = extract.getIfNull();
 		} else if (extract.getConverter() == null) {
 		    val = value != null ? value.toString() : EMPTY;

@@ -46,7 +46,6 @@ public class CopyHeader {
     public int getField2() {
 	return this.field2;
     }
- 
 
     /*
      * (non-Javadoc)
@@ -64,7 +63,7 @@ public class CopyHeader {
      * @return {@code Integer} The field3
      */
     public Integer getField3() {
-        return this.field3;
+	return this.field3;
     }
 
     /**
@@ -73,7 +72,7 @@ public class CopyHeader {
      * @param field3 {@code Integer} The field3 to set
      */
     public void setField3(Integer field3) {
-        this.field3 = field3;
+	this.field3 = field3;
     }
 
     /**
@@ -82,9 +81,7 @@ public class CopyHeader {
      * @param field2 {@code int} The field2 to set
      */
     public void setField2(int field2) {
-        this.field2 = field2;
+	this.field2 = field2;
     }
-    
-    
 
 }

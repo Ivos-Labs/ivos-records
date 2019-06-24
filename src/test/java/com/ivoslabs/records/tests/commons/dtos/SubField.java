@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.tests.piped.dtos;
+package com.ivoslabs.records.tests.commons.dtos;
 
 /**
  * 

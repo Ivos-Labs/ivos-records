@@ -13,6 +13,7 @@ import java.util.Stack;
 import org.junit.Test;
 
 import com.ivoslabs.records.parsers.CopyParser;
+import com.ivoslabs.records.tests.commons.dtos.SubField;
 import com.ivoslabs.records.tests.copy.dtos.CopyDataDTO;
 import com.ivoslabs.records.tests.copy.dtos.CopyHeader;
 
@@ -48,7 +49,7 @@ public class TestCopyFileHTSave {
 	// data
 
 	CopyDataDTO dto1 = new CopyDataDTO();
-	dto1.setField("");
+	dto1.setField1("");
 	dto1.setField2(1);
 	dto1.setField3(1);
 	dto1.setField4(true);
@@ -56,15 +57,16 @@ public class TestCopyFileHTSave {
 	dto1.setField6(new Date());
 
 	CopyDataDTO dto2 = new CopyDataDTO();
-	dto2.setField("b");
+	dto2.setField1("b");
 	dto2.setField2(2);
 	dto2.setField3(22);
 	dto2.setField4(false);
 	dto2.setField5(2.2);
 	dto2.setField6(new Date());
+	dto2.setField7(new SubField("qw", "er"));
 
 	CopyDataDTO dto3 = new CopyDataDTO();
-	dto3.setField("c");
+	dto3.setField1("c");
 	dto3.setField2(3);
 	dto3.setField3(33);
 	dto3.setField4(false);
@@ -85,9 +87,9 @@ public class TestCopyFileHTSave {
 	dataStack.addAll(list);
 
 	CopyParser copyParser = new CopyParser();
-	
+
 	String file = "data.copy";
-	
+
 	copyParser.objectsToFileHD(file, headerStack, dataStack);
 
 	assertTrue(Boolean.TRUE);
