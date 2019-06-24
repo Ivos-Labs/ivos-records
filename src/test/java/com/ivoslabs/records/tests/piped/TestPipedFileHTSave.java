@@ -27,6 +27,7 @@ public class TestPipedFileHTSave {
     @Test
     public void testObjectsToFile() {
 
+	// creating header objects
 	PipedHeader header1 = new PipedHeader();
 	header1.setField1("headerA");
 	header1.setField2(1);
@@ -35,13 +36,12 @@ public class TestPipedFileHTSave {
 	header2.setField1("headerB");
 	header2.setField2(2);
 
-	//
+	// saving header objects into a list
 	List<PipedHeader> headers = new ArrayList<PipedHeader>();
 	headers.add(header1);
 	headers.add(header2);
 
-	// data
-
+	// creating data objects
 	PipedDataDTO dto1 = new PipedDataDTO();
 	dto1.setField1("a");
 	dto1.setField2(null);
@@ -67,22 +67,22 @@ public class TestPipedFileHTSave {
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
+	// saving data objects into a list
 	List<PipedDataDTO> list = new ArrayList<PipedDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
 
-	// tail
-
+	// creating tail objects
 	PipedTail tail = new PipedTail();
 	tail.setField1(1);
 	tail.setField2("tailA");
 
+	// saving tail objects into a list
 	List<PipedTail> tails = new ArrayList<PipedTail>();
 	tails.add(tail);
 
-	// save objest in a Stacks
-
+	// save list objects into Stacks
 	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
 	headerStack.addAll(headers);
 
@@ -92,8 +92,11 @@ public class TestPipedFileHTSave {
 	Stack<PipedTail> tailStack = new Stack<PipedTail>();
 	tailStack.addAll(tails);
 
+	String file = "datahdt.psv";
+
+	// append objects into a file
 	PipedParser pipedParser = new PipedParser();
-	pipedParser.objectsToFile("datahdt.psv", headerStack, dataStack, tailStack);
+	pipedParser.objectsToFile(file, headerStack, dataStack, tailStack);
 
 	assertTrue(Boolean.TRUE);
 

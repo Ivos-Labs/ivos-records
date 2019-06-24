@@ -25,8 +25,8 @@ public class TestCopyFileHTSave {
 
     @Test
     public void testObjectsToFile() {
-	// headers
 
+	// creating header objects
 	CopyHeader header1 = new CopyHeader();
 	header1.setField1("headerA");
 	header1.setField2(1);
@@ -41,13 +41,13 @@ public class TestCopyFileHTSave {
 	header3.setField2(3);
 	header3.setField3(123456);
 
+	// saving header objects into a list
 	List<CopyHeader> headers = new ArrayList<CopyHeader>();
 	headers.add(header1);
 	headers.add(header2);
 	headers.add(header3);
 
-	// data
-
+	// creating data objects
 	CopyDataDTO dto1 = new CopyDataDTO();
 	dto1.setField1("");
 	dto1.setField2(1);
@@ -73,23 +73,24 @@ public class TestCopyFileHTSave {
 	dto3.setField5(3.3);
 	dto3.setField6(new Date());
 
+	// saving data objects into a list
 	List<CopyDataDTO> list = new ArrayList<CopyDataDTO>();
 	list.add(dto1);
 	list.add(dto2);
 	list.add(dto3);
 
-	// save objest in a Stacks
 
+	// save list objects into Stacks
 	Stack<CopyHeader> headerStack = new Stack<CopyHeader>();
 	headerStack.addAll(headers);
 
 	Stack<CopyDataDTO> dataStack = new Stack<CopyDataDTO>();
 	dataStack.addAll(list);
 
-	CopyParser copyParser = new CopyParser();
-
 	String file = "data.copy";
-
+	
+	// append objects into a file
+	CopyParser copyParser = new CopyParser();
 	copyParser.objectsToFileHD(file, headerStack, dataStack);
 
 	assertTrue(Boolean.TRUE);

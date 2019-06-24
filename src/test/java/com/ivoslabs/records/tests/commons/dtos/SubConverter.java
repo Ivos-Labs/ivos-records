@@ -17,7 +17,7 @@ public class SubConverter implements FieldConverter<SubField> {
      * @see com.ivoslabs.records.converters.FieldConverter#toString(java.lang.Object, java.lang.String[])
      */
     public String toString(SubField object, String... args) throws Exception {
-	return object.getA() + "," + object.getB();
+	return object != null ? object.getA() + "," + object.getB() : "";
     }
 
     /*
@@ -26,7 +26,7 @@ public class SubConverter implements FieldConverter<SubField> {
      * @see com.ivoslabs.records.converters.FieldConverter#toObject(java.lang.String, java.lang.String[])
      */
     public SubField toObject(String string, String... args) throws Exception {
-	return new SubField(string.split(",")[0], string.split(",")[1]);
+	return string != null && string.split(",").length > 1 ? new SubField(string.split(",")[0], string.split(",")[1]) : null;
     }
 
 }
