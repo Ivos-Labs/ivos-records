@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.IfNull;
-import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.annontation.Piped;
 import com.ivoslabs.records.converters.DateLatinConverver;
 import com.ivoslabs.records.tests.commons.dtos.SubConverter;
 import com.ivoslabs.records.tests.commons.dtos.SubField;
@@ -19,27 +19,27 @@ import com.ivoslabs.records.tests.commons.dtos.SubField;
 @IfNull("-")
 public class PipedDataDTO {
 
-    @PipedField(value = 0, maxSize = 3)
+    @Piped(value = 0, maxSize = 3)
     private String field1;
 
-    @PipedField(1)
+    @Piped(1)
     private Integer field2;
 
-    @PipedField(2)
+    @Piped(2)
     private int field3;
 
-    @PipedField(3)
+    @Piped(3)
     private Boolean field4;
 
-    @PipedField(4)
+    @Piped(4)
     private Double field5;
 
     @Converter(DateLatinConverver.class)
-    @PipedField(5)
+    @Piped(5)
     private Date field6;
 
     @Converter(SubConverter.class)
-    @PipedField(6)
+    @Piped(6)
     private SubField field7;
 
     /**

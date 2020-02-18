@@ -3,7 +3,7 @@
  */
 package com.ivoslabs.records.tests.piped.dtos;
 
-import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.annontation.Piped;
 
 /**
  * @author
@@ -11,10 +11,10 @@ import com.ivoslabs.records.annontation.PipedField;
  */
 public class PipedHeader {
 
-    @PipedField(0)
+    @Piped(0)
     private String field1;
 
-    @PipedField(1)
+    @Piped(1)
     private Integer field2;
 
     /**

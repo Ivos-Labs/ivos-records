@@ -6,6 +6,7 @@ package com.ivoslabs.records.tests.copy.dtos;
 import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
+import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.Pic;
 import com.ivoslabs.records.converters.Boolean10Converter;
 import com.ivoslabs.records.converters.DateLatinConverver;
@@ -16,6 +17,7 @@ import com.ivoslabs.records.tests.commons.dtos.SubField;
  * @author www.ivoslabs.com
  *
  */
+@IfNull("-")
 public class CopyDataDTO {
 
     @Pic(beginIndex = 0, size = 1)

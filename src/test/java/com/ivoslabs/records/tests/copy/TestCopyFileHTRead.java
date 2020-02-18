@@ -18,7 +18,7 @@ public class TestCopyFileHTRead {
 
     @Test
     public void testFileToObjects() {
-	
+
 	// CopyHeader consumer (action to do for each CopyHeader)
 	Consumer<CopyHeader> headerConsumer = new Consumer<CopyHeader>() {
 
@@ -41,7 +41,7 @@ public class TestCopyFileHTRead {
 	int headerSize = 3;
 
 	String file = "data.copy";
-	 
+
 	copyParser.processFile(file,
 		CopyHeader.class, headerSize, headerConsumer,
 		CopyDataDTO.class, dataConsumer);

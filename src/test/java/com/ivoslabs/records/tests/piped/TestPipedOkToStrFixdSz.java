@@ -24,61 +24,61 @@ import com.ivoslabs.records.tests.piped.dtos.PipedDataFSsDTO;
 public class TestPipedOkToStrFixdSz {
     @Test
     public void testToString() {
-        PipedParser ex = new PipedParser();
+	PipedParser ex = new PipedParser();
 
-        PipedDataFSsDTO dto = new PipedDataFSsDTO();
-        dto.setField1(null);
-        dto.setField2(2);
-        dto.setField3(1);
-        dto.setField4(false);
-        dto.setField5(2.2);
+	PipedDataFSsDTO dto = new PipedDataFSsDTO();
+	dto.setField1(null);
+	dto.setField2(2);
+	dto.setField3(1);
+	dto.setField4(false);
+	dto.setField5(2.2);
 
-        try {
-            dto.setField6(new DateLatinConverver().toObject("20190306"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        dto.setField7(new SubField("aa", "bb"));
+	try {
+	    dto.setField6(new DateLatinConverver().toObject("20190306"));
+	} catch (ParseException e) {
+	    e.printStackTrace();
+	}
+	dto.setField7(new SubField("aa", "bb"));
 
-        String expected = "|2|1|false       |2.2            |            20190306|aa,bb";
-        String actual = ex.toString(dto);
+	String expected = "|2|1|false       |2.2            |            20190306|aa,bb";
+	String actual = ex.toString(dto);
 
-        assertEquals(expected, actual);
+	assertEquals(expected, actual);
     }
 
     @Test
     public void testToStrings() {
-        PipedParser ex = new PipedParser();
+	PipedParser ex = new PipedParser();
 
-        PipedDataFSsDTO dto1 = new PipedDataFSsDTO();
-        dto1.setField1("1");
-        dto1.setField2(2);
-        dto1.setField3(1);
-        dto1.setField4(true);
-        dto1.setField5(2.2);
+	PipedDataFSsDTO dto1 = new PipedDataFSsDTO();
+	dto1.setField1("1");
+	dto1.setField2(2);
+	dto1.setField3(1);
+	dto1.setField4(true);
+	dto1.setField5(2.2);
 
-        PipedDataFSsDTO dto = new PipedDataFSsDTO();
-        dto.setField1("b");
-        dto.setField2(2);
-        dto.setField3(1);
-        dto.setField4(false);
-        dto.setField5(2.2);
+	PipedDataFSsDTO dto = new PipedDataFSsDTO();
+	dto.setField1("b");
+	dto.setField2(2);
+	dto.setField3(1);
+	dto.setField4(false);
+	dto.setField5(2.2);
 
-        try {
-            dto.setField6(new DateLatinConverver().toObject("20190306"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+	try {
+	    dto.setField6(new DateLatinConverver().toObject("20190306"));
+	} catch (ParseException e) {
+	    e.printStackTrace();
+	}
 
-        List<String> dtos = ex.toStrings(Arrays.asList(dto1, dto));
+	List<String> dtos = ex.toStrings(Arrays.asList(dto1, dto));
 
-        String expected = "b|2|1|false|2.2|20190306|-";
+	String expected = "b|2|1|false       |2.2            |            20190306|";
 
-        String actual = null;
-        for (String string : dtos) {
-            actual = string;
-        }
+	String actual = null;
+	for (String string : dtos) {
+	    actual = string;
+	}
 
-        assertEquals(expected, actual);
+	assertEquals(expected, actual);
     }
 }

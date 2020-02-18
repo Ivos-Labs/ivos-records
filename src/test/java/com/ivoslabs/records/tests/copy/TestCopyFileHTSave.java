@@ -79,7 +79,6 @@ public class TestCopyFileHTSave {
 	list.add(dto2);
 	list.add(dto3);
 
-
 	// save list objects into Stacks
 	Stack<CopyHeader> headerStack = new Stack<CopyHeader>();
 	headerStack.addAll(headers);
@@ -88,7 +87,7 @@ public class TestCopyFileHTSave {
 	dataStack.addAll(list);
 
 	String file = "data.copy";
-	
+
 	// append objects into a file
 	CopyParser copyParser = new CopyParser();
 	copyParser.objectsToFileHD(file, headerStack, dataStack);

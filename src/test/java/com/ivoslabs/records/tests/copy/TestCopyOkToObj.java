@@ -63,7 +63,6 @@ public class TestCopyOkToObj {
 
 	assertEquals(expected, actual);
     }
- 
 
     @Test
     public void testToObjects() {

@@ -6,7 +6,7 @@ package com.ivoslabs.records.parsers;
 import java.util.List;
 import java.util.Stack;
 
-import com.ivoslabs.records.annontation.PipedField;
+import com.ivoslabs.records.annontation.Piped;
 import com.ivoslabs.records.core.Extractor;
 import com.ivoslabs.records.function.Consumer;
 
@@ -14,8 +14,8 @@ import com.ivoslabs.records.function.Consumer;
  * Utility to parse piped data to POJOs (using {@code @PipedField } annotation) and viceversa
  * 
  * @author www.ivoslabs.com
- * @see PipedField &#64;PipedField
- * @see com.ivoslabs.records.annontation.PipedField#value() &#64;PipedField#value
+ * @see Piped &#64;PipedField
+ * @see com.ivoslabs.records.annontation.Piped#value() &#64;PipedField#value
  * @see com.ivoslabs.records.annontation.Converter Converter
  */
 public class PipedParser {
@@ -41,7 +41,7 @@ public class PipedParser {
      * @return a T instance
      */
     public <T> T toObject(String data, Class<T> type) {
-	return Extractor.convertStringToObject(data, type, PipedField.class);
+	return Extractor.convertStringToObject(data, type, Piped.class);
     }
 
     /**
@@ -53,7 +53,7 @@ public class PipedParser {
      * @return a List of T instance
      */
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
-	return Extractor.convertStringsToObjects(data, type, PipedField.class);
+	return Extractor.convertStringsToObjects(data, type, Piped.class);
     }
 
     /**
@@ -85,7 +85,7 @@ public class PipedParser {
 	    Integer tailSize,
 	    Consumer<T> tailConsumer) {
 
-	Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, PipedField.class);
+	Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, tailType, tailSize, tailConsumer, Piped.class);
     }
 
     /**
@@ -171,7 +171,7 @@ public class PipedParser {
      * @return a string representation of the value of the received object
      */
     public String toString(Object data) {
-	return Extractor.convertObjectToString(data, PipedField.class);
+	return Extractor.convertObjectToString(data, Piped.class);
     }
 
     /**
@@ -181,7 +181,7 @@ public class PipedParser {
      * @return a list of string representation of the value of each item in the received object list
      */
     public List<String> toStrings(List<?> data) {
-	return Extractor.convertObjectsToStrings(data, PipedField.class);
+	return Extractor.convertObjectsToStrings(data, Piped.class);
     }
 
     /********************************
@@ -212,7 +212,7 @@ public class PipedParser {
      * @param tails  objects to be appended into the last rows of the file
      */
     public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
-	Extractor.convertObjectsToFile(file, header, data, tails, PipedField.class);
+	Extractor.convertObjectsToFile(file, header, data, tails, Piped.class);
     }
 
     /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ivoslabs.records.core;
+package com.ivoslabs.records.core.func;
 
 /**
  * Interface to be implemented to process a file row<br>

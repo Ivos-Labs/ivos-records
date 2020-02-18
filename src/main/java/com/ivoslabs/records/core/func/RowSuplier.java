@@ -1,4 +1,4 @@
-package com.ivoslabs.records.core;
+package com.ivoslabs.records.core.func;
 
 /**
  * Interface to be implemented to get a String in Piped format or COPY format from an Object<br>
