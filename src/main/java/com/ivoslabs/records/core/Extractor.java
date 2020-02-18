@@ -658,20 +658,16 @@ public class Extractor {
 		int fieldSize = extract.getPic().size();
 		// cut string if is longer than fieldSize
 		if (val.length() > fieldSize) {
-		    val = val.substring(0, fieldSize);
+		    val = val.substring(ParseUtils.ZERO, fieldSize);
 		} else if (val.length() < fieldSize) {
-		    // add spaces is is shorter than fieldSize
-		    StringBuilder ssb = new StringBuilder(fieldSize);
-		    ssb.append(val);
-		    int lim = fieldSize - val.length();
-		    for (int i = 0; i < lim; i++) {
-			ssb.append(ParseUtils.SPACE);
-		    }
-		    val = ssb.toString();
+		    // use val.length as field size
+		    fieldSize = val.length();
 		}
 
-		int start = extract.getPic().beginIndex();
-		sb.replace(start, start + fieldSize, val);
+		if (!val.isEmpty()) {
+		    int start = extract.getPic().beginIndex();
+		    sb.replace(start, start + fieldSize, val);
+		}
 
 	    } catch (InstantiationException e) {
 		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : ParseUtils.EMPTY;

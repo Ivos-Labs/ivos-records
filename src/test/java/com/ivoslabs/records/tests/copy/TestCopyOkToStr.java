@@ -26,7 +26,7 @@ public class TestCopyOkToStr {
 	CopyParser cex = new CopyParser();
 
 	CopyDataDTO dto = new CopyDataDTO();
-	dto.setField1("b");
+	dto.setField1("");
 	dto.setField2(2);
 	dto.setField3(3);
 	dto.setField4(false);
@@ -40,7 +40,7 @@ public class TestCopyOkToStr {
 
 	String actual = cex.toString(dto);
 
-	String expected = "b2301.220190306-    ";
+	String expected = " 2301.220190306-    ";
 
 	assertEquals(expected, actual);
     }

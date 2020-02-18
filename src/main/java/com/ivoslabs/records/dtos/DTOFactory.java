@@ -109,7 +109,7 @@ public class DTOFactory {
 
 	    CopyField last = copyFields.get(copyFields.size() - 1);
 
-	    ((CopyClass) template).setSize(last.getPic().beginIndex() + last.getPic().size() - 1);
+	    ((CopyClass) template).setSize(last.getPic().beginIndex() + last.getPic().size());
 
 	}
 
