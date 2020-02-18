@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.ivoslabs.records.annontation.Converter;
@@ -29,6 +30,9 @@ public class Extractor {
 
     /** */
     private static final String EMPTY = "";
+
+    /** */
+    private static final int ZERO = 0;
 
     /** */
     private static final String SPACE = " ";
@@ -59,14 +63,14 @@ public class Extractor {
      * @return a T instance
      */
     public static <T extends Object> T convertStringToObject(String data, Class<T> type, Class<? extends Annotation> annon) {
-	Validate.notNull(data, "data must not be null");
-	Validate.notNull(type, "type must not be null");
+        Validate.notNull(data, "data must not be null");
+        Validate.notNull(type, "type must not be null");
 
-	T obj;
-	ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
-	obj = Extractor.convertStringRowToObject(data, type, extracts);
+        T obj;
+        ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+        obj = Extractor.convertStringRowToObject(data, type, extracts);
 
-	return obj;
+        return obj;
     }
 
     /**
@@ -80,31 +84,31 @@ public class Extractor {
      * @return a List of T instance
      */
     public static <T extends Object> List<T> convertStringsToObjects(List<String> data, Class<T> type, Class<? extends Annotation> annon) {
-	Validate.notNull(data, "data must not be null");
-	Validate.notNull(type, "type must not be null");
+        Validate.notNull(data, "data must not be null");
+        Validate.notNull(type, "type must not be null");
 
-	List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<T>();
 
-	if (!data.isEmpty()) {
-	    int rowNum = 0;
-	    ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
+        if (!data.isEmpty()) {
+            int rowNum = 0;
+            ClassParseDTO extracts = ParseUtils.getTemplate(type, annon, Boolean.TRUE);
 
-	    try {
-		for (String row : data) {
-		    rowNum++;
-		    T object;
-		    object = Extractor.convertStringRowToObject(row, type, extracts);
-		    list.add(object);
-		}
-	    } catch (RecordParserException e) {
-		throw new RecordParserException("An error has occurred while processing row: " + rowNum + "; Detail: " + e.getMessage(), e);
-	    } catch (Exception e) {
-		throw new RecordParserException("An error has occurred while processing row: " + rowNum, e);
-	    }
+            try {
+                for (String row : data) {
+                    rowNum++;
+                    T object;
+                    object = Extractor.convertStringRowToObject(row, type, extracts);
+                    list.add(object);
+                }
+            } catch (RecordParserException e) {
+                throw new RecordParserException("An error has occurred while processing row: " + rowNum + "; Detail: " + e.getMessage(), e);
+            } catch (Exception e) {
+                throw new RecordParserException("An error has occurred while processing row: " + rowNum, e);
+            }
 
-	}
+        }
 
-	return list;
+        return list;
 
     }
 
@@ -127,74 +131,74 @@ public class Extractor {
      * @param annon          annotation to indicate if is Piped or COPY file
      */
     public static <H, D, T> void processFile(String file,
-	    // header
-	    final Class<H> headerType,
-	    final Integer headerSize,
-	    final Consumer<H> headerConsumer,
-	    // data
-	    final Class<D> dataType,
-	    final Consumer<D> dataConsumer,
-	    // tail
-	    final Class<T> tailType,
-	    Integer tailSize,
-	    final Consumer<T> tailConsumer,
-	    Class<? extends Annotation> annon) {
+            // header
+            final Class<H> headerType,
+            final Integer headerSize,
+            final Consumer<H> headerConsumer,
+            // data
+            final Class<D> dataType,
+            final Consumer<D> dataConsumer,
+            // tail
+            final Class<T> tailType,
+            Integer tailSize,
+            final Consumer<T> tailConsumer,
+            Class<? extends Annotation> annon) {
 
-	Validate.notNull(file, "file must not be null");
-	Validate.notNull(dataType, "type must not be null");
-	Validate.notNull(dataConsumer, "action must not be null");
+        Validate.notNull(file, "file must not be null");
+        Validate.notNull(dataType, "type must not be null");
+        Validate.notNull(dataConsumer, "action must not be null");
 
-	Validate.isTrue(headerType == null || (headerSize != null && headerSize > 0), "headerSize have to be greater than 0");
-	Validate.isTrue(tailType == null || (tailSize != null && tailSize > 0), "tailSize have to be greater than 0");
+        Validate.isTrue(headerType == null || (headerSize != null && headerSize > 0), "headerSize have to be greater than 0");
+        Validate.isTrue(tailType == null || (tailSize != null && tailSize > 0), "tailSize have to be greater than 0");
 
-	final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
-	final ClassParseDTO headerExtracts;
-	final ClassParseDTO tailExtracts;
+        final ClassParseDTO extracts = ParseUtils.getTemplate(dataType, annon, Boolean.TRUE);
+        final ClassParseDTO headerExtracts;
+        final ClassParseDTO tailExtracts;
 
-	final Integer tailLine;
+        final Integer tailLine;
 
-	if (headerType != null) {
-	    headerExtracts = ParseUtils.getTemplate(headerType, annon, Boolean.TRUE);
-	} else {
-	    headerExtracts = null;
-	}
+        if (headerType != null) {
+            headerExtracts = ParseUtils.getTemplate(headerType, annon, Boolean.TRUE);
+        } else {
+            headerExtracts = null;
+        }
 
-	if (tailType != null) {
-	    tailLine = ParseUtils.countLinesNew(file) - tailSize;
-	    tailExtracts = ParseUtils.getTemplate(tailType, annon, Boolean.TRUE);
-	} else {
-	    tailLine = null;
-	    tailExtracts = null;
-	}
+        if (tailType != null) {
+            tailLine = ParseUtils.countLinesNew(file) - tailSize;
+            tailExtracts = ParseUtils.getTemplate(tailType, annon, Boolean.TRUE);
+        } else {
+            tailLine = null;
+            tailExtracts = null;
+        }
 
-	final MutableInt rowNum = new MutableInt();
+        final MutableInt rowNum = new MutableInt();
 
-	RowConsumer actionForRow = new RowConsumer() {
+        RowConsumer actionForRow = new RowConsumer() {
 
-	    public void process(String row, int rowNumber) throws Exception {
-		rowNum.setValue(rowNumber);
-		if (headerExtracts != null && rowNumber <= headerSize) {
-		    H object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
-		    headerConsumer.process(object);
-		} else if (tailLine != null && rowNumber > tailLine) {
-		    T object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
-		    tailConsumer.process(object);
-		} else {
-		    D object = Extractor.convertStringRowToObject(row, dataType, extracts);
-		    dataConsumer.process(object);
-		}
+            public void process(String row, int rowNumber) throws Exception {
+                rowNum.setValue(rowNumber);
+                if (headerExtracts != null && rowNumber <= headerSize) {
+                    H object = Extractor.convertStringRowToObject(row, headerType, headerExtracts);
+                    headerConsumer.process(object);
+                } else if (tailLine != null && rowNumber > tailLine) {
+                    T object = Extractor.convertStringRowToObject(row, tailType, tailExtracts);
+                    tailConsumer.process(object);
+                } else {
+                    D object = Extractor.convertStringRowToObject(row, dataType, extracts);
+                    dataConsumer.process(object);
+                }
 
-	    }
+            }
 
-	};
+        };
 
-	try {
-	    ParseUtils.readTextFile(file, actionForRow);
-	} catch (RecordParserException e) {
-	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue() + "; Detail: " + e.getMessage(), e);
-	} catch (Exception e) {
-	    throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
-	}
+        try {
+            ParseUtils.readTextFile(file, actionForRow);
+        } catch (RecordParserException e) {
+            throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue() + "; Detail: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RecordParserException("An error has occurred while processing file: " + file + "; row: " + rowNum.getValue(), e);
+        }
 
     }
 
@@ -224,16 +228,16 @@ public class Extractor {
      * @return a string representation of the value of the received object
      */
     public static String convertObjectToString(Object data, Class<? extends Annotation> annon) {
-	Validate.notNull(data, "data must not be null");
-	String obj;
-	ClassParseDTO template = ParseUtils.getTemplate(data.getClass(), annon, Boolean.FALSE);
-	if (annon.equals(PipedField.class)) {
-	    obj = Extractor.convertPipedObjectToString(data, template);
-	} else {
-	    obj = Extractor.convertCopyObjectToString(data, template);
-	}
+        Validate.notNull(data, "data must not be null");
+        String obj;
+        ClassParseDTO template = ParseUtils.getTemplate(data.getClass(), annon, Boolean.FALSE);
+        if (annon.equals(PipedField.class)) {
+            obj = Extractor.convertPipedObjectToString(data, template);
+        } else {
+            obj = Extractor.convertCopyObjectToString(data, template);
+        }
 
-	return obj;
+        return obj;
     }
 
     /**
@@ -244,31 +248,31 @@ public class Extractor {
      * @return a list of string representation of the value of each item in the received object list
      */
     public static List<String> convertObjectsToStrings(List<?> data, Class<? extends Annotation> annon) {
-	Validate.notNull(data, "data must not be null");
-	Validate.isTrue(!data.isEmpty(), "data must not be empty");
+        Validate.notNull(data, "data must not be null");
+        Validate.isTrue(!data.isEmpty(), "data must not be empty");
 
-	List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<String>();
 
-	if (!data.isEmpty()) {
-	    ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
+        if (!data.isEmpty()) {
+            ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
 
-	    if (annon.equals(PipedField.class)) {
-		for (Object row : data) {
-		    String object;
-		    object = Extractor.convertPipedObjectToString(row, template);
-		    list.add(object);
-		}
-	    } else {
-		for (Object row : data) {
-		    String object;
-		    object = Extractor.convertCopyObjectToString(row, template);
-		    list.add(object);
-		}
-	    }
+            if (annon.equals(PipedField.class)) {
+                for (Object row : data) {
+                    String object;
+                    object = Extractor.convertPipedObjectToString(row, template);
+                    list.add(object);
+                }
+            } else {
+                for (Object row : data) {
+                    String object;
+                    object = Extractor.convertCopyObjectToString(row, template);
+                    list.add(object);
+                }
+            }
 
-	}
+        }
 
-	return list;
+        return list;
 
     }
 
@@ -303,82 +307,82 @@ public class Extractor {
      */
     public static <H, D, T> void convertObjectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails, Class<? extends Annotation> annon) {
 
-	Validate.notNull(file, "file must not be null");
-	Validate.notNull(data, "data must not be null");
-	Validate.isTrue(!data.empty(), "data must not be empty");
+        Validate.notNull(file, "file must not be null");
+        Validate.notNull(data, "data must not be null");
+        Validate.isTrue(!data.empty(), "data must not be empty");
 
-	RowSuplier<H> rowHeaderSuplier = null;
-	RowSuplier<D> rowDataSuplier;
-	RowSuplier<T> rowTailSuplier = null;
+        RowSuplier<H> rowHeaderSuplier = null;
+        RowSuplier<D> rowDataSuplier;
+        RowSuplier<T> rowTailSuplier = null;
 
-	final ClassParseDTO headerTemplate;
-	final ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
-	final ClassParseDTO tailTemplate;
+        final ClassParseDTO headerTemplate;
+        final ClassParseDTO template = ParseUtils.getTemplate(data.get(0).getClass(), annon, Boolean.FALSE);
+        final ClassParseDTO tailTemplate;
 
-	if (header != null && !header.empty()) {
-	    headerTemplate = ParseUtils.getTemplate(header.get(0).getClass(), annon, Boolean.FALSE);
-	} else {
-	    headerTemplate = null;
-	}
+        if (header != null && !header.empty()) {
+            headerTemplate = ParseUtils.getTemplate(header.get(0).getClass(), annon, Boolean.FALSE);
+        } else {
+            headerTemplate = null;
+        }
 
-	if (tails != null && !tails.empty()) {
-	    tailTemplate = ParseUtils.getTemplate(tails.get(0).getClass(), annon, Boolean.FALSE);
-	} else {
-	    tailTemplate = null;
-	}
+        if (tails != null && !tails.empty()) {
+            tailTemplate = ParseUtils.getTemplate(tails.get(0).getClass(), annon, Boolean.FALSE);
+        } else {
+            tailTemplate = null;
+        }
 
-	if (annon.equals(PipedField.class)) {
+        if (annon.equals(PipedField.class)) {
 
-	    if (headerTemplate != null) {
-		rowHeaderSuplier = new RowSuplier<H>() {
-		    public String get(H object) {
-			return Extractor.convertPipedObjectToString(object, headerTemplate);
-		    }
-		};
-	    }
+            if (headerTemplate != null) {
+                rowHeaderSuplier = new RowSuplier<H>() {
+                    public String get(H object) {
+                        return Extractor.convertPipedObjectToString(object, headerTemplate);
+                    }
+                };
+            }
 
-	    rowDataSuplier = new RowSuplier<D>() {
-		public String get(D object) {
-		    return Extractor.convertPipedObjectToString(object, template);
-		}
-	    };
+            rowDataSuplier = new RowSuplier<D>() {
+                public String get(D object) {
+                    return Extractor.convertPipedObjectToString(object, template);
+                }
+            };
 
-	    if (tailTemplate != null) {
-		rowTailSuplier = new RowSuplier<T>() {
-		    public String get(T object) {
-			return Extractor.convertPipedObjectToString(object, tailTemplate);
-		    }
-		};
-	    }
+            if (tailTemplate != null) {
+                rowTailSuplier = new RowSuplier<T>() {
+                    public String get(T object) {
+                        return Extractor.convertPipedObjectToString(object, tailTemplate);
+                    }
+                };
+            }
 
-	} else {
+        } else {
 
-	    if (headerTemplate != null) {
-		rowHeaderSuplier = new RowSuplier<H>() {
-		    public String get(H object) {
-			return Extractor.convertCopyObjectToString(object, headerTemplate);
-		    }
-		};
-	    }
+            if (headerTemplate != null) {
+                rowHeaderSuplier = new RowSuplier<H>() {
+                    public String get(H object) {
+                        return Extractor.convertCopyObjectToString(object, headerTemplate);
+                    }
+                };
+            }
 
-	    rowDataSuplier = new RowSuplier<D>() {
+            rowDataSuplier = new RowSuplier<D>() {
 
-		public String get(D object) {
-		    return Extractor.convertCopyObjectToString(object, template);
-		}
+                public String get(D object) {
+                    return Extractor.convertCopyObjectToString(object, template);
+                }
 
-	    };
+            };
 
-	    if (tailTemplate != null) {
-		rowTailSuplier = new RowSuplier<T>() {
-		    public String get(T object) {
-			return Extractor.convertCopyObjectToString(object, tailTemplate);
-		    }
-		};
-	    }
-	}
+            if (tailTemplate != null) {
+                rowTailSuplier = new RowSuplier<T>() {
+                    public String get(T object) {
+                        return Extractor.convertCopyObjectToString(object, tailTemplate);
+                    }
+                };
+            }
+        }
 
-	ParseUtils.writeFile(file, header, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
+        ParseUtils.writeFile(file, header, rowHeaderSuplier, data, rowDataSuplier, tails, rowTailSuplier);
     }
 
     /***
@@ -421,95 +425,95 @@ public class Extractor {
     @SuppressWarnings("unchecked")
     private static <T extends Object> T convertStringRowToObject(String data, Class<T> type, ClassParseDTO template) {
 
-	T object;
+        T object;
 
-	// array with values when is a piped String
-	String values[] = null;
+        // array with values when is a piped String
+        String values[] = null;
 
-	boolean isPiped = template.getType().equals(Type.PIPE);
+        boolean isPiped = template.getType().equals(Type.PIPE);
 
-	if (isPiped) {
-	    values = data.split(PIPE_SEPARATOR, -1);
-	}
+        if (isPiped) {
+            values = data.split(PIPE_SEPARATOR, -1);
+        }
 
-	try {
-	    object = type.newInstance();
-	} catch (IllegalAccessException e) {
-	    throw new RuntimeException(e);
-	} catch (InstantiationException e) {
-	    throw new RuntimeException(e);
-	}
+        try {
+            object = type.newInstance();
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        }
 
-	for (FieldParseDTO fieldParseDTO : template.getFieldParseDTOs()) {
+        for (FieldParseDTO fieldParseDTO : template.getFieldParseDTOs()) {
 
-	    Field field = fieldParseDTO.getField();
-	    PipedField pf = fieldParseDTO.getPipeField();
-	    Pic pic = fieldParseDTO.getPic();
+            Field field = fieldParseDTO.getField();
+            PipedField pf = fieldParseDTO.getPipeField();
+            Pic pic = fieldParseDTO.getPic();
 
-	    Converter conv = fieldParseDTO.getConverter();
+            Converter conv = fieldParseDTO.getConverter();
 
-	    String fieldName = field.getName();
-	    String strValue = null;
-	    Object objValue = null;
-	    Class<? extends FieldConverter<Object>> clazzConv = null;
+            String fieldName = field.getName();
+            String strValue = null;
+            Object objValue = null;
+            Class<? extends FieldConverter<Object>> clazzConv = null;
 
-	    try {
-		if (template.getType().equals(Type.PIPE)) {
-		    // if is a piped file, get value from the array
-		    int indx = pf.value();
-		    strValue = values[indx];
-		} else {
-		    // template.type is equals to ClassParseDTO.Type.PIC
-		    // if is a piped file, get value from data
-		    // using beginIndex and size values in Pic Annotation
-		    int begin = pic.beginIndex();
-		    int size = pic.size();
+            try {
+                if (template.getType().equals(Type.PIPE)) {
+                    // if is a piped file, get value from the array
+                    int indx = pf.value();
+                    strValue = values[indx];
+                } else {
+                    // template.type is equals to ClassParseDTO.Type.PIC
+                    // if is a piped file, get value from data
+                    // using beginIndex and size values in Pic Annotation
+                    int begin = pic.beginIndex();
+                    int size = pic.size();
 
-		    if ((begin + size) > data.length()) {
-			// avoid IndexOutOfBoundsException if data is shorter than expected
-			strValue = data.substring(begin);
-		    } else {
-			strValue = data.substring(begin, begin + size);
-		    }
+                    if ((begin + size) > data.length()) {
+                        // avoid IndexOutOfBoundsException if data is shorter than expected
+                        strValue = data.substring(begin);
+                    } else {
+                        strValue = data.substring(begin, begin + size);
+                    }
 
-		}
+                }
 
-		field.setAccessible(Boolean.TRUE);
-		try {
-		    String ifNull = fieldParseDTO.getIfNull();
-		    if ((isPiped && !strValue.equals(ifNull)) || (!isPiped && !strValue.trim().equals(ifNull))) {
+                field.setAccessible(Boolean.TRUE);
+                try {
+                    String ifNull = fieldParseDTO.getIfNull();
+                    if ((isPiped && !strValue.equals(ifNull)) || (!isPiped && !strValue.trim().equals(ifNull))) {
 
-			if (conv == null) {
-			    objValue = ParseUtils.parse(strValue, field.getType());
-			} else {
-			    clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
-			    // get the converter in the ClassParseDTO
-			    FieldConverter<?> c = template.getConverter(clazzConv);
-			    objValue = c.toObject(strValue, conv.args());
-			}
-		    }
+                        if (conv == null) {
+                            objValue = ParseUtils.parse(strValue, field.getType());
+                        } else {
+                            clazzConv = (Class<? extends FieldConverter<Object>>) conv.value();
+                            // get the converter in the ClassParseDTO
+                            FieldConverter<?> c = template.getConverter(clazzConv);
+                            objValue = c.toObject(strValue, conv.args());
+                        }
+                    }
 
-		} catch (Exception e) {
-		    throw new ParseException(e.getMessage(), e);
-		}
+                } catch (Exception e) {
+                    throw new ParseException(e.getMessage(), e);
+                }
 
-		field.set(object, objValue);
+                field.set(object, objValue);
 
-	    } catch (IndexOutOfBoundsException e) {
-		// if is IndexOutOfBoundsException strValue is null
-		throw new RecordParserException("An error has occurred while getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; ", e);
-	    } catch (ParseException e) {
-		// if is ParseException objValue is null
-		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
-	    } catch (Exception e) {
-		String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
-		throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
-	    }
+            } catch (IndexOutOfBoundsException e) {
+                // if is IndexOutOfBoundsException strValue is null
+                throw new RecordParserException("An error has occurred while getting value, field_name: " + fieldName + "; of:  '" + data + "'; index_not_found: " + e.getMessage() + "; class: " + type.getCanonicalName() + "; ", e);
+            } catch (ParseException e) {
+                // if is ParseException objValue is null
+                String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
+                throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
+            } catch (Exception e) {
+                String convDesc = clazzConv != null ? "converter: " + clazzConv.getCanonicalName() + "; " : "";
+                throw new RecordParserException("An error has occurred while setting value, original value: " + (strValue != null ? "'" + strValue + "'" : null) + "; converted value: " + (objValue != null ? "'" + objValue + "'" : null) + "; " + convDesc + "class: " + type.getCanonicalName() + "; " + "field name: " + fieldName + "; field type: " + field.getType().getCanonicalName() + "; ", e);
+            }
 
-	}
+        }
 
-	return object;
+        return object;
     }
 
     /**
@@ -523,75 +527,83 @@ public class Extractor {
     @SuppressWarnings("unchecked")
     private static String convertPipedObjectToString(Object data, ClassParseDTO template) {
 
-	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-	int last = template.getLastIndex();
+        int last = template.getLastIndex();
 
-	for (int idx = 0; idx <= last; idx++) {
+        for (int idx = 0; idx <= last; idx++) {
 
-	    FieldParseDTO extract = template.getFieldParseDTO(idx);
+            FieldParseDTO extract = template.getFieldParseDTO(idx);
 
-	    if (extract != null) {
+            if (extract != null) {
 
-		Field field = extract.getField();
-		field.setAccessible(Boolean.TRUE);
+                Field field = extract.getField();
+                field.setAccessible(Boolean.TRUE);
 
-		String name = field.getName();
+                String name = field.getName();
 
-		Object value;
+                Object value;
 
-		try {
-		    value = field.get(data);
-		} catch (IllegalArgumentException e) {
-		    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
-		} catch (IllegalAccessException e) {
-		    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
-		}
+                try {
+                    value = field.get(data);
+                } catch (IllegalArgumentException e) {
+                    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+                } catch (IllegalAccessException e) {
+                    throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+                }
 
-		Class<? extends FieldConverter<?>> conv = null;
-		try {
+                Class<? extends FieldConverter<?>> conv = null;
+                try {
 
-		    String strValue;
+                    String strValue;
 
-		    if (value == null && extract.getIfNull() != null) {
-			strValue = extract.getIfNull();
-		    } else if (extract.getConverter() == null) {
-			strValue = value != null ? value.toString() : EMPTY;
-		    } else {
-			conv = extract.getConverter().value();
-			FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
-			strValue = c.toString(value, extract.getConverter().args());
-		    }
+                    if (value == null && extract.getIfNull() != null) {
+                        strValue = extract.getIfNull();
+                    } else if (extract.getConverter() == null) {
+                        strValue = value != null ? value.toString() : EMPTY;
+                    } else {
+                        conv = extract.getConverter().value();
+                        FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
+                        strValue = c.toString(value, extract.getConverter().args());
+                    }
 
-		    // cut if is longer than max size
-		    if (extract.getMaxSize() != null && strValue.length() > extract.getMaxSize()) {
-			strValue = strValue.substring(0, extract.getMaxSize());
-		    }
+                    // cut if is longer than max size
+                    if (extract.getMaxSize() != null && strValue.length() > extract.getMaxSize()) {
+                        // when the values is longer tha
+                        strValue = strValue.substring(ZERO, extract.getMaxSize());
+                    } else if (extract.getMaxSize() != null && extract.getPipeField().fixedSize()) {
+                        // when the fixed size was specified
+                        if (extract.getPipeField().rightAlign()) {
+                            strValue = StringUtils.leftPad(strValue, extract.getMaxSize(), SPACE);
+                        } else {
+                            strValue = StringUtils.rightPad(strValue, extract.getMaxSize(), SPACE);
+                        }
+                    }
 
-		    sb.append(strValue);
+                    sb.append(strValue);
 
-		} catch (InstantiationException e) {
-		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-		} catch (IllegalAccessException e) {
-		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-		} catch (ClassCastException e) {
-		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-		} catch (Exception e) {
-		    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-		}
+                } catch (InstantiationException e) {
+                    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+                } catch (IllegalAccessException e) {
+                    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+                } catch (ClassCastException e) {
+                    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+                } catch (Exception e) {
+                    String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                    throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+                }
 
-	    }
+            }
 
-	    if (idx < last) {
-		sb.append("|");
-	    }
-	}
+            if (idx < last) {
+                sb.append("|");
+            }
+        }
 
-	return sb.toString();
+        return sb.toString();
     }
 
     /**
@@ -605,83 +617,83 @@ public class Extractor {
     @SuppressWarnings("unchecked")
     private static String convertCopyObjectToString(Object data, ClassParseDTO template) {
 
-	int size = template.getLastIndex();
+        int size = template.getLastIndex();
 
-	StringBuilder sb = new StringBuilder(size);
-	for (int i = 0; i < size; i++) {
-	    sb.append(SPACE);
-	}
+        StringBuilder sb = new StringBuilder(size);
+        for (int i = 0; i < size; i++) {
+            sb.append(SPACE);
+        }
 
-	List<FieldParseDTO> extracts = template.getFieldParseDTOs();
+        List<FieldParseDTO> extracts = template.getFieldParseDTOs();
 
-	for (FieldParseDTO extract : extracts) {
+        for (FieldParseDTO extract : extracts) {
 
-	    Field field = extract.getField();
-	    field.setAccessible(Boolean.TRUE);
+            Field field = extract.getField();
+            field.setAccessible(Boolean.TRUE);
 
-	    String name = field.getName();
+            String name = field.getName();
 
-	    Object value;
+            Object value;
 
-	    try {
-		value = field.get(data);
-	    } catch (IllegalArgumentException e) {
-		throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
-	    } catch (IllegalAccessException e) {
-		throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
-	    }
+            try {
+                value = field.get(data);
+            } catch (IllegalArgumentException e) {
+                throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+            } catch (IllegalAccessException e) {
+                throw new RecordParserException("An error has occurred while getting value in class: " + data.getClass().getCanonicalName() + "; field: " + field.getName() + ";", e);
+            }
 
-	    Class<? extends FieldConverter<?>> conv = null;
+            Class<? extends FieldConverter<?>> conv = null;
 
-	    try {
+            try {
 
-		String val;
+                String val;
 
-		if (value == null && extract.getIfNull() != null) {
-		    val = extract.getIfNull();
-		} else if (extract.getConverter() == null) {
-		    val = value != null ? value.toString() : EMPTY;
-		} else {
-		    conv = extract.getConverter().value();
-		    FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
-		    val = c.toString(value, extract.getConverter().args());
-		}
+                if (value == null && extract.getIfNull() != null) {
+                    val = extract.getIfNull();
+                } else if (extract.getConverter() == null) {
+                    val = value != null ? value.toString() : EMPTY;
+                } else {
+                    conv = extract.getConverter().value();
+                    FieldConverter<Object> c = (FieldConverter<Object>) template.getConverter(conv);
+                    val = c.toString(value, extract.getConverter().args());
+                }
 
-		int fieldSize = extract.getPic().size();
-		// cut string if is longer than fieldSize
-		if (val.length() > fieldSize) {
-		    val = val.substring(0, fieldSize);
-		} else if (val.length() < fieldSize) {
-		    // add spaces is is shorter than fieldSize
-		    StringBuilder ssb = new StringBuilder(fieldSize);
-		    ssb.append(val);
-		    int lim = fieldSize - val.length();
-		    for (int i = 0; i < lim; i++) {
-			ssb.append(SPACE);
-		    }
-		    val = ssb.toString();
-		}
+                int fieldSize = extract.getPic().size();
+                // cut string if is longer than fieldSize
+                if (val.length() > fieldSize) {
+                    val = val.substring(0, fieldSize);
+                } else if (val.length() < fieldSize) {
+                    // add spaces is is shorter than fieldSize
+                    StringBuilder ssb = new StringBuilder(fieldSize);
+                    ssb.append(val);
+                    int lim = fieldSize - val.length();
+                    for (int i = 0; i < lim; i++) {
+                        ssb.append(SPACE);
+                    }
+                    val = ssb.toString();
+                }
 
-		int start = extract.getPic().beginIndex();
-		sb.replace(start, start + fieldSize, val);
+                int start = extract.getPic().beginIndex();
+                sb.replace(start, start + fieldSize, val);
 
-	    } catch (InstantiationException e) {
-		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-	    } catch (IllegalAccessException e) {
-		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-	    } catch (ClassCastException e) {
-		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-	    } catch (Exception e) {
-		String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
-		throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
-	    }
+            } catch (InstantiationException e) {
+                String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+            } catch (IllegalAccessException e) {
+                String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+            } catch (ClassCastException e) {
+                String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+            } catch (Exception e) {
+                String convName = conv != null ? "converter: " + conv.getCanonicalName() + "; " : EMPTY;
+                throw new RecordParserException("An error has occurred while converting value: '" + value + "'; " + convName + "class: " + data.getClass().getCanonicalName() + "; field: " + name + ";", e);
+            }
 
-	}
+        }
 
-	return sb.toString();
+        return sb.toString();
     }
 
 }

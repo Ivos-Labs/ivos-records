@@ -59,4 +59,14 @@ public @interface Pic {
      */
     int size();
 
+    /**
+     * Specifies whether the value has to be aligned to the right side,<br>
+     * 
+     * @return true when the value has to be aligned to the right side
+     * @since 1.0.0
+     * @author imperezivan
+     *
+     */
+    boolean rightAlign() default false;
+
 }

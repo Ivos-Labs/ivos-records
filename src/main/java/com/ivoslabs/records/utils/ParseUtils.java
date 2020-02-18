@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,74 +63,74 @@ public class ParseUtils {
      */
     public static ClassParseDTO getTemplate(Class<?> type, Class<? extends Annotation> annon, boolean isToObj) {
 
-	Type t = annon.equals(PipedField.class) ? Type.PIPE : Type.PIC;
+        Type t = annon.equals(PipedField.class) ? Type.PIPE : Type.PIC;
 
-	ClassParseDTO template = new ClassParseDTO(t);
+        ClassParseDTO template = new ClassParseDTO(t);
 
-	Field fields[] = type.getDeclaredFields();
+        Field fields[] = type.getDeclaredFields();
 
-	// generic if-null value
-	IfNull genIfNull = type.getDeclaredAnnotation(IfNull.class);
-	String genIfNullValue = genIfNull != null ? genIfNull.value() : null;
+        // generic if-null value
+        IfNull genIfNull = type.getDeclaredAnnotation(IfNull.class);
+        String genIfNullValue = genIfNull != null ? genIfNull.value() : null;
 
-	for (Field field : fields) {
-	    FieldParseDTO ex = null;
+        for (Field field : fields) {
+            FieldParseDTO ex = null;
 
-	    IfNull ifNull = field.getDeclaredAnnotation(IfNull.class);
-	    String ifNullValue = ifNull != null ? ifNull.value() : genIfNullValue;
+            IfNull ifNull = field.getDeclaredAnnotation(IfNull.class);
+            String ifNullValue = ifNull != null ? ifNull.value() : genIfNullValue;
 
-	    if (annon.equals(PipedField.class)) {
-		PipedField pf = field.getDeclaredAnnotation(PipedField.class);
-		if (pf != null) {
-		    Integer maxSize = pf.maxSize() > 0 ? pf.maxSize() : null;
-		    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class), ifNullValue, maxSize);
-		}
-	    } else {
-		Pic pic = field.getAnnotation(Pic.class);
-		if (pic != null) {
-		    ex = new FieldParseDTO(field, pic, field.getAnnotation(Converter.class), ifNullValue);
-		}
-	    }
+            if (annon.equals(PipedField.class)) {
+                PipedField pf = field.getDeclaredAnnotation(PipedField.class);
+                if (pf != null) {
+                    Integer maxSize = pf.maxSize() > 0 ? pf.maxSize() : null;
+                    ex = new FieldParseDTO(field, pf, field.getAnnotation(Converter.class), ifNullValue, maxSize);
+                }
+            } else {
+                Pic pic = field.getAnnotation(Pic.class);
+                if (pic != null) {
+                    ex = new FieldParseDTO(field, pic, field.getAnnotation(Converter.class), ifNullValue);
+                }
+            }
 
-	    if (ex != null) {
-		template.add(ex);
-	    }
-	}
+            if (ex != null) {
+                template.add(ex);
+            }
+        }
 
-	if (template.getFieldParseDTOs().isEmpty()) {
-	    throw new IllegalArgumentException("Class: " + type.getCanonicalName() + " doesn't have PipedField or Pic fields");
-	}
+        if (template.getFieldParseDTOs().isEmpty()) {
+            throw new IllegalArgumentException("Class: " + type.getCanonicalName() + " doesn't have PipedField or Pic fields");
+        }
 
-	if (annon.equals(PipedField.class) && !isToObj) {
-	    List<FieldParseDTO> extracts = template.getFieldParseDTOs();
-	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
-		public int compare(FieldParseDTO o1, FieldParseDTO o2) {
-		    return Integer.compare(o1.getPipeField().value(), o2.getPipeField().value());
-		}
-	    });
+        if (annon.equals(PipedField.class) && !isToObj) {
+            List<FieldParseDTO> extracts = template.getFieldParseDTOs();
+            Collections.sort(extracts, new Comparator<FieldParseDTO>() {
+                public int compare(FieldParseDTO o1, FieldParseDTO o2) {
+                    return Integer.compare(o1.getPipeField().value(), o2.getPipeField().value());
+                }
+            });
 
-	    for (FieldParseDTO extract : extracts) {
-		template.addFieldParserDTO(extract.getPipeField().value(), extract);
-	    }
+            for (FieldParseDTO extract : extracts) {
+                template.addFieldParserDTO(extract.getPipeField().value(), extract);
+            }
 
-	    template.setLastIndex(extracts.get(extracts.size() - 1).getPipeField().value());
+            template.setLastIndex(extracts.get(extracts.size() - 1).getPipeField().value());
 
-	} else if (!isToObj) {
+        } else if (!isToObj) {
 
-	    List<FieldParseDTO> extracts = template.getFieldParseDTOs();
+            List<FieldParseDTO> extracts = template.getFieldParseDTOs();
 
-	    Collections.sort(extracts, new Comparator<FieldParseDTO>() {
-		public int compare(FieldParseDTO o1, FieldParseDTO o2) {
-		    return Integer.compare(o1.getPic().beginIndex(), o2.getPic().beginIndex());
-		}
-	    });
+            Collections.sort(extracts, new Comparator<FieldParseDTO>() {
+                public int compare(FieldParseDTO o1, FieldParseDTO o2) {
+                    return Integer.compare(o1.getPic().beginIndex(), o2.getPic().beginIndex());
+                }
+            });
 
-	    FieldParseDTO last = extracts.get(extracts.size() - 1);
-	    template.setLastIndex(last.getPic().beginIndex() + last.getPic().size() - 1);
+            FieldParseDTO last = extracts.get(extracts.size() - 1);
+            template.setLastIndex(last.getPic().beginIndex() + last.getPic().size() - 1);
 
-	}
+        }
 
-	return template;
+        return template;
 
     }
 
@@ -142,63 +143,61 @@ public class ParseUtils {
      */
     public static Object parse(String value, Class<?> type) {
 
-	Object v = null;
+        Object v = null;
 
-	if (type != String.class) {
-	    value = value.trim();
-	}
+        value = StringUtils.trimToEmpty(value);
 
-	if (type == long.class) {
-	    v = Long.parseLong(value);
-	} else if (type == int.class) {
-	    v = Integer.parseInt(value);
-	} else if (type == short.class) {
-	    v = Short.parseShort(value);
-	} else if (type == double.class) {
-	    v = Double.parseDouble(value);
-	} else if (type == float.class) {
-	    v = Float.parseFloat(value);
-	} else if (type == boolean.class) {
-	    v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
-	    if (v.equals(Boolean.FALSE)) {
-		v = Boolean.parseBoolean(value);
-	    }
-	} else if (type.equals(Long.class)) {
-	    if (!value.isEmpty()) {
-		v = Long.parseLong(value);
-	    }
-	} else if (type.equals(Integer.class)) {
-	    if (!value.isEmpty()) {
-		v = Integer.parseInt(value);
-	    }
-	} else if (type.equals(Short.class)) {
-	    if (!value.isEmpty()) {
-		v = Short.parseShort(value);
-	    }
-	} else if (type.equals(Double.class)) {
-	    if (!value.isEmpty()) {
-		v = Double.parseDouble(value);
-	    }
-	} else if (type.equals(Float.class)) {
-	    if (!value.isEmpty()) {
-		v = Float.parseFloat(value);
-	    }
-	} else if (type.equals(BigDecimal.class)) {
-	    if (!value.isEmpty()) {
-		v = new BigDecimal(value);
-	    }
-	} else if (type.equals(Boolean.class)) {
-	    if (!value.isEmpty()) {
-		v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
-		if (v.equals(Boolean.FALSE)) {
-		    v = Boolean.parseBoolean(value);
-		}
-	    }
-	} else {
-	    v = value;
-	}
+        if (type == long.class) {
+            v = Long.parseLong(value);
+        } else if (type == int.class) {
+            v = Integer.parseInt(value);
+        } else if (type == short.class) {
+            v = Short.parseShort(value);
+        } else if (type == double.class) {
+            v = Double.parseDouble(value);
+        } else if (type == float.class) {
+            v = Float.parseFloat(value);
+        } else if (type == boolean.class) {
+            v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
+            if (v.equals(Boolean.FALSE)) {
+                v = Boolean.parseBoolean(value);
+            }
+        } else if (type.equals(Long.class)) {
+            if (!value.isEmpty()) {
+                v = Long.parseLong(value);
+            }
+        } else if (type.equals(Integer.class)) {
+            if (!value.isEmpty()) {
+                v = Integer.parseInt(value);
+            }
+        } else if (type.equals(Short.class)) {
+            if (!value.isEmpty()) {
+                v = Short.parseShort(value);
+            }
+        } else if (type.equals(Double.class)) {
+            if (!value.isEmpty()) {
+                v = Double.parseDouble(value);
+            }
+        } else if (type.equals(Float.class)) {
+            if (!value.isEmpty()) {
+                v = Float.parseFloat(value);
+            }
+        } else if (type.equals(BigDecimal.class)) {
+            if (!value.isEmpty()) {
+                v = new BigDecimal(value);
+            }
+        } else if (type.equals(Boolean.class)) {
+            if (!value.isEmpty()) {
+                v = value.equals(TRUE_1) || value.equals(TRUE_T) || value.equals(TRUE_Y);
+                if (v.equals(Boolean.FALSE)) {
+                    v = Boolean.parseBoolean(value);
+                }
+            }
+        } else {
+            v = value;
+        }
 
-	return v;
+        return v;
     }
 
     /**
@@ -209,35 +208,35 @@ public class ParseUtils {
      * @throws RecordParserException when occur an Exception processing a row
      */
     public static void readTextFile(String url, RowConsumer action) throws RecordParserException {
-	BufferedReader br = null;
-	int rowNumber = 0;
-	try {
+        BufferedReader br = null;
+        int rowNumber = 0;
+        try {
 
-	    br = new BufferedReader(new FileReader(url));
-	    String sCurrentLine;
+            br = new BufferedReader(new FileReader(url));
+            String sCurrentLine;
 
-	    while ((sCurrentLine = br.readLine()) != null) {
-		rowNumber++;
-		action.process(sCurrentLine, rowNumber);
-	    }
+            while ((sCurrentLine = br.readLine()) != null) {
+                rowNumber++;
+                action.process(sCurrentLine, rowNumber);
+            }
 
-	} catch (RecordParserException e) {
-	    throw e;
-	} catch (Exception e) {
-	    if (rowNumber > 0) {
-		throw new RecordParserException("An error has occurred while processing file: " + url + "; row: " + rowNumber + "; Detail: " + e.getMessage(), e);
-	    } else {
-		throw new RuntimeException(e);
-	    }
-	} finally {
-	    if (br != null) {
-		try {
-		    br.close();
-		} catch (Exception e2) {
-		    LOGGER.error(e2.getMessage(), e2);
-		}
-	    }
-	}
+        } catch (RecordParserException e) {
+            throw e;
+        } catch (Exception e) {
+            if (rowNumber > 0) {
+                throw new RecordParserException("An error has occurred while processing file: " + url + "; row: " + rowNumber + "; Detail: " + e.getMessage(), e);
+            } else {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e2) {
+                    LOGGER.error(e2.getMessage(), e2);
+                }
+            }
+        }
 
     }
 
@@ -253,42 +252,42 @@ public class ParseUtils {
      */
     public static <H, D, T> void writeFile(String path, Stack<H> headers, RowSuplier<H> rowHeaderSuplier, Stack<D> data, RowSuplier<D> rowDataSuplier, Stack<T> tails, RowSuplier<T> rowTailSuplier) {
 
-	BufferedWriter out = null;
+        BufferedWriter out = null;
 
-	try {
+        try {
 
-	    LOGGER.debug("writing file: {}", path);
+            LOGGER.debug("writing file: {}", path);
 
-	    out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
+            out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
 
-	    while (headers != null && !headers.empty()) {
-		out.write(rowHeaderSuplier.get(headers.firstElement()) + "\n");
-		headers.remove(0);
-	    }
+            while (headers != null && !headers.empty()) {
+                out.write(rowHeaderSuplier.get(headers.firstElement()) + "\n");
+                headers.remove(0);
+            }
 
-	    while (!data.empty()) {
-		out.write(rowDataSuplier.get(data.firstElement()) + "\n");
-		data.remove(0);
-	    }
+            while (!data.empty()) {
+                out.write(rowDataSuplier.get(data.firstElement()) + "\n");
+                data.remove(0);
+            }
 
-	    while (tails != null && !tails.empty()) {
-		out.write(rowTailSuplier.get(tails.firstElement()) + "\n");
-		tails.remove(0);
-	    }
+            while (tails != null && !tails.empty()) {
+                out.write(rowTailSuplier.get(tails.firstElement()) + "\n");
+                tails.remove(0);
+            }
 
-	    LOGGER.debug("writed: {}", path);
+            LOGGER.debug("writed: {}", path);
 
-	} catch (IOException e) {
-	    throw new RuntimeException(e);
-	} finally {
-	    if (out != null) {
-		try {
-		    out.close();
-		} catch (Exception e2) {
-		    LOGGER.error(e2.getMessage(), e2);
-		}
-	    }
-	}
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e2) {
+                    LOGGER.error(e2.getMessage(), e2);
+                }
+            }
+        }
     }
 
     /**
@@ -298,51 +297,51 @@ public class ParseUtils {
      * @return the number of lines
      */
     public static int countLinesNew(String filename) {
-	InputStream is = null;
-	try {
-	    is = new BufferedInputStream(new FileInputStream(filename));
-	    byte[] c = new byte[1024];
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(filename));
+            byte[] c = new byte[1024];
 
-	    int readChars = is.read(c);
-	    if (readChars == -1) {
-		// bail out if nothing to read
-		return 0;
-	    }
+            int readChars = is.read(c);
+            if (readChars == -1) {
+                // bail out if nothing to read
+                return 0;
+            }
 
-	    // make it easy for the optimizer to tune this loop
-	    int count = 0;
-	    while (readChars == 1024) {
-		for (int i = 0; i < 1024;) {
-		    if (c[i++] == BREAK_LINE) {
-			++count;
-		    }
-		}
-		readChars = is.read(c);
-	    }
+            // make it easy for the optimizer to tune this loop
+            int count = 0;
+            while (readChars == 1024) {
+                for (int i = 0; i < 1024;) {
+                    if (c[i++] == BREAK_LINE) {
+                        ++count;
+                    }
+                }
+                readChars = is.read(c);
+            }
 
-	    // count remaining characters
-	    while (readChars != -1) {
+            // count remaining characters
+            while (readChars != -1) {
 //		System.out.println(readChars);
-		for (int i = 0; i < readChars; ++i) {
-		    if (c[i] == BREAK_LINE) {
-			++count;
-		    }
-		}
-		readChars = is.read(c);
-	    }
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == BREAK_LINE) {
+                        ++count;
+                    }
+                }
+                readChars = is.read(c);
+            }
 
-	    return count == 0 ? 1 : count;
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	} finally {
-	    if (is != null) {
-		try {
-		    is.close();
-		} catch (Exception e2) {
-		    LOGGER.error(e2.getMessage(), e2);
-		}
-	    }
-	}
+            return count == 0 ? 1 : count;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e2) {
+                    LOGGER.error(e2.getMessage(), e2);
+                }
+            }
+        }
     }
 
 }

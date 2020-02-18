@@ -23,7 +23,7 @@ public class TestPipedOkToObj {
     public void testToObject1() {
 	PipedParser ex = new PipedParser();
 
-	PipedDataDTO dto = ex.toObject("b|2|1|false|2.2|20190306|cc,dd", PipedDataDTO.class);
+	PipedDataDTO dto = ex.toObject("b   |2 |1 |false  |  2.2  |20190306  |cc,dd", PipedDataDTO.class);
 
 	String expected = "PipedDataDTO [field1=b, field2=2, field3=1, field4=false, field5=2.2, field6=Wed Mar 06 00:00:00 CST 2019, field7=SubField [a=cc, b=dd]]";
 	String actual = dto.toString();

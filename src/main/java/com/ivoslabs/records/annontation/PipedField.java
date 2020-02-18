@@ -32,27 +32,53 @@ import java.lang.annotation.Target;
  * @author www.ivoslabs.com
  * @see com.ivoslabs.records.annontation.PipedField#value() &#64;PipedField#value
  * @see com.ivoslabs.records.annontation.Converter Converter
- *
+ * @since 1.0.0
+ * @author imperezivan
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PipedField {
 
     /**
-     * Specify the index where will be found the field in row separated by pipe
+     * Specifies the index where will be found the field in row separated by pipe
      * 
      * @return The index where will be found the field
      * @see com.ivoslabs.records.annontation.PipedField &#64;PipedField
      * @see com.ivoslabs.records.annontation.Converter Converter
-     * 
+     * @since 1.0.0
+     * @author imperezivan
      */
     int value();
 
     /**
-     * Specify the max size of the field as String
+     * Specifies the max size of the field as String
      * 
      * @return The max size
+     * @since 1.0.0
+     * @author imperezivan
      */
     int maxSize() default 0;
+
+    /**
+     * Specifies whether the max size has to be used as the fixed size of the field,<br>
+     * if the max size is 0, the fixed sized flag will be ignored
+     * 
+     * @return true when the max size has to be used as the fixed size of the field
+     * @since 1.0.0
+     * @author imperezivan
+     *
+     */
+    boolean fixedSize() default false;
+
+    /**
+     * Specifies whether the value has to be aligned to the right side,<br>
+     * if the fixed size flag is false, the right align flag will be ignored
+     * 
+     * @return true when the value has to be aligned to the right side
+     * @since 1.0.0
+     * @author imperezivan
+     *
+     */
+    boolean rightAlign() default false;
 
 }
