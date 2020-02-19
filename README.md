@@ -15,27 +15,27 @@ Example piped data pojo
 @IfNull("-")
 public class PipedDataDTO {
 
-    @PipedField(value = 0, maxSize = 3)
+    @Piped(value = 0, maxSize = 3)
     private String field1;
 
-    @PipedField(1)
+    @Piped(1)
     private Integer field2;
 
-    @PipedField(2)
+    @Piped(2)
     private int field3;
 
-    @PipedField(3)
+    @Piped(3)
     private Boolean field4;
 
-    @PipedField(4)
+    @Piped(4)
     private Double field5;
 
     @Converter(DateLatinConverver.class)
-    @PipedField(5)
+    @Piped(5)
     private Date field6;
 
     @Converter(SubConverter.class)
-    @PipedField(6)
+    @Piped(6)
     private SubField field7;
     
     ...
@@ -50,10 +50,10 @@ Example piped header pojo
 
 public class PipedHeader {
 
-    @PipedField(0)
+    @Piped(0)
     private String field1;
 
-    @PipedField(1)
+    @Piped(1)
     private Integer field2;
     
     ...
@@ -67,10 +67,10 @@ Example piped tail pojo
 
 public class PipedTail {
 
-    @PipedField(0)
+    @Piped(0)
     private Integer field1;
 
-    @PipedField(1)
+    @Piped(1)
     private String field2;
     
     ...
