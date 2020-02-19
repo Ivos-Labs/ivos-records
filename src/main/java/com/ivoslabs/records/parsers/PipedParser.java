@@ -14,8 +14,8 @@ import com.ivoslabs.records.function.Consumer;
  * Utility to parse piped data to POJOs (using {@code @PipedField } annotation) and viceversa
  * 
  * @author www.ivoslabs.com
- * @see Piped &#64;PipedField
- * @see com.ivoslabs.records.annontation.Piped#value() &#64;PipedField#value
+ * @see Piped &#64;Piped
+ * @see com.ivoslabs.records.annontation.Piped#value() &#64;Piped#value
  * @see com.ivoslabs.records.annontation.Converter Converter
  */
 public class PipedParser {
@@ -57,19 +57,19 @@ public class PipedParser {
     }
 
     /**
-     * Creates an instance of H, D, or T for each row in a file and execute the respective received ObjectConsumer
+     * Creates an instance of H, D, or T for each row in a file and execute the respective received Consumer
      * 
      * @param                <H> Header type
      * @param                <D> Data type
      * @param                <T> Tail type
      * @param file           file path
      * @param headerType     header type
-     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
+     * @param headerSize     number of the first rows to be processed with headerType and headerConsumer
      * @param headerConsumer action to do for each header instance
      * @param dataType       data type
      * @param dataConsumer   action to do for each data instance
      * @param tailType       tail type
-     * @param tailSize       number of last rows to be processed with tailType and tailConsumer
+     * @param tailSize       number of the last rows to be processed with tailType and tailConsumer
      * @param tailConsumer   action to do for each tail instance
      */
     public <H, D, T> void processFile(String file,
