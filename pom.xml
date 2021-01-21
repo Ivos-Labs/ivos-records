@@ -21,8 +21,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.5</maven.compiler.source>
-		<maven.compiler.target>1.5</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -123,5 +123,16 @@
 		<url>https://github.com/Ivos-Labs/ivos-records/issues</url>
 	</issueManagement>
 
+	<!-- Conf para compartir dependencias -->
+	<distributionManagement>
+		<repository>
+			<id>telcel-maven-dssc</id>
+			<url>file:\\191.9.3.109\telcel-maven</url>
+		</repository>
+		<snapshotRepository>
+			<id>telcel-maven-dssc</id>
+			<url>file:\\191.9.3.109\telcel-maven</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>
