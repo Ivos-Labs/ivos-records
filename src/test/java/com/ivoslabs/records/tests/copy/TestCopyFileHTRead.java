@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.copy;
 
@@ -40,7 +40,7 @@ public class TestCopyFileHTRead {
 
 	int headerSize = 3;
 
-	String file = "data.copy";
+	String file = "target/data.copy";
 
 	copyParser.processFile(file,
 		CopyHeader.class, headerSize, headerConsumer,
