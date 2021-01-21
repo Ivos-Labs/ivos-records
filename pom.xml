@@ -126,12 +126,12 @@
 	<!-- Conf para compartir dependencias -->
 	<distributionManagement>
 		<repository>
-			<id>telcel-maven-dssc</id>
-			<url>file:\\191.9.3.109\telcel-maven</url>
+			<id>local-nexus-maven/id>
+			<url>file:\\127.0.0.1\local-nexus-maven</url>
 		</repository>
 		<snapshotRepository>
-			<id>telcel-maven-dssc</id>
-			<url>file:\\191.9.3.109\telcel-maven</url>
+			<id>local-nexus-maven</id>
+			<url>file:\\127.0.0.1\local-nexus-maven</url>
 		</snapshotRepository>
 	</distributionManagement>
 
