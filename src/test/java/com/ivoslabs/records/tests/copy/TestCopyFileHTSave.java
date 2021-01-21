@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.copy;
 
@@ -86,7 +86,7 @@ public class TestCopyFileHTSave {
 	Stack<CopyDataDTO> dataStack = new Stack<CopyDataDTO>();
 	dataStack.addAll(list);
 
-	String file = "data.copy";
+	String file = "target/data.copy";
 
 	// append objects into a file
 	CopyParser copyParser = new CopyParser();
