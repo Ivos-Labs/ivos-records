@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.piped.dtos;
 
@@ -13,7 +13,7 @@ import com.ivoslabs.records.tests.commons.dtos.SubField;
 
 /**
  * @since
- * @author VI9XXL8
+ * @author imperezivan
  *
  */
 public class PipedDataFSsDTO {
@@ -474,7 +474,7 @@ public class PipedDataFSsDTO {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
