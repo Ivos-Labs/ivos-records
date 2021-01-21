@@ -487,7 +487,7 @@ public class Extractor {
                     if (template instanceof PipedClass) {
                         int indx = ((PipedField) fieldParseDTO).getPipeField().value();
                         // if is a piped file, get value from the array
-                        strValue = values[indx];
+                        strValue = values[indx].trim();
                     } else {
                         Pic pic = ((CopyField) fieldParseDTO).getPic();
                         // template.type is equals to ClassParseDTO.Type.PIC
