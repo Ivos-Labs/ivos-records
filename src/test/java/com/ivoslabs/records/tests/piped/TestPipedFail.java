@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.piped;
 
@@ -28,7 +28,7 @@ public class TestPipedFail {
 
 	String actual = null;
 	try {
-	    ex.toObjects(rows, PipedDataDTO.class);
+	    ex.toObjects(rows, PipedDataDTO.class );
 	} catch (Exception e) {
 	    actual = e.getMessage();
 	}
