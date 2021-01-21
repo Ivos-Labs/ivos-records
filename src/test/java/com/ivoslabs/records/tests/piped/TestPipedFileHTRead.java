@@ -52,7 +52,7 @@ public class TestPipedFileHTRead {
         int headerSize = 2;
         int tailSize = 1;
 
-        String file = "datahdt.psv";
+        String file = "target/datahdt.psv";
 
         // read file
         pipedParser.processFile(file,
