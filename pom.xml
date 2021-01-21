@@ -126,7 +126,7 @@
 	<!-- Conf para compartir dependencias -->
 	<distributionManagement>
 		<repository>
-			<id>local-nexus-maven/id>
+			<id>local-nexus-maven</id>
 			<url>file:\\127.0.0.1\local-nexus-maven</url>
 		</repository>
 		<snapshotRepository>
