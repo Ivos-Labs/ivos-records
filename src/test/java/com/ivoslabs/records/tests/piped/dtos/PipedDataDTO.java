@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.piped.dtos;
 
@@ -19,10 +19,10 @@ import com.ivoslabs.records.tests.commons.dtos.SubField;
 @IfNull("-")
 public class PipedDataDTO {
 
-    @Piped(value = 0, maxSize = 3)
+    @Piped(value = 0, maxSize = 4, fixedSize = true)
     private String field1;
 
-    @Piped(1)
+    @Piped(value = 1, maxSize = 2, fixedSize = true)
     private Integer field2;
 
     @Piped(2)
@@ -170,7 +170,7 @@ public class PipedDataDTO {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
