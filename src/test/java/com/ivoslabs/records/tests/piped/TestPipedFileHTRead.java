@@ -3,11 +3,11 @@
  */
 package com.ivoslabs.records.tests.piped;
 
-import static org.junit.Assert.assertTrue;
+import java.util.function.Consumer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import com.ivoslabs.records.function.Consumer;
 import com.ivoslabs.records.parsers.PipedParser;
 import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
 import com.ivoslabs.records.tests.piped.dtos.PipedHeader;
@@ -23,29 +23,13 @@ public class TestPipedFileHTRead {
     public void testFileToObjects() {
 
         // PipedHeader consumer (action to do for each PipedHeader)
-        Consumer<PipedHeader> headerConsumer = new Consumer<PipedHeader>() {
-
-            public void process(PipedHeader object) {
-                System.out.println(object.toString());
-            }
-
-        };
+        Consumer<PipedHeader> headerConsumer = object -> System.out.println("header: " + object.toString());
 
         // PipedDataDTO consumer (action to do for each PipedDataDTO)
-        Consumer<PipedDataDTO> dataConsumer = new Consumer<PipedDataDTO>() {
-
-            public void process(PipedDataDTO object) {
-                System.out.println(object.toString());
-            }
-
-        };
+        Consumer<PipedDataDTO> dataConsumer = object -> System.out.println("data: " + object.toString());
 
         // PipedTail consumer (action to do for each PipedTail)
-        Consumer<PipedTail> tailConsumer = new Consumer<PipedTail>() {
-            public void process(PipedTail object) {
-                System.out.println(object.toString());
-            }
-        };
+        Consumer<PipedTail> tailConsumer = object -> System.out.println("tail" + object.toString());
 
         PipedParser pipedParser = new PipedParser();
 
@@ -60,7 +44,7 @@ public class TestPipedFileHTRead {
                 PipedDataDTO.class, dataConsumer,
                 PipedTail.class, tailSize, tailConsumer);
 
-        assertTrue(Boolean.TRUE);
+        Assertions.assertTrue(Boolean.TRUE);
 
     }
 

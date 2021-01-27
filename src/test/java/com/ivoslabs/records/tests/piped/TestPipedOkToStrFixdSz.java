@@ -1,17 +1,16 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.piped;
-
-import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import com.ivoslabs.records.converters.DateLatinConverver;
+import com.ivoslabs.records.converters.date.DateLatinConverver;
 import com.ivoslabs.records.parsers.PipedParser;
 import com.ivoslabs.records.tests.commons.dtos.SubField;
 import com.ivoslabs.records.tests.piped.dtos.PipedDataFSsDTO;
@@ -25,7 +24,7 @@ public class TestPipedOkToStrFixdSz {
 
     @Test
     public void testToString() {
-        
+
         PipedParser ex = new PipedParser();
 
         PipedDataFSsDTO dto = new PipedDataFSsDTO();
@@ -51,13 +50,13 @@ public class TestPipedOkToStrFixdSz {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        
+
         dto.setField21(new SubField("aa", "bb"));
 
         String expected = "||   |   |||   |   |123456|123|123  |  456|||   |  2|1|false       |2.2            |            20190306|aa,bb";
         String actual = ex.toString(dto);
 
-        assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -115,6 +114,6 @@ public class TestPipedOkToStrFixdSz {
             actual = string;
         }
 
-        assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

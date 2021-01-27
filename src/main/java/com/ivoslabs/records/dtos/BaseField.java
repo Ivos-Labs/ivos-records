@@ -32,10 +32,10 @@ public abstract class BaseField {
      * @param converter
      */
     public BaseField(Field field, Converter converter, String ifNull) {
-	super();
-	this.field = field;
-	this.converter = converter;
-	this.ifNull = ifNull;
+        super();
+        this.field = field;
+        this.converter = converter;
+        this.ifNull = ifNull;
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class BaseField {
      * @return {@code Field} The field
      */
     public Field getField() {
-	return this.field;
+        return this.field;
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class BaseField {
      * @return {@code Converter} The converter
      */
     public Converter getConverter() {
-	return this.converter;
+        return this.converter;
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class BaseField {
      * @return {@code String} The ifNull
      */
     public String getIfNull() {
-	return this.ifNull;
+        return this.ifNull;
     }
 
 }

@@ -3,9 +3,11 @@
  */
 package com.ivoslabs.records.tests.copy;
 
-import org.junit.Test;
+import java.util.function.Consumer;
 
-import com.ivoslabs.records.function.Consumer;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.ivoslabs.records.parsers.CopyParser;
 import com.ivoslabs.records.tests.copy.dtos.CopyDataDTO;
 import com.ivoslabs.records.tests.copy.dtos.CopyHeader;
@@ -19,31 +21,20 @@ public class TestCopyFileHTRead {
     @Test
     public void testFileToObjects() {
 
-	// CopyHeader consumer (action to do for each CopyHeader)
-	Consumer<CopyHeader> headerConsumer = new Consumer<CopyHeader>() {
+        // CopyHeader consumer (action to do for each CopyHeader)
+        Consumer<CopyHeader> headerConsumer = object -> System.out.println("header: " + object.toString());
 
-	    public void process(CopyHeader object) {
-		System.out.println(object.toString());
-	    }
+        // CopyDataDTO consumer (action to do for each CopyDataDTO)
+        Consumer<CopyDataDTO> dataConsumer = object -> System.out.println("data:   " + object.toString());
 
-	};
+        CopyParser copyParser = new CopyParser();
 
-	// CopyDataDTO consumer (action to do for each CopyDataDTO)
-	Consumer<CopyDataDTO> dataConsumer = new Consumer<CopyDataDTO>() {
+        int headerSize = 3;
 
-	    public void process(CopyDataDTO object) {
-		System.out.println(object.toString());
-	    }
-	};
+        String file = "target/data.copy";
 
-	CopyParser copyParser = new CopyParser();
+        copyParser.processFile(file, CopyHeader.class, headerSize, headerConsumer, CopyDataDTO.class, dataConsumer);
 
-	int headerSize = 3;
-
-	String file = "target/data.copy";
-
-	copyParser.processFile(file,
-		CopyHeader.class, headerSize, headerConsumer,
-		CopyDataDTO.class, dataConsumer);
+        Assertions.assertTrue(Boolean.TRUE);
     }
 }

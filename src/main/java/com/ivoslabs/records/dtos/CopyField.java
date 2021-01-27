@@ -25,8 +25,8 @@ public class CopyField extends BaseField {
      * @param converter
      */
     public CopyField(Field field, Pic pic, Converter converter, String ifNull) {
-	super(field, converter, ifNull);
-	this.pic = pic;
+        super(field, converter, ifNull);
+        this.pic = pic;
     }
 
     /**
@@ -35,7 +35,7 @@ public class CopyField extends BaseField {
      * @return {@code Pic} The pic
      */
     public Pic getPic() {
-	return this.pic;
+        return this.pic;
     }
 
 }

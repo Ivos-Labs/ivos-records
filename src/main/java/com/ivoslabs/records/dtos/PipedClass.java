@@ -26,7 +26,7 @@ public class PipedClass extends BaseClass {
      * @author www.ivoslabs.mx
      */
     PipedClass() {
-	super();
+        super();
     }
 
     /**
@@ -35,7 +35,7 @@ public class PipedClass extends BaseClass {
      * @return {@code FieldParseDTO} the FieldParseDTO
      */
     public PipedField getFieldParseDTO(int index) {
-	return this.fieldParserDTOMap.get(index);
+        return this.fieldParserDTOMap.get(index);
     }
 
     /**
@@ -48,7 +48,7 @@ public class PipedClass extends BaseClass {
      * 
      */
     public void addFieldParserDTO(int key, PipedField fieldParserDTO) {
-	this.fieldParserDTOMap.put(key, fieldParserDTO);
+        this.fieldParserDTOMap.put(key, fieldParserDTO);
     }
 
     /**
@@ -57,7 +57,7 @@ public class PipedClass extends BaseClass {
      * @return {@code Integer} The lastIndex
      */
     public Integer getLastIndex() {
-	return this.lastIndex;
+        return this.lastIndex;
     }
 
     /**
@@ -66,7 +66,7 @@ public class PipedClass extends BaseClass {
      * @param lastIndex {@code Integer} The lastIndex to set
      */
     public void setLastIndex(Integer lastIndex) {
-	this.lastIndex = lastIndex;
+        this.lastIndex = lastIndex;
     }
 
     /*
@@ -77,7 +77,7 @@ public class PipedClass extends BaseClass {
      */
     @Override
     public Collection<PipedField> getFieldParseDTOs() {
-	return fieldParserDTOMap.values();
+        return fieldParserDTOMap.values();
     }
 
 }

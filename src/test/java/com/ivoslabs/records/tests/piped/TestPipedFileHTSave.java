@@ -3,14 +3,13 @@
  */
 package com.ivoslabs.records.tests.piped;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.ivoslabs.records.parsers.PipedParser;
 import com.ivoslabs.records.tests.commons.dtos.SubField;
@@ -98,7 +97,7 @@ public class TestPipedFileHTSave {
         PipedParser pipedParser = new PipedParser();
         pipedParser.objectsToFile(file, headerStack, dataStack, tailStack);
 
-        assertTrue(Boolean.TRUE);
+        Assertions.assertTrue(Boolean.TRUE);
 
     }
 }

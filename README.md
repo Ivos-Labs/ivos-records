@@ -10,7 +10,7 @@ Add the dependency to our pom
 
 <properties>
 
-...
+    ... other properties
 
     <!-- ivos records version -->
     <ivos-records.version>1.0.0</ivos-records.version>
@@ -26,7 +26,7 @@ Add the dependency to our pom
         <version>${ivos-records.version}</version>
     </dependency>
 
-    ...
+    ... other dependencies
 
 <dependencies>
 
@@ -36,9 +36,9 @@ Add the dependency to our pom
 
 **Reading and saving piped file**
 
- 
 
-Example piped data DTO 
+
+Example piped data DTO
 
 
 ``` java
@@ -68,10 +68,10 @@ public class PipedDataDTO {
     @Converter(SubConverter.class)
     @Piped(6)
     private SubField field7;
-    
+
     ...
     ...
-    
+
 ```
 
 Example piped header DTO
@@ -86,7 +86,7 @@ public class PipedHeader {
 
     @Piped(1)
     private Integer field2;
-    
+
     ...
     ...
 ```
@@ -103,13 +103,13 @@ public class PipedTail {
 
     @Piped(1)
     private String field2;
-    
+
     ...
     ...
 
 ```
 
-Example subfield 
+Example subfield
 
 
 ``` java
@@ -119,7 +119,7 @@ public class SubField {
     private String a;
 
     private String b;
-    
+
     ...
     ...
 ```
@@ -130,16 +130,16 @@ Example subfield converter
 
 public class SubConverter implements FieldConverter<SubField> {
 
- 
+
     public String toString(SubField object, String... args) throws Exception {
 	    return object != null ? object.getA() + "," + object.getB() : "";
     }
 
- 
+
     public SubField toObject(String string, String... args) throws Exception {
 	    return string != null && string.split(",").length > 1 ? new SubField(string.split(",")[0], string.split(",")[1]) : null;
     }
-    
+
     ...
     ...
 ```
@@ -202,13 +202,13 @@ Saving a piped file
 	// saving tail objects into a list
 	List<PipedTail> tails = new ArrayList<PipedTail>();
 	tails.add(tail);
-	
+
 	//
-	
+
 	// save list objects into Stacks
 	Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
 	headerStack.addAll(headers);
-	
+
 	Stack<PipedDataDTO> dataStack = new Stack<PipedDataDTO>();
 	dataStack.addAll(list);
 
@@ -227,7 +227,7 @@ Saving a piped file
 datahdt.piped expected content
 
 
-``` 
+```
 headerA|1
 headerB|2
 a|-|1|true|1.1|20190623|-
@@ -315,9 +315,9 @@ public class CopyDataDTO {
     @Converter(SubConverter.class)
     @Pic(beginIndex = 15, size = 5)
     private SubField field7;
-    
+
     // getters and setters
-    
+
 }
 ```
 
@@ -336,11 +336,11 @@ public class CopyHeader {
 
     @Pic(beginIndex = 12, size = 5)
     private Integer field3;
-    
+
 ```
 
 
-Example subfield 
+Example subfield
 
 
 ``` java
@@ -350,7 +350,7 @@ public class SubField {
     private String a;
 
     private String b;
-    
+
     ...
     ...
 ```
@@ -361,16 +361,16 @@ Example subfield converter
 
 public class SubConverter implements FieldConverter<SubField> {
 
- 
+
     public String toString(SubField object, String... args) throws Exception {
 	    return object != null ? object.getA() + "," + object.getB() : "";
     }
 
- 
+
     public SubField toObject(String string, String... args) throws Exception {
 	    return string != null && string.split(",").length > 1 ? new SubField(string.split(",")[0], string.split(",")[1]) : null;
     }
-    
+
     ...
     ...
 ```
@@ -441,11 +441,11 @@ Saving a COPY file
 	dataStack.addAll(list);
 
 	String file = "data.copy";
-	
+
 	// append objects into a file
 	CopyParser copyParser = new CopyParser();
 	copyParser.objectsToFileHD(file, headerStack, dataStack);
-	
+
 
 ```
 
@@ -455,11 +455,11 @@ data.copy expected content
 ``` copy
 
 headerA1    12345
-headerB2         
+headerB2
 headerC3    12345
- 1111.120190623     
+ 1111.120190623
 b2202.220190623qw,er
-c3303.320190623     
+c3303.320190623
 
 ```
 

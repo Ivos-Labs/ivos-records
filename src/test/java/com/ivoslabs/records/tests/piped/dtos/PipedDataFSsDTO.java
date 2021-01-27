@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.Piped;
-import com.ivoslabs.records.converters.DateLatinConverver;
+import com.ivoslabs.records.converters.date.DateLatinConverver;
 import com.ivoslabs.records.tests.commons.dtos.SubConverter;
 import com.ivoslabs.records.tests.commons.dtos.SubField;
 

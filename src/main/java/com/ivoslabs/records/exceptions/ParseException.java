@@ -2,7 +2,7 @@ package com.ivoslabs.records.exceptions;
 
 /**
  * Exception to be thrown when occurs an exception parsing data
- * 
+ *
  * @author www.ivoslabs.com
  *
  */
@@ -13,11 +13,11 @@ public class ParseException extends RuntimeException {
 
     /**
      * Create a ParseException
-     * 
+     *
      * @param message the message
      * @param cause   the cause
      */
     public ParseException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 }

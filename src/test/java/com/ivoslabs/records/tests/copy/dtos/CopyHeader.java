@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.tests.copy.dtos;
 
@@ -21,12 +21,33 @@ public class CopyHeader {
     private Integer field3;
 
     /**
+     * Creates a CopyHeader instance
+     */
+    public CopyHeader() {
+        super();
+    }
+
+    /**
+     * Creates a CopyHeader instance
+     *
+     * @param field1
+     * @param field2
+     * @param field3
+     */
+    public CopyHeader(String field1, int field2, Integer field3) {
+        super();
+        this.field1 = field1;
+        this.field2 = field2;
+        this.field3 = field3;
+    }
+
+    /**
      * Gets the field1
      *
      * @return {@code String} The field1
      */
     public String getField1() {
-	return this.field1;
+        return this.field1;
     }
 
     /**
@@ -35,7 +56,7 @@ public class CopyHeader {
      * @param field1 {@code String} The field1 to set
      */
     public void setField1(String field1) {
-	this.field1 = field1;
+        this.field1 = field1;
     }
 
     /**
@@ -44,17 +65,17 @@ public class CopyHeader {
      * @return {@code int} The field2
      */
     public int getField2() {
-	return this.field2;
+        return this.field2;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-	return "CopyHeader [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + "]";
+        return "CopyHeader [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + "]";
     }
 
     /**
@@ -63,7 +84,7 @@ public class CopyHeader {
      * @return {@code Integer} The field3
      */
     public Integer getField3() {
-	return this.field3;
+        return this.field3;
     }
 
     /**
@@ -72,7 +93,7 @@ public class CopyHeader {
      * @param field3 {@code Integer} The field3 to set
      */
     public void setField3(Integer field3) {
-	this.field3 = field3;
+        this.field3 = field3;
     }
 
     /**
@@ -81,7 +102,7 @@ public class CopyHeader {
      * @param field2 {@code int} The field2 to set
      */
     public void setField2(int field2) {
-	this.field2 = field2;
+        this.field2 = field2;
     }
 
 }

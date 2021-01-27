@@ -19,9 +19,9 @@ public interface RowConsumer {
      *
      * @param row       line content
      * @param rowNumber row number
-     * @param keep      flag to stop
+     * @param stop      flag to stop
      * @throws Exception
      */
-    void process(String row, int rowNumber, MutableBoolean keep) throws Exception;
+    void process(String row, int rowNumber, MutableBoolean stop);
 
 }

@@ -19,7 +19,7 @@ public class SubField {
      * 
      */
     public SubField() {
-	super();
+        super();
     }
 
     /**
@@ -27,9 +27,9 @@ public class SubField {
      * @param b
      */
     public SubField(String a, String b) {
-	super();
-	this.a = a;
-	this.b = b;
+        super();
+        this.a = a;
+        this.b = b;
     }
 
     /**
@@ -38,7 +38,7 @@ public class SubField {
      * @return The a
      */
     public String getA() {
-	return this.a;
+        return this.a;
     }
 
     /**
@@ -47,7 +47,7 @@ public class SubField {
      * @param a The a to set
      */
     public void setA(String a) {
-	this.a = a;
+        this.a = a;
     }
 
     /**
@@ -56,7 +56,7 @@ public class SubField {
      * @return The b
      */
     public String getB() {
-	return this.b;
+        return this.b;
     }
 
     /**
@@ -65,7 +65,7 @@ public class SubField {
      * @param b The b to set
      */
     public void setB(String b) {
-	this.b = b;
+        this.b = b;
     }
 
     /*
@@ -76,7 +76,7 @@ public class SubField {
      */
     @Override
     public String toString() {
-	return "SubField [a=" + a + ", b=" + b + "]";
+        return "SubField [a=" + a + ", b=" + b + "]";
     }
 
 }

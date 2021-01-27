@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Stack;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ivoslabs.records.core.func.RowConsumer;
-import com.ivoslabs.records.core.func.RowSuplier;
-import com.ivoslabs.records.exceptions.RecordParserException;
+import com.ivoslabs.records.exceptions.RecordsException;
 
 /**
  *
+ * @since
  * @author www.ivoslabs.com
  *
  */
@@ -31,16 +32,25 @@ public class ParseUtils {
     /** The constant logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseUtils.class);
 
-    /** */
+    /** The constant pipe */
     public static final String PIPE = "|";
 
-    /** */
+    /** The constant empty */
     public static final String EMPTY = "";
 
-    /** */
-    public static final int ZERO = 0;
+    /** The constant 0 */
+    public static final int _0 = 0;
 
-    /** */
+    /** The constant 1 */
+    public static final int _1 = 1;
+
+    /** The constant -1 */
+    public static final int NEG = -1;
+
+    /** The constant 1024 */
+    public static final int _1024 = 1024;
+
+    /** The constant space */
     public static final String SPACE = " ";
 
     /** The constant pipe separator */
@@ -57,6 +67,14 @@ public class ParseUtils {
 
     /** The constant \n */
     private static final char BREAK_LINE = '\n';
+
+    /**
+     *
+     * Creates a ParseUtils instance
+     */
+    private ParseUtils() {
+        super();
+    }
 
     /**
      * Parse a string value to a Object
@@ -129,41 +147,37 @@ public class ParseUtils {
      *
      * @param url    path file to be read
      * @param action action to do for each row
-     * @throws RecordParserException when occur an Exception processing a row
+     * @throws RecordsException when occur an Exception processing a row
      */
-    public static void readTextFile(String url, RowConsumer action) throws RecordParserException {
-        BufferedReader br = null;
-        int rowNumber = 0;
-        try {
+    public static void readTextFile(String url, RowConsumer action) throws RecordsException {
 
-            br = new BufferedReader(new FileReader(url));
-            String sCurrentLine;
+        int rowNumber = _0;
 
+        try (BufferedReader br = new BufferedReader(new FileReader(url))) {
+
+            String currentLine;
+
+            // mutable to receive the flag to stop the iteration
             MutableBoolean stop = new MutableBoolean(Boolean.FALSE);
 
-            while ((sCurrentLine = br.readLine()) != null) {
+            while ((currentLine = br.readLine()) != null) {
+
                 rowNumber++;
-                action.process(sCurrentLine, rowNumber, stop);
+
+                action.process(currentLine, rowNumber, stop);
+
                 if (BooleanUtils.isTrue(stop.getValue())) {
                     break;
                 }
             }
 
-        } catch (RecordParserException e) {
+        } catch (RecordsException e) {
             throw e;
         } catch (Exception e) {
             if (rowNumber > 0) {
-                throw new RecordParserException("An error has occurred while processing file: " + url + "; row: " + rowNumber + "; Detail: " + e.getMessage(), e);
+                throw new RecordsException("An error has occurred while processing file: " + url + "; row: " + rowNumber + "; Detail: " + e.getMessage(), e);
             } else {
-                throw new RuntimeException(e);
-            }
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Exception e2) {
-                    LOGGER.error(e2.getMessage(), e2);
-                }
+                throw new RecordsException("An error occurred reading the file: " + url, e);
             }
         }
 
@@ -179,43 +193,31 @@ public class ParseUtils {
      * @param tails
      * @param rowTailSuplier
      */
-    public static <H, D, T> void writeFile(String path, Stack<H> headers, RowSuplier<H> rowHeaderSuplier, Stack<D> data, RowSuplier<D> rowDataSuplier, Stack<T> tails, RowSuplier<T> rowTailSuplier) {
+    public static <H, D, T> void writeFile(String path, Stack<H> headers, Function<H, String> rowHeaderSuplier, Stack<D> data, Function<D, String> rowDataSuplier, Stack<T> tails, Function<T, String> rowTailSuplier) {
 
-        BufferedWriter out = null;
-
-        try {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(path, Boolean.TRUE))) {
 
             LOGGER.debug("writing file: {}", path);
 
-            out = new BufferedWriter(new FileWriter(path, Boolean.TRUE));
-
             while (headers != null && !headers.empty()) {
-                out.write(rowHeaderSuplier.get(headers.firstElement()) + "\n");
+                out.write(rowHeaderSuplier.apply(headers.firstElement()) + BREAK_LINE);
                 headers.remove(0);
             }
 
             while (!data.empty()) {
-                out.write(rowDataSuplier.get(data.firstElement()) + "\n");
+                out.write(rowDataSuplier.apply(data.firstElement()) + BREAK_LINE);
                 data.remove(0);
             }
 
             while (tails != null && !tails.empty()) {
-                out.write(rowTailSuplier.get(tails.firstElement()) + "\n");
+                out.write(rowTailSuplier.apply(tails.firstElement()) + BREAK_LINE);
                 tails.remove(0);
             }
 
             LOGGER.debug("writed: {}", path);
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e2) {
-                    LOGGER.error(e2.getMessage(), e2);
-                }
-            }
+            throw new RecordsException("An error occurred saving the file: " + path, e);
         }
     }
 
@@ -226,51 +228,60 @@ public class ParseUtils {
      * @return the number of lines
      */
     public static int countLinesNew(String filename) {
-        InputStream is = null;
-        try {
-            is = new BufferedInputStream(new FileInputStream(filename));
-            byte[] c = new byte[1024];
+
+        int count = _0;
+
+        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+
+            byte[] c = new byte[_1024];
 
             int readChars = is.read(c);
-            if (readChars == -1) {
-                // bail out if nothing to read
-                return 0;
-            }
 
-            // make it easy for the optimizer to tune this loop
-            int count = 0;
-            while (readChars == 1024) {
-                for (int i = 0; i < 1024;) {
-                    if (c[i++] == BREAK_LINE) {
-                        ++count;
+            if (readChars != NEG) {
+
+                count++;
+
+                byte lastChar = _0;
+
+                while (readChars == _1024) {
+
+                    for (int i = _0; i < _1024; i++) {
+
+                        if (c[i] == BREAK_LINE) {
+                            count++;
+                        }
+
+                        if (i == _1024 - _1) {
+                            lastChar = c[i];
+                        }
+
+                    }
+
+                    readChars = is.read(c);
+
+                }
+
+                if (readChars == NEG && lastChar == BREAK_LINE) {
+                    count--;
+                } else {
+                    // count remaining characters
+                    while (readChars != NEG) {
+                        for (int i = _0; i < readChars; i++) {
+                            if (c[i] == BREAK_LINE && i < readChars - _1) {
+                                count++;
+                            }
+                        }
+                        readChars = is.read(c);
                     }
                 }
-                readChars = is.read(c);
+
             }
 
-            // count remaining characters
-            while (readChars != -1) {
-//		System.out.println(readChars);
-                for (int i = 0; i < readChars; ++i) {
-                    if (c[i] == BREAK_LINE) {
-                        ++count;
-                    }
-                }
-                readChars = is.read(c);
-            }
-
-            return count == 0 ? 1 : count;
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e2) {
-                    LOGGER.error(e2.getMessage(), e2);
-                }
-            }
+            throw new RecordsException("An error ocurred counting the lines of file: " + filename, e);
         }
+
+        return count;
     }
 
 }

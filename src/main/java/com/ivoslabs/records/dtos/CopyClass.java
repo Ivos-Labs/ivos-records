@@ -26,7 +26,7 @@ public class CopyClass extends BaseClass {
      * @author www.ivoslabs.mx
      */
     CopyClass() {
-	super();
+        super();
     }
 
     /**
@@ -36,7 +36,7 @@ public class CopyClass extends BaseClass {
      */
     @Override
     public Collection<CopyField> getFieldParseDTOs() {
-	return this.fieldParseDTOs;
+        return this.fieldParseDTOs;
     }
 
     /**
@@ -45,7 +45,7 @@ public class CopyClass extends BaseClass {
      * @param fieldParseDTO
      */
     public void add(CopyField fieldParseDTO) {
-	this.fieldParseDTOs.add(fieldParseDTO);
+        this.fieldParseDTOs.add(fieldParseDTO);
     }
 
     /**
@@ -54,7 +54,7 @@ public class CopyClass extends BaseClass {
      * @return {@code Integer} The size
      */
     public Integer getSize() {
-	return this.size;
+        return this.size;
     }
 
     /**
@@ -63,7 +63,7 @@ public class CopyClass extends BaseClass {
      * @param size {@code Integer} The size to set
      */
     public void setSize(Integer size) {
-	this.size = size;
+        this.size = size;
     }
 
 }

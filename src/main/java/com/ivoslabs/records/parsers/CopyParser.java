@@ -3,16 +3,22 @@
  */
 package com.ivoslabs.records.parsers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-import com.ivoslabs.records.annontation.Pic;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
+
 import com.ivoslabs.records.core.Extractor;
-import com.ivoslabs.records.function.Consumer;
+import com.ivoslabs.records.core.FileType;
 
 /**
  * Utility to parse COPY data to POJOs (using {@code @Pic} annotation) and viceversa
  *
+ * @since 1.0.0
  * @author www.ivoslabs.com
  * @see com.ivoslabs.records.annontation.Pic &#64;Pic
  * @see com.ivoslabs.records.annontation.Pic#beginIndex() &#64;Pic#beginIndex
@@ -40,9 +46,11 @@ public class CopyParser {
      * @param data values separated by pipes
      * @param type required type
      * @return a T instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <T> T toObject(String data, Class<T> type) {
-        return Extractor.convertStringToObject(data, type, Pic.class);
+        return Extractor.convertStringToObject(data, type, FileType.COPY);
     }
 
     /**
@@ -52,9 +60,65 @@ public class CopyParser {
      * @param data list of values separated by pipes
      * @param type required type
      * @return a List of T instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <T> List<T> toObjects(List<String> data, Class<T> type) {
-        return Extractor.convertStringsToObjects(data, type, Pic.class);
+        return Extractor.convertStringsToObjects(data, type, FileType.COPY);
+    }
+
+    /**
+     * Find first element which matches with the condition
+     *
+     * @param <D>
+     * @param file       file name
+     * @param headerSize header size
+     * @param dataType   data type
+     * @param condition  condition
+     * @return the first object found
+     * @since 1.0.0
+     * @author www.ivoslabs.com
+     *
+     */
+    public <D> D findFirst(String file,
+            // header
+            Integer headerSize,
+            // data
+            Class<D> dataType,
+            Predicate<D> condition) {
+
+        Mutable<D> mutable = new MutableObject<D>();
+
+        Extractor.processFile(file, null, headerSize, null, dataType, mutable::setValue, condition, null, null, null, FileType.COPY, Boolean.TRUE);
+
+        return mutable.getValue();
+    }
+
+    /**
+     * Find all elements which match with the condition
+     *
+     * @param <D>
+     * @param file       file name
+     * @param headerSize header size
+     * @param dataType   data type
+     * @param condition  condition
+     * @return the first object found
+     * @since 1.0.0
+     * @author www.ivoslabs.com
+     *
+     */
+    public <D> List<D> find(String file,
+            // header
+            Integer headerSize,
+            // data
+            Class<D> dataType,
+            Predicate<D> condition) {
+
+        List<D> list = new ArrayList<>();
+
+        Extractor.processFile(file, null, headerSize, null, dataType, list::add, condition, null, null, null, FileType.COPY, null);
+
+        return list;
     }
 
     /**
@@ -72,6 +136,8 @@ public class CopyParser {
      * @param tailType       tail type
      * @param tailSize       number of last rows to be processed with tailType and tailConsumer
      * @param tailConsumer   action to do for each tail instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <H, D, T> void processFile(String file,
             // header
@@ -86,7 +152,7 @@ public class CopyParser {
             Integer tailSize,
             Consumer<T> tailConsumer) {
 
-        Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, tailType, tailSize, tailConsumer, Pic.class);
+        Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, tailType, tailSize, tailConsumer, FileType.COPY, null);
     }
 
     /**
@@ -100,6 +166,8 @@ public class CopyParser {
      * @param headerConsumer action to do for each header instance
      * @param dataType       data type
      * @param dataConsumer   action to do for each data instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <H, D> void processFile(String file,
             // header
@@ -124,6 +192,8 @@ public class CopyParser {
      * @param tailType     tail type
      * @param tailSize     number of last rows to be processed with tailType and tailConsumer
      * @param tailConsumer action to do for each tail instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <D, T> void processFile(String file,
             // Data
@@ -144,6 +214,8 @@ public class CopyParser {
      * @param file         file path
      * @param dataType     fata type
      * @param dataConsumer action to do for each data instance
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <D> void processFile(String file, Class<D> dataType, Consumer<D> dataConsumer) {
         this.processFile(file, null, null, null, dataType, dataConsumer, null, null, null);
@@ -170,9 +242,11 @@ public class CopyParser {
      *
      * @param data the {@code Object} to be converted to a {@code Strings}
      * @return a string representation of the value of the received object
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public String toString(Object data) {
-        return Extractor.convertObjectToString(data, Pic.class);
+        return Extractor.convertObjectToString(data, FileType.COPY);
     }
 
     /**
@@ -180,9 +254,11 @@ public class CopyParser {
      *
      * @param data the {@code Object} list to be converted to a {@code Strings}
      * @return a list of string representation of the value of each item in the received object list
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public List<String> toStrings(List<?> data) {
-        return Extractor.convertObjectsToStrings(data, Pic.class);
+        return Extractor.convertObjectsToStrings(data, FileType.COPY);
     }
 
     /********************************
@@ -211,9 +287,11 @@ public class CopyParser {
      * @param header objects to be appended into the fist rows of the file
      * @param data   objects to be appended into after header rows
      * @param tails  objects to be appended into the last rows of the file
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
-        Extractor.convertObjectsToFile(file, header, data, tails, Pic.class);
+        Extractor.convertObjectsToFile(file, header, data, tails, FileType.COPY);
     }
 
     /**
@@ -224,6 +302,8 @@ public class CopyParser {
      * @param file   path file to save string representations of the value of each item in the received object lists
      * @param header objects to be appended into the fist rows of the file
      * @param data   objects to be appended into after header rows
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <H, D> void objectsToFileHD(String file, Stack<H> header, Stack<D> data) {
         this.objectsToFile(file, header, data, null);
@@ -237,6 +317,8 @@ public class CopyParser {
      * @param file  path file to save string representations of the value of each item in the received object lists
      * @param data  objects to be appended into after header rows
      * @param tails objects to be appended into the last rows of the file
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <D, T> void objectsToFileDT(String file, Stack<D> data, Stack<T> tails) {
         this.objectsToFile(file, null, data, tails);
@@ -248,6 +330,8 @@ public class CopyParser {
      * @param <D>  Data type
      * @param file path file to save string representations of the value of each item in the received object list
      * @param data objects to be appended into the file
+     * @since 1.0.0
+     * @author www.ivoslabs.com
      */
     public <D> void objectsToFile(String file, Stack<D> data) {
         this.objectsToFile(file, null, data, null);

@@ -1,7 +1,7 @@
 /**
- * 
+ *
  */
-package com.ivoslabs.records.converters;
+package com.ivoslabs.records.converters.date;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -10,45 +10,47 @@ import java.util.Date;
  * Converter to parse Date fields to String and vice versa using the 'MMddyyyyHHmmss' format <br>
  * <br>
  * <b>Example</b>
- * 
+ *
  * <pre>
  <code> &#64;Converter(DateTimeUSAConverver.class )
   &#64PipedField(0)
   private Date field1;</code>
  * </pre>
- * 
+ *
  * @author www.ivoslabs.com
  *
  */
 public class DateTimeUSAConverver extends DateConverter {
 
-    /** */
+    /** The date format to use */
     private static final String FORMAT = "MMddyyyyHHmmss";
 
     /**
-     * 
+     *
      */
     public DateTimeUSAConverver() {
-	super();
+        super();
     }
 
     /*
+     *
      * (non-Javadoc)
-     * 
-     * @see com.ivoslabs.records.converters.Converter#toString(java.lang.Object)
+     *
+     * @see com.ivoslabs.records.converters.date.DateConverter#toString(java.util.Date, java.lang.String[])
      */
     @Override
     public String toString(Date object, String... args) {
-	return super.toString(object, FORMAT);
+        return super.toString(object, FORMAT);
     }
 
     /*
+     *
      * (non-Javadoc)
-     * 
-     * @see com.ivoslabs.records.converters.Converter#toObject(java.lang.String)
+     *
+     * @see com.ivoslabs.records.converters.date.DateConverter#toObject(java.lang.String, java.lang.String[])
      */
     @Override
     public Date toObject(String string, String... args) throws ParseException {
-	return super.toObject(string, FORMAT);
+        return super.toObject(string, FORMAT);
     }
 }

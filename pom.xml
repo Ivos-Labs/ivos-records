@@ -11,6 +11,10 @@
 	<description>Utility to parse piped files and COPYs to POJOs and viceversa </description>
 	<url>https://github.com/Ivos-Labs/ivos-records</url>
 
+	<!--
+	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.8.0.2131:sonar sonar:sonar -Dsonar.projectKey=com.ivoslabs.records:ivos-records -Dsonar.host.url=http://localhost:9000 -Dsonar.login=3752e3181f9489f8ca82b1d11af09f75f3c47786
+	-->
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -38,17 +42,26 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.11</version>
+		</dependency>
+
+		<!-- test -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
+
 
 	</dependencies>
 

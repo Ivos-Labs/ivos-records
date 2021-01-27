@@ -8,7 +8,7 @@ import java.util.Date;
 import com.ivoslabs.records.annontation.Converter;
 import com.ivoslabs.records.annontation.IfNull;
 import com.ivoslabs.records.annontation.Piped;
-import com.ivoslabs.records.converters.DateLatinConverver;
+import com.ivoslabs.records.converters.date.DateLatinConverver;
 import com.ivoslabs.records.tests.commons.dtos.SubConverter;
 import com.ivoslabs.records.tests.commons.dtos.SubField;
 
@@ -19,10 +19,10 @@ import com.ivoslabs.records.tests.commons.dtos.SubField;
 @IfNull("-")
 public class PipedDataDTO {
 
-    @Piped(value = 0, maxSize = 4, fixedSize = true)
+    @Piped(value = 0, maxSize = 4)
     private String field1;
 
-    @Piped(value = 1, maxSize = 2, fixedSize = true)
+    @Piped(value = 1, maxSize = 2)
     private Integer field2;
 
     @Piped(2)
@@ -43,12 +43,41 @@ public class PipedDataDTO {
     private SubField field7;
 
     /**
+     * Creates an PipedDataDTO instance
+     */
+    public PipedDataDTO() {
+        super();
+    }
+
+    /**
+     * Creates an PipedDataDTO instance
+     *
+     * @param field1
+     * @param field2
+     * @param field3
+     * @param field4
+     * @param field5
+     * @param field6
+     * @param field7
+     */
+    public PipedDataDTO(String field1, Integer field2, int field3, Boolean field4, Double field5, Date field6, SubField field7) {
+        super();
+        this.field1 = field1;
+        this.field2 = field2;
+        this.field3 = field3;
+        this.field4 = field4;
+        this.field5 = field5;
+        this.field6 = field6;
+        this.field7 = field7;
+    }
+
+    /**
      * Gets the field1
      *
      * @return {@code String} The field1
      */
     public String getField1() {
-	return this.field1;
+        return this.field1;
     }
 
     /**
@@ -57,7 +86,7 @@ public class PipedDataDTO {
      * @param field1 {@code String} The field1 to set
      */
     public void setField1(String field1) {
-	this.field1 = field1;
+        this.field1 = field1;
     }
 
     /**
@@ -66,7 +95,7 @@ public class PipedDataDTO {
      * @return {@code Integer} The field2
      */
     public Integer getField2() {
-	return this.field2;
+        return this.field2;
     }
 
     /**
@@ -75,7 +104,7 @@ public class PipedDataDTO {
      * @param field2 {@code Integer} The field2 to set
      */
     public void setField2(Integer field2) {
-	this.field2 = field2;
+        this.field2 = field2;
     }
 
     /**
@@ -84,7 +113,7 @@ public class PipedDataDTO {
      * @return {@code int} The field3
      */
     public int getField3() {
-	return this.field3;
+        return this.field3;
     }
 
     /**
@@ -93,7 +122,7 @@ public class PipedDataDTO {
      * @param field3 {@code int} The field3 to set
      */
     public void setField3(int field3) {
-	this.field3 = field3;
+        this.field3 = field3;
     }
 
     /**
@@ -102,7 +131,7 @@ public class PipedDataDTO {
      * @return {@code Boolean} The field4
      */
     public Boolean getField4() {
-	return this.field4;
+        return this.field4;
     }
 
     /**
@@ -111,7 +140,7 @@ public class PipedDataDTO {
      * @param field4 {@code Boolean} The field4 to set
      */
     public void setField4(Boolean field4) {
-	this.field4 = field4;
+        this.field4 = field4;
     }
 
     /**
@@ -120,7 +149,7 @@ public class PipedDataDTO {
      * @return {@code Double} The field5
      */
     public Double getField5() {
-	return this.field5;
+        return this.field5;
     }
 
     /**
@@ -129,7 +158,7 @@ public class PipedDataDTO {
      * @param field5 {@code Double} The field5 to set
      */
     public void setField5(Double field5) {
-	this.field5 = field5;
+        this.field5 = field5;
     }
 
     /**
@@ -138,7 +167,7 @@ public class PipedDataDTO {
      * @return {@code Date} The field6
      */
     public Date getField6() {
-	return this.field6;
+        return this.field6;
     }
 
     /**
@@ -147,7 +176,7 @@ public class PipedDataDTO {
      * @param field6 {@code Date} The field6 to set
      */
     public void setField6(Date field6) {
-	this.field6 = field6;
+        this.field6 = field6;
     }
 
     /**
@@ -156,7 +185,7 @@ public class PipedDataDTO {
      * @return {@code SubField} The field7
      */
     public SubField getField7() {
-	return this.field7;
+        return this.field7;
     }
 
     /**
@@ -165,7 +194,7 @@ public class PipedDataDTO {
      * @param field7 {@code SubField} The field7 to set
      */
     public void setField7(SubField field7) {
-	this.field7 = field7;
+        this.field7 = field7;
     }
 
     /*
@@ -175,7 +204,7 @@ public class PipedDataDTO {
      */
     @Override
     public String toString() {
-	return "PipedDataDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + ", field7=" + field7 + "]";
+        return "PipedDataDTO [field1=" + field1 + ", field2=" + field2 + ", field3=" + field3 + ", field4=" + field4 + ", field5=" + field5 + ", field6=" + field6 + ", field7=" + field7 + "]";
     }
 
 }

@@ -28,9 +28,9 @@ public class PipedField extends BaseField {
      * @param converter
      */
     public PipedField(Field field, Piped pipeField, Converter converter, String ifNull, Integer maxSize) {
-	super(field, converter, ifNull);
-	this.pipeField = pipeField;
-	this.maxSize = maxSize;
+        super(field, converter, ifNull);
+        this.pipeField = pipeField;
+        this.maxSize = maxSize;
     }
 
     /**
@@ -39,7 +39,7 @@ public class PipedField extends BaseField {
      * @return {@code Piped} The pipeField
      */
     public Piped getPipeField() {
-	return this.pipeField;
+        return this.pipeField;
     }
 
     /**
@@ -48,7 +48,7 @@ public class PipedField extends BaseField {
      * @return {@code Integer} The maxSize
      */
     public Integer getMaxSize() {
-	return this.maxSize;
+        return this.maxSize;
     }
 
 }

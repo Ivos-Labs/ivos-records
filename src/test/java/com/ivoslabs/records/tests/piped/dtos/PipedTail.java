@@ -23,7 +23,7 @@ public class PipedTail {
      * @return {@code Integer} The field1
      */
     public Integer getField1() {
-	return this.field1;
+        return this.field1;
     }
 
     /**
@@ -32,7 +32,7 @@ public class PipedTail {
      * @param field1 {@code Integer} The field1 to set
      */
     public void setField1(Integer field1) {
-	this.field1 = field1;
+        this.field1 = field1;
     }
 
     /**
@@ -41,7 +41,7 @@ public class PipedTail {
      * @return {@code String} The field2
      */
     public String getField2() {
-	return this.field2;
+        return this.field2;
     }
 
     /**
@@ -50,7 +50,7 @@ public class PipedTail {
      * @param field2 {@code String} The field2 to set
      */
     public void setField2(String field2) {
-	this.field2 = field2;
+        this.field2 = field2;
     }
 
     /*
@@ -60,7 +60,7 @@ public class PipedTail {
      */
     @Override
     public String toString() {
-	return "PipedTail [field1=" + field1 + ", field2=" + field2 + "]";
+        return "PipedTail [field1=" + field1 + ", field2=" + field2 + "]";
     }
 
 }
