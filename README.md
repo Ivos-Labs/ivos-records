@@ -1,13 +1,44 @@
 # ivos-records
 
-Utility to parse piped files and COPYs to pojos
+Utility to parse piped files and COPYs to DTOs
+
+**Configuration**
+
+Add the dependency to our pom
+
+``` xml
+
+<properties>
+
+...
+
+    <!-- ivos records version -->
+    <ivos-records.version>1.0.0</ivos-records.version>
+
+</properties>
+
+<dependencies>
+
+    <!-- ivos mail dependency -->
+    <dependency>
+        <groupId>com.ivoslabs.records</groupId>
+        <artifactId>ivos-records</artifactId>
+        <version>${ivos-records.version}</version>
+    </dependency>
+
+    ...
+
+<dependencies>
+
+
+```
 
 
 **Reading and saving piped file**
 
  
 
-Example piped data pojo 
+Example piped data DTO 
 
 
 ``` java
@@ -43,7 +74,7 @@ public class PipedDataDTO {
     
 ```
 
-Example piped header pojo
+Example piped header DTO
 
 
 ``` java
@@ -60,7 +91,7 @@ public class PipedHeader {
     ...
 ```
 
-Example piped tail pojo
+Example piped tail DTO
 
 
 ``` java
