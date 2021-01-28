@@ -3,10 +3,11 @@
  */
 package com.ivoslabs.records.tests.piped;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import com.ivoslabs.records.tests.piped.dtos.PipedTail;
  * @author
  *
  */
-public class TestPipedFileHTSave {
+public class TestPipedFileHT01Save {
 
     @Test
     public void testObjectsToFile() {
@@ -82,13 +83,13 @@ public class TestPipedFileHTSave {
         tails.add(tail);
 
         // save list objects into Stacks
-        Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
+        Deque<PipedHeader> headerStack = new ArrayDeque<>();
         headerStack.addAll(headers);
 
-        Stack<PipedDataDTO> dataStack = new Stack<PipedDataDTO>();
+        Deque<PipedDataDTO> dataStack = new ArrayDeque<>();
         dataStack.addAll(list);
 
-        Stack<PipedTail> tailStack = new Stack<PipedTail>();
+        Deque<PipedTail> tailStack = new ArrayDeque<>();
         tailStack.addAll(tails);
 
         String file = "target/datahdt.psv";

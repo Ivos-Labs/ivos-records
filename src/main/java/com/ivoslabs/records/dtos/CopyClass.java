@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ivoslabs.records.dtos;
 
@@ -14,13 +14,13 @@ import java.util.List;
 public class CopyClass extends BaseClass {
 
     /** The fieldParseDTOs */
-    private List<CopyField> fieldParseDTOs = new ArrayList<CopyField>();
+    private List<CopyField> fieldParseDTOs = new ArrayList<>();
 
     /** Size (used in the Object to String process) */
     private Integer size;
 
     /**
-     * 
+     *
      * @param annon
      * @since 1.0.0
      * @author www.ivoslabs.mx
@@ -31,7 +31,7 @@ public class CopyClass extends BaseClass {
 
     /**
      * Gets the fieldParseDTOs
-     * 
+     *
      * @return the fieldParseDTOs
      */
     @Override
@@ -41,7 +41,7 @@ public class CopyClass extends BaseClass {
 
     /**
      * Appends the specified element to the end of this fieldParseDTOs list
-     * 
+     *
      * @param fieldParseDTO
      */
     public void add(CopyField fieldParseDTO) {
@@ -50,7 +50,7 @@ public class CopyClass extends BaseClass {
 
     /**
      * Gets the size
-     * 
+     *
      * @return {@code Integer} The size
      */
     public Integer getSize() {

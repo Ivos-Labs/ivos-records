@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.ivoslabs.records.core.ParserTask;
 import com.ivoslabs.records.parsers.PipedParser;
 import com.ivoslabs.records.tests.piped.dtos.PipedDataDTO;
 import com.ivoslabs.records.tests.piped.dtos.PipedHeader;
@@ -17,7 +18,7 @@ import com.ivoslabs.records.tests.piped.dtos.PipedTail;
  * @author
  *
  */
-public class TestPipedFileHTRead {
+public class TestPipedFileHT02Read {
 
     @Test
     public void testFileToObjects() {
@@ -38,11 +39,12 @@ public class TestPipedFileHTRead {
 
         String file = "target/datahdt.psv";
 
+        ParserTask<PipedHeader, PipedDataDTO, PipedTail> parserTask = new ParserTask<>(file, PipedDataDTO.class, dataConsumer);
+        parserTask.setHeaderInfo(PipedHeader.class, headerSize, headerConsumer);
+        parserTask.setTailInfo(PipedTail.class, tailSize, tailConsumer);
+
         // read file
-        pipedParser.processFile(file,
-                PipedHeader.class, headerSize, headerConsumer,
-                PipedDataDTO.class, dataConsumer,
-                PipedTail.class, tailSize, tailConsumer);
+        pipedParser.processFile(parserTask);
 
         Assertions.assertTrue(Boolean.TRUE);
 

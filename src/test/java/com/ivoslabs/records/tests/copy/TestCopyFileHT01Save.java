@@ -3,10 +3,11 @@
  */
 package com.ivoslabs.records.tests.copy;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Stack;
+import java.util.Deque;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import com.ivoslabs.records.tests.copy.dtos.CopyHeader;
  * @author
  *
  */
-public class TestCopyFileHTSave {
+public class TestCopyFileHT01Save {
 
     @Test
     public void testObjectsToFile() {
@@ -79,10 +80,10 @@ public class TestCopyFileHTSave {
         list.add(dto3);
 
         // save list objects into Stacks
-        Stack<CopyHeader> headerStack = new Stack<CopyHeader>();
+        Deque<CopyHeader> headerStack = new ArrayDeque<>();
         headerStack.addAll(headers);
 
-        Stack<CopyDataDTO> dataStack = new Stack<CopyDataDTO>();
+        Deque<CopyDataDTO> dataStack = new ArrayDeque<>();
         dataStack.addAll(list);
 
         String file = "target/data.copy";

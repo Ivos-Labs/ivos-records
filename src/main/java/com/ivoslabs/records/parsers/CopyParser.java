@@ -4,9 +4,8 @@
 package com.ivoslabs.records.parsers;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.mutable.Mutable;
@@ -14,6 +13,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import com.ivoslabs.records.core.Extractor;
 import com.ivoslabs.records.core.FileType;
+import com.ivoslabs.records.core.ParserTask;
 
 /**
  * Utility to parse COPY data to POJOs (using {@code @Pic} annotation) and viceversa
@@ -73,6 +73,7 @@ public class CopyParser {
      * @param <D>
      * @param file       file name
      * @param headerSize header size
+     * @param tailSize   tail size
      * @param dataType   data type
      * @param condition  condition
      * @return the first object found
@@ -80,16 +81,15 @@ public class CopyParser {
      * @author www.ivoslabs.com
      *
      */
-    public <D> D findFirst(String file,
-            // header
-            Integer headerSize,
-            // data
-            Class<D> dataType,
-            Predicate<D> condition) {
+    public <D> D findFirst(String file, Integer headerSize, Integer tailSize, Class<D> dataType, Predicate<D> condition) {
 
-        Mutable<D> mutable = new MutableObject<D>();
+        Mutable<D> mutable = new MutableObject<>();
 
-        Extractor.processFile(file, null, headerSize, null, dataType, mutable::setValue, condition, null, null, null, FileType.COPY, Boolean.TRUE);
+        ParserTask<Object, D, Object> parserTask = new ParserTask<>(file, dataType, mutable::setValue);
+        parserTask.setHeaderInfo(null, headerSize, null);
+        parserTask.setTailInfo(null, tailSize, null);
+
+        Extractor.processFile(parserTask, condition, FileType.COPY, Boolean.TRUE);
 
         return mutable.getValue();
     }
@@ -100,6 +100,7 @@ public class CopyParser {
      * @param <D>
      * @param file       file name
      * @param headerSize header size
+     * @param tailSize   tail size
      * @param dataType   data type
      * @param condition  condition
      * @return the first object found
@@ -107,118 +108,31 @@ public class CopyParser {
      * @author www.ivoslabs.com
      *
      */
-    public <D> List<D> find(String file,
-            // header
-            Integer headerSize,
-            // data
-            Class<D> dataType,
-            Predicate<D> condition) {
+    public <D> List<D> find(String file, Integer headerSize, Integer tailSize, Class<D> dataType, Predicate<D> condition) {
 
         List<D> list = new ArrayList<>();
 
-        Extractor.processFile(file, null, headerSize, null, dataType, list::add, condition, null, null, null, FileType.COPY, null);
+        ParserTask<Object, D, Object> parserTask = new ParserTask<>(file, dataType, list::add);
+        parserTask.setHeaderInfo(null, headerSize, null);
+        parserTask.setTailInfo(null, tailSize, null);
+
+        Extractor.processFile(parserTask, condition, FileType.COPY, null);
 
         return list;
     }
 
     /**
-     * Creates an instance of H, D, or T for each row in a file and execute the respective received ObjectConsumer
+     * Creates an instance of H, D, or T for each row in a file and execute the respective received task
      *
-     * @param <H>            Header type
-     * @param <D>            Data type
-     * @param <T>            Tail type
-     * @param file           file path
-     * @param headerType     header type
-     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
-     * @param headerConsumer action to do for each header instance
-     * @param dataType       data type
-     * @param dataConsumer   action to do for each data instance
-     * @param tailType       tail type
-     * @param tailSize       number of last rows to be processed with tailType and tailConsumer
-     * @param tailConsumer   action to do for each tail instance
+     * @param <H>        Header type
+     * @param <D>        Data type
+     * @param <T>        Tail type
+     * @param parserTask ParserTask
      * @since 1.0.0
      * @author www.ivoslabs.com
      */
-    public <H, D, T> void processFile(String file,
-            // header
-            Class<H> headerType,
-            Integer headerSize,
-            Consumer<H> headerConsumer,
-            // data
-            Class<D> dataType,
-            Consumer<D> dataConsumer,
-            // tail
-            Class<T> tailType,
-            Integer tailSize,
-            Consumer<T> tailConsumer) {
-
-        Extractor.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, tailType, tailSize, tailConsumer, FileType.COPY, null);
-    }
-
-    /**
-     * Creates an instance of H or T for each row in a file and execute the respective received ObjectConsumer
-     *
-     * @param <H>            Header type
-     * @param <D>            Data type
-     * @param file           file path
-     * @param headerType     header type
-     * @param headerSize     number of first rows to be processed with headerType and headerConsumer
-     * @param headerConsumer action to do for each header instance
-     * @param dataType       data type
-     * @param dataConsumer   action to do for each data instance
-     * @since 1.0.0
-     * @author www.ivoslabs.com
-     */
-    public <H, D> void processFile(String file,
-            // header
-            Class<H> headerType,
-            Integer headerSize,
-            Consumer<H> headerConsumer,
-            // data
-            Class<D> dataType,
-            Consumer<D> dataConsumer) {
-
-        this.processFile(file, headerType, headerSize, headerConsumer, dataType, dataConsumer, null, null, null);
-    }
-
-    /**
-     * Creates an instance of D or T for each row in a file and execute the respective received ObjectConsumer
-     *
-     * @param <D>          Data type
-     * @param <T>          Tail type
-     * @param file         file path
-     * @param dataType     data type
-     * @param dataConsumer action to do for each data instance
-     * @param tailType     tail type
-     * @param tailSize     number of last rows to be processed with tailType and tailConsumer
-     * @param tailConsumer action to do for each tail instance
-     * @since 1.0.0
-     * @author www.ivoslabs.com
-     */
-    public <D, T> void processFile(String file,
-            // Data
-            Class<D> dataType,
-            Consumer<D> dataConsumer,
-            // Tail
-            Class<T> tailType,
-            Integer tailSize,
-            Consumer<T> tailConsumer) {
-
-        this.processFile(file, null, null, null, dataType, dataConsumer, tailType, tailSize, tailConsumer);
-    }
-
-    /**
-     * Creates an instance of D for each row in a file and execute the respective received ObjectConsumer
-     *
-     * @param <D>          Data type
-     * @param file         file path
-     * @param dataType     fata type
-     * @param dataConsumer action to do for each data instance
-     * @since 1.0.0
-     * @author www.ivoslabs.com
-     */
-    public <D> void processFile(String file, Class<D> dataType, Consumer<D> dataConsumer) {
-        this.processFile(file, null, null, null, dataType, dataConsumer, null, null, null);
+    public <H, D, T> void processFile(ParserTask<H, D, T> parserTask) {
+        Extractor.processFile(parserTask, null, FileType.COPY, null);
     }
 
     /********************************
@@ -290,7 +204,7 @@ public class CopyParser {
      * @since 1.0.0
      * @author www.ivoslabs.com
      */
-    public <H, D, T> void objectsToFile(String file, Stack<H> header, Stack<D> data, Stack<T> tails) {
+    public <H, D, T> void objectsToFile(String file, Deque<H> header, Deque<D> data, Deque<T> tails) {
         Extractor.convertObjectsToFile(file, header, data, tails, FileType.COPY);
     }
 
@@ -305,7 +219,7 @@ public class CopyParser {
      * @since 1.0.0
      * @author www.ivoslabs.com
      */
-    public <H, D> void objectsToFileHD(String file, Stack<H> header, Stack<D> data) {
+    public <H, D> void objectsToFileHD(String file, Deque<H> header, Deque<D> data) {
         this.objectsToFile(file, header, data, null);
     }
 
@@ -320,7 +234,7 @@ public class CopyParser {
      * @since 1.0.0
      * @author www.ivoslabs.com
      */
-    public <D, T> void objectsToFileDT(String file, Stack<D> data, Stack<T> tails) {
+    public <D, T> void objectsToFileDT(String file, Deque<D> data, Deque<T> tails) {
         this.objectsToFile(file, null, data, tails);
     }
 
@@ -333,7 +247,7 @@ public class CopyParser {
      * @since 1.0.0
      * @author www.ivoslabs.com
      */
-    public <D> void objectsToFile(String file, Stack<D> data) {
+    public <D> void objectsToFile(String file, Deque<D> data) {
         this.objectsToFile(file, null, data, null);
     }
 }

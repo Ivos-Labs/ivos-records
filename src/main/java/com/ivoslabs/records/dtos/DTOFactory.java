@@ -22,6 +22,10 @@ import com.ivoslabs.records.utils.ParseUtils;
  */
 public class DTOFactory {
 
+    private DTOFactory() {
+        super();
+    }
+
     /**
      * Gets the BaseClass with Converters and default values to parse Objects to Strings and vice versa
      *
@@ -36,7 +40,7 @@ public class DTOFactory {
 
         BaseClass template = annon == FileType.COPY ? new CopyClass() : new PipedClass();
 
-        Field fields[] = type.getDeclaredFields();
+        Field[] fields = type.getDeclaredFields();
 
         // generic if-null value
         IfNull genIfNull = type.getDeclaredAnnotation(IfNull.class);

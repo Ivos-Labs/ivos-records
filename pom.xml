@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>ivos-records</name>
-	<description>Utility to parse piped files and COPYs to POJOs and viceversa </description>
+	<description>Utility to parse piped files and COPYs to DTOs and viceversa </description>
 	<url>https://github.com/Ivos-Labs/ivos-records</url>
 
 	<!--

@@ -7,7 +7,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ivoslabs.records.converters.FieldConverter;
+import com.ivoslabs.records.utils.ParseUtils;
 
 /**
  * DTO
@@ -17,26 +21,18 @@ import com.ivoslabs.records.converters.FieldConverter;
  */
 public abstract class BaseClass {
 
+    /** The constant logger */
+    @SuppressWarnings("unused")
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseClass.class);
+
     /** Map of the class that requires converter and their converter */
-    private Map<Class<?>, FieldConverter<?>> fieldConverterMap = new HashMap<Class<?>, FieldConverter<?>>();
+    private Map<Class<?>, FieldConverter<?>> fieldConverterMap = new HashMap<>();
 
     /**
-     * Gets the FieldConverter
-     *
-     * @param clazz type of the required converter
-     * @return the converter
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * Creates a BaseClass instance
      */
-    public FieldConverter<?> getConverter(Class<? extends FieldConverter<?>> clazz) throws InstantiationException, IllegalAccessException {
-        FieldConverter<?> c = this.fieldConverterMap.get(clazz);
-
-        if (c == null) {
-            c = clazz.newInstance();
-            this.fieldConverterMap.put(clazz, c);
-        }
-
-        return c;
+    public BaseClass() {
+        super();
     }
 
     /**
@@ -46,5 +42,22 @@ public abstract class BaseClass {
      * @author www.ivoslabs.com
      *
      */
-    abstract public Collection<? extends BaseField> getFieldParseDTOs();
+    public abstract Collection<? extends BaseField> getFieldParseDTOs();
+
+    /**
+     * Gets the FieldConverter
+     *
+     * @param clazz type of the required converter
+     * @return the converter
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public FieldConverter<?> getConverter(Class<? extends FieldConverter<?>> clazz) {
+        return this.fieldConverterMap.computeIfAbsent(clazz, k -> ParseUtils.newInstance(clazz));
+    }
+
+    /**
+     *
+     */
+
 }

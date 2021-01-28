@@ -8,10 +8,10 @@ import java.io.File;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.ivoslabs.records.utils.ParseUtils;
+import com.ivoslabs.records.utils.LinesCounter;
 
 /**
- * @since
+ * @since 1.0.0
  * @author www.ivoslabs.com
  *
  */
@@ -22,7 +22,7 @@ public class TestParseUtils {
         int expected = 0;
         int actual;
 
-        actual = ParseUtils.countLinesNew(new File("./src/test/resources/data/lines_a-empty.data").getAbsolutePath());
+        actual = new LinesCounter().countLines(new File("./src/test/resources/data/lines_a-empty.data").getAbsolutePath());
 
         Assertions.assertEquals(expected, actual);
     }
@@ -32,7 +32,7 @@ public class TestParseUtils {
         int expected = 1;
         int actual;
 
-        actual = ParseUtils.countLinesNew(new File("./src/test/resources/data/lines_b-1.data").getAbsolutePath());
+        actual = new LinesCounter().countLines(new File("./src/test/resources/data/lines_b-1.data").getAbsolutePath());
 
         Assertions.assertEquals(expected, actual);
     }
@@ -42,7 +42,7 @@ public class TestParseUtils {
         int expected = 2;
         int actual;
 
-        actual = ParseUtils.countLinesNew(new File("./src/test/resources/data/lines_c-2.data").getAbsolutePath());
+        actual = new LinesCounter().countLines(new File("./src/test/resources/data/lines_c-2.data").getAbsolutePath());
 
         Assertions.assertEquals(expected, actual);
     }
@@ -52,7 +52,7 @@ public class TestParseUtils {
         int expected = 3;
         int actual;
 
-        actual = ParseUtils.countLinesNew(new File("./src/test/resources/data/lines_d-3.data").getAbsolutePath());
+        actual = new LinesCounter().countLines(new File("./src/test/resources/data/lines_d-3.data").getAbsolutePath());
 
         Assertions.assertEquals(expected, actual);
     }

@@ -4,10 +4,11 @@
 package com.ivoslabs.records.tests.copy;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +35,7 @@ public class TestCopyFind {
 
         CopyParser copyParser = new CopyParser();
 
-        CopyDataDTO dto = copyParser.findFirst(file, 2, CopyDataDTO.class, data -> data.getField1().equals("c"));
+        CopyDataDTO dto = copyParser.findFirst(file, 2, 0, CopyDataDTO.class, data -> data.getField1().equals("c"));
 
         Assertions.assertEquals(dto.getField1(), "c");
 
@@ -49,7 +50,7 @@ public class TestCopyFind {
 
         CopyParser copyParser = new CopyParser();
 
-        List<CopyDataDTO> dtos = copyParser.find(file, 2, CopyDataDTO.class, data -> data.getField2().equals(2));
+        List<CopyDataDTO> dtos = copyParser.find(file, 2, 0, CopyDataDTO.class, data -> data.getField2().equals(2));
 
         String rs = dtos.stream().map(CopyDataDTO::getField1).collect(Collectors.joining(","));
 
@@ -86,10 +87,10 @@ public class TestCopyFind {
         list.add(dto4);
 
         // save list objects into Stacks
-        Stack<CopyHeader> headerStack = new Stack<CopyHeader>();
+        Deque<CopyHeader> headerStack = new ArrayDeque<>();
         headerStack.addAll(headers);
 
-        Stack<CopyDataDTO> dataStack = new Stack<CopyDataDTO>();
+        Deque<CopyDataDTO> dataStack = new ArrayDeque<>();
         dataStack.addAll(list);
 
         // append objects into a file

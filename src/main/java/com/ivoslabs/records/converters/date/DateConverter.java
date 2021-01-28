@@ -10,6 +10,7 @@ import java.util.Date;
 import org.apache.commons.lang3.Validate;
 
 import com.ivoslabs.records.converters.FieldConverter;
+import com.ivoslabs.records.utils.ParseUtils;
 
 /**
  * Converter to parse Date fields to String and vice versa <br>
@@ -42,9 +43,8 @@ public class DateConverter implements FieldConverter<Date> {
     @Override
     public String toString(Date object, String... args) {
         String date = null;
-        Validate.notNull(args, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(args.length == 1, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(!args[0].isEmpty(), "DateConverter requires one argument  (pattern date)");
+        Validate.notNull(args, "DateConverter requires arguments (pattern date)");
+        Validate.isTrue(args.length == ParseUtils.NUM_1 && !args[ParseUtils.NUM_0].isEmpty(), "DateConverter requires one arguments (pattern date)");
 
         if (object != null) {
             SimpleDateFormat sdf = new SimpleDateFormat(args[0]);
@@ -62,9 +62,8 @@ public class DateConverter implements FieldConverter<Date> {
      */
     public Date toObject(String string, String... args) throws ParseException {
         Date date = null;
-        Validate.notNull(args, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(args.length == 1, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(!args[0].isEmpty(), "DateConverter requires one argument  (pattern date)");
+        Validate.notNull(args, "DateConverter requires arguments (pattern date)");
+        Validate.isTrue(args.length == ParseUtils.NUM_1 && !args[ParseUtils.NUM_0].isEmpty(), "DateConverter requires one arguments (pattern date)");
 
         if (string != null && !string.trim().isEmpty()) {
             SimpleDateFormat sdf = new SimpleDateFormat(args[0]);

@@ -32,12 +32,13 @@ public class TestPipedFail {
             actual = e.getMessage();
         }
 
-        String expected = "An error has occurred while processing row: 1; Detail: An error has occurred while setting value, original value: ''; class: com.ivoslabs.records.tests.piped.dtos.PipedDataDTO; field name: field3; field type: int; ";
+        String expected = "An error has occurred while processing row: 1; Detail: An error has occurred while setting value, original value: ''; converter: ; class: com.ivoslabs.records.tests.piped.dtos.PipedDataDTO; field name: field3; field type: int;";
 
         System.out.println(expected);
         System.out.println(actual);
 
         Assertions.assertEquals(expected, actual);
+
     }
 
 }

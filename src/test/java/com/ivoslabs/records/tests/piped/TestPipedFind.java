@@ -4,10 +4,11 @@
 package com.ivoslabs.records.tests.piped;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +35,7 @@ public class TestPipedFind {
         this.saveData(file);
 
         PipedParser pipedParser = new PipedParser();
-        PipedDataDTO dto = pipedParser.findFirst(file, 2, PipedDataDTO.class, d -> d.getField1().equals("c"));
+        PipedDataDTO dto = pipedParser.findFirst(file, 2, 0, PipedDataDTO.class, d -> d.getField1().equals("c"));
 
         Assertions.assertEquals(dto.getField1(), "c");
     }
@@ -48,7 +49,7 @@ public class TestPipedFind {
         this.saveData(file);
 
         PipedParser pipedParser = new PipedParser();
-        List<PipedDataDTO> dtos = pipedParser.find(file, 2, PipedDataDTO.class, d -> d.getField3() == 2);
+        List<PipedDataDTO> dtos = pipedParser.find(file, 2, 0, PipedDataDTO.class, d -> d.getField3() == 2);
 
         String rs = dtos.stream().map(PipedDataDTO::getField1).collect(Collectors.joining(","));
 
@@ -84,10 +85,10 @@ public class TestPipedFind {
         list.add(dto4);
 
         // save list objects into Stacks
-        Stack<PipedHeader> headerStack = new Stack<PipedHeader>();
+        Deque<PipedHeader> headerStack = new ArrayDeque<>();
         headerStack.addAll(headers);
 
-        Stack<PipedDataDTO> dataStack = new Stack<PipedDataDTO>();
+        Deque<PipedDataDTO> dataStack = new ArrayDeque<>();
         dataStack.addAll(list);
 
         // append objects into a file

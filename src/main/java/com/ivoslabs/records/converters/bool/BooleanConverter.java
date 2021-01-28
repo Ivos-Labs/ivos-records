@@ -6,6 +6,7 @@ package com.ivoslabs.records.converters.bool;
 import org.apache.commons.lang3.Validate;
 
 import com.ivoslabs.records.converters.FieldConverter;
+import com.ivoslabs.records.utils.ParseUtils;
 
 /**
  * Converter to parse Boolean fields to String and vice versa<br>
@@ -39,14 +40,13 @@ public class BooleanConverter implements FieldConverter<Boolean> {
     @Override
     public String toString(Boolean object, String... args) {
         String str;
-        Validate.notNull(args, "BooleanConverter requires two arguments");
-        Validate.isTrue(args.length == 2, "BooleanConverter requires two arguments");
-        Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requires two arguments");
+        Validate.notNull(args, "BooleanConverter requires arguments");
+        Validate.isTrue(args.length == ParseUtils.NUM_2 && !args[ParseUtils.NUM_0].isEmpty(), "BooleanConverter requires two arguments");
 
         if (object != null && object) {
-            str = args[0];
+            str = args[ParseUtils.NUM_0];
         } else {
-            str = args[1];
+            str = args[ParseUtils.NUM_1];
         }
 
         return str;
@@ -60,11 +60,10 @@ public class BooleanConverter implements FieldConverter<Boolean> {
      */
     @Override
     public Boolean toObject(String string, String... args) {
-        Validate.notNull(args, "BooleanConverter requires two arguments");
-        Validate.isTrue(args.length == 2, "BooleanConverter requires two arguments");
-        Validate.isTrue(!args[0].isEmpty(), "BooleanConverter requires two arguments");
+        Validate.notNull(args, "BooleanConverter requires arguments");
+        Validate.isTrue(args.length == ParseUtils.NUM_2 && !args[ParseUtils.NUM_0].isEmpty(), "BooleanConverter requires two arguments");
 
-        return string != null && string.equals(args[0]);
+        return string != null && string.equals(args[ParseUtils.NUM_0]);
     }
 
 }

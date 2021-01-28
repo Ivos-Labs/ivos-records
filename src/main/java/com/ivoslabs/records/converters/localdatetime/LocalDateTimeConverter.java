@@ -43,12 +43,11 @@ public class LocalDateTimeConverter implements FieldConverter<LocalDateTime> {
     @Override
     public String toString(LocalDateTime object, String... args) {
         String date = null;
-        Validate.notNull(args, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(args.length == ParseUtils._1, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(!args[ParseUtils._0].isEmpty(), "DateConverter requires one argument  (pattern date)");
+        Validate.notNull(args, "LocalDateTimeConverter requires arguments (pattern date)");
+        Validate.isTrue(args.length == ParseUtils.NUM_1 && !args[ParseUtils.NUM_0].isEmpty(), "LocalDateTimeConverter requires one arguments (pattern date)");
 
         if (object != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args[ParseUtils._0]);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args[ParseUtils.NUM_0]);
             date = object.format(formatter);
         }
 
@@ -64,12 +63,11 @@ public class LocalDateTimeConverter implements FieldConverter<LocalDateTime> {
     @Override
     public LocalDateTime toObject(String string, String... args) throws ParseException {
         LocalDateTime localDate = null;
-        Validate.notNull(args, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(args.length == ParseUtils._1, "DateConverter requires one arguments (pattern date)");
-        Validate.isTrue(!args[ParseUtils._0].isEmpty(), "DateConverter requires one argument  (pattern date)");
+        Validate.notNull(args, "LocalDateTimeConverter requires arguments (pattern date)");
+        Validate.isTrue(args.length == ParseUtils.NUM_1 && !args[ParseUtils.NUM_0].isEmpty(), "LocalDateTimeConverter requires one arguments (pattern date)");
 
         if (string != null && !string.trim().isEmpty()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args[ParseUtils._0]);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args[ParseUtils.NUM_0]);
             localDate = LocalDateTime.parse(string, formatter);
         }
 
