@@ -39,6 +39,7 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.13.2</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -140,11 +141,11 @@
 	<distributionManagement>
 		<repository>
 			<id>local-nexus-maven</id>
-			<url>file:\\127.0.0.1\local-nexus-maven</url>
+			<url>file:\\nexus.ivoslabs.com\maven</url>
 		</repository>
 		<snapshotRepository>
 			<id>local-nexus-maven</id>
-			<url>file:\\127.0.0.1\local-nexus-maven</url>
+			<url>file:\\nexus.ivoslabs.com\maven</url>
 		</snapshotRepository>
 	</distributionManagement>
 
