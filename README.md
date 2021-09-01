@@ -4,7 +4,7 @@ Utility to parse piped files and COPYs to DTOs
 
 **Configuration**
 
-Add the dependency to our pom
+Add the dependency to our pom.
 
 ``` xml
 
